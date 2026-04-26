@@ -1,0 +1,47 @@
+name: movil_home_pay
+description: "App para administrar pagos de cuentas del hogar"
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.11.5
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+  
+  # State Management
+  flutter_bloc: ^9.1.0
+  equatable: ^2.0.7
+  
+  # Navigation
+  go_router: ^14.8.1
+  
+  # Networking
+  dio: ^5.8.0
+  
+  # Environment variables
+  flutter_dotenv: ^5.2.1
+  
+  # Dependency Injection
+  get_it: ^8.0.3
+  
+  # Clerk Auth
+  clerk_flutter: ^0.0.14-beta
+  clerk_auth: ^0.0.14-beta
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  bloc_test: ^10.0.0
+  mocktail: ^1.0.4
+
+flutter:
+  uses-material-design: true
+  
+  assets:
+    - .env
