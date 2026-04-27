@@ -1,48 +1,45 @@
 # Movil Home Pay
 
-Initial project setup for account and category management.
+Flutter mobile application for managing home payments, including authentication, accounts, and categories.
 
-## Technology Stack
-- **Framework:** Flutter
-- **Authentication:** Clerk
-- **CI/CD:** GitHub Actions
+## Prerequisites
 
-## Getting Started
-
-### Prerequisites
-- Flutter SDK (v3.41.7 or higher)
+- Flutter SDK (stable channel, version 3.41.7 recommended)
 - Dart SDK
+- A Clerk account for authentication
 
-### Environment Configuration
-Before running the application, you must set up your environment variables:
+## Setup
 
-1. Copy the example environment file:
+1. **Clone the repository**
+2. **Environment Variables**:
+   The project requires an environment configuration. Copy the template provided:
    ```bash
    cp .env.example .env
    ```
-2. Configure the following variables in `.env`:
-   - `API_BASE_URL`: The base URL for the API services (default: `http://localhost:8082`).
-   - `CLERK_PUBLISHABLE_KEY`: Your Clerk publishable key from the Clerk dashboard.
+   Configure the following variables in your `.env` file:
+   - `API_BASE_URL`: The base URL for the backend services.
+   - `CLERK_PUBLISHABLE_KEY`: Your Clerk publishable key for authentication.
 
-### Installation
-To install dependencies, run:
-```bash
-flutter pub get
-```
+3. **Install dependencies**:
+   ```bash
+   flutter pub get
+   ```
 
-### Running the Application
-To run the app in debug mode:
-```bash
-flutter run
-```
-
-## CI/CD and Quality Control
-The project uses GitHub Actions for continuous validation:
-- **Version Check:** Automatically validates the versioning defined in `pubspec.yaml`.
-- **Linting:** Runs `flutter analyze` to ensure code quality and style consistency.
-- **Tests:** Runs `flutter test` and generates coverage reports (lcov format).
+4. **Run the app**:
+   ```bash
+   flutter run
+   ```
 
 ## Project Structure
-- `lib/core/auth`: Core authentication logic and token providers.
-- `lib/features/auth`: Clerk-based authentication implementation (data sources, repositories, and UI).
-- `lib/features/`: Contains domain-driven modules for accounts (cuentas) and categories (categorias).
+
+- **lib/features/auth**: Authentication logic and UI using Clerk integration.
+- **lib/features/cuentas**: Modules for managing user accounts.
+- **lib/features/categorias**: Modules for managing transaction categories.
+- **lib/core**: Shared logic, theme, and authentication providers.
+
+## CI/CD
+
+Automated workflows are configured via GitHub Actions:
+- **Version Control**: Validates changes against the version defined in `pubspec.yaml`.
+- **Static Analysis**: Runs `flutter analyze` to ensure code quality.
+- **Testing**: Executes `flutter test` and generates coverage reports (LCOV).
