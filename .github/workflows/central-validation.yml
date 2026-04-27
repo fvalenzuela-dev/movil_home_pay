@@ -40,9 +40,7 @@ jobs:
       - name: Fix coverage path
         run: |
           mkdir -p coverage
-          if [ -f "coverage/lcov.info" ]; then
-            cp coverage/lcov.info coverage/lcov.info
-          elif [ -f ".dart_tool/coverage/lcov.info" ]; then
+          if [ -f ".dart_tool/coverage/lcov.info" ]; then
             cp .dart_tool/coverage/lcov.info coverage/lcov.info
           fi
           ls -la coverage/
