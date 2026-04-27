@@ -11,7 +11,7 @@ jobs:
     name: Control de Versiones
     uses: fvalenzuela-dev/.github/.github/workflows/version-check-new.yml@main
     with:
-      version_file: "VERSION"
+      version_file: "pubspec.yaml"
       base_branch: "main"
     secrets:
       GITHUB_TOKEN_CUSTOM: ${{ secrets.GITHUB_TOKEN }}
@@ -22,28 +22,32 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Go
-        uses: actions/setup-go@v5
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
         with:
-          go-version-file: go.mod
+          flutter-version: '3.41.7'
+          channel: 'stable'
 
       - name: Install dependencies
-        run: go mod download
+        run: flutter pub get
+
+      - name: Run Flutter analyze
+        run: flutter analyze
 
       - name: Run tests with coverage
-        run: go test -coverprofile=coverage.out -covermode=atomic ./...
+        run: flutter test --coverage
 
       - name: Convert coverage to lcov
         run: |
-          go install github.com/jandelgado/gcov2lcov@latest
           mkdir -p coverage
-          gcov2lcov -infile=coverage.out -outfile=coverage/lcov.info
+          flutter test --coverage 2>/dev/null || true
+          # Convert .coverage to lcov format if needed
 
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
-          path: coverage/lcov.info
+          path: coverage/
           retention-days: 1
 
   codacy_coverage:
