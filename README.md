@@ -1,48 +1,46 @@
 # Movil Home Pay
 
-Initial project setup for Movil Home Pay, built with Flutter.
-
-## Features
-
-- **Authentication**: Integrated with Clerk Auth.
-- **Modules**: Initial structure for Accounts (Cuentas) and Categories (Categorias).
-- **Architecture**: Clean Architecture with BLoC for state management.
+Flutter application for managing accounts and categories.
 
 ## Prerequisites
 
-- **Flutter SDK**: `3.41.7` (Stable channel)
-- **Dart SDK**: Compatible with the specified Flutter version.
+- Flutter SDK: `3.41.7`
+- Dart SDK
 
-## Getting Started
+## Project Setup
 
-1. **Environment Configuration**:
-   Copy the template and provide your specific keys:
+1. **Environment Variables**
+   Copy the example environment file:
    ```bash
    cp .env.example .env
    ```
-   Key variables:
-   - `API_BASE_URL`: Backend service endpoint.
-   - `CLERK_PUBLISHABLE_KEY`: Clerk authentication key.
+   Update the following variables in `.env`:
+   - `API_BASE_URL`: The base URL of the backend API (default: http://localhost:8082).
+   - `CLERK_PUBLISHABLE_KEY`: Your Clerk publishable key for authentication.
 
-2. **Install Dependencies**:
+2. **Install Dependencies**
    ```bash
    flutter pub get
    ```
 
-3. **Run Application**:
+3. **Run the App**
    ```bash
    flutter run
    ```
 
-## CI/CD and Automation
+## Features
 
-This project uses GitHub Actions for quality control:
-- **Version Control**: Validates versioning based on `pubspec.yaml`.
-- **Quality Guard**: Runs `flutter analyze` and `flutter test` with coverage reporting on every PR.
-- **Documentation**: Automatic drift detection for README and code documentation.
+- **Authentication**: Integrated with Clerk Auth.
+- **Accounts (Cuentas)**: Manage and track different financial accounts.
+- **Categories (Categorias)**: Organize and classify your records.
 
-## Project Structure
+## CI/CD and Quality
 
-- `lib/core`: Shared utilities and authentication providers.
-- `lib/features`: Domain-driven modules (Auth, Accounts, Categories).
-- `test`: Unit and widget tests.
+This project uses GitHub Actions for automated workflows:
+- **Control de Versiones**: Tracks versions via `pubspec.yaml` (main branch).
+- **Validation**: Runs `flutter analyze` and `flutter test --coverage` on every PR.
+- **Continuous Documentation**: Automatically detects drift between code and documentation.
+
+## Development
+
+The project structure follows Flutter's standard architecture. Metadata for the project can be found in `.metadata` and project context in `.ship-safe/context.json`.
