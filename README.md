@@ -1,47 +1,63 @@
 # Movil Home Pay
 
-Initial project setup for a Flutter-based mobile application focused on financial management.
+This project is a Flutter mobile application for financial management, allowing users to track accounts (cuentas) and organize transactions into categories (categorias).
 
-## Overview
+## Features
 
-This project provides a platform for managing accounts and categories, utilizing Clerk for secure authentication and a Clean Architecture approach for maintainability.
-
-## Prerequisites
-
-- **Flutter SDK**: `3.41.7` (Stable channel)
-- **Dart SDK**: Integrated with Flutter
-
-## Environment Variables
-
-Configure your environment by creating a `.env` file based on `.env.example`:
-
-```env
-API_BASE_URL=http://localhost:8082
-CLERK_PUBLISHABLE_KEY=pk_test_your_key_here
-```
+- **Authentication**: Secure login and user session management powered by Clerk.
+- **Account Management**: Track and manage different financial accounts.
+- **Category Organization**: Categorize financial data for better insights.
 
 ## Getting Started
 
-1. **Clone the repository**
-2. **Install dependencies**:
-   ```bash
-   flutter pub get
-   ```
-3. **Run the application**:
-   ```bash
-   flutter run
-   ```
+### Prerequisites
 
-## Continuous Integration
+- **Flutter SDK**: `3.41.7` (Stable channel)
+- **Dart SDK**
+- **Clerk Account**: For authentication keys.
 
-The project uses GitHub Actions (defined in `.github/workflows/central-validation.yml`) for automated quality control:
-- **Analysis**: Runs `flutter analyze` on every pull request to ensure code quality.
-- **Tests**: Executes `flutter test` with coverage reports stored in the `coverage/` directory.
-- **Version Management**: Project versioning is now managed via `pubspec.yaml` (replacing the previous `VERSION` file system).
+### Configuration
 
-## Architecture
+The app uses environment variables for configuration. Create a `.env` file in the root directory:
 
-The codebase follows Clean Architecture principles:
-- **Features**: Scoped business logic (e.g., auth, cuentas, categorias).
-- **Layers**: Separation of concerns into `data`, `domain`, and `presentation` layers.
-- **State Management**: Implemented using the **BLoC** pattern.
+```bash
+cp .env.example .env
+```
+
+Update the values in `.env`:
+- `API_BASE_URL`: The base URL for the backend API (default: `http://localhost:8082`).
+- `CLERK_PUBLISHABLE_KEY`: Your publishable key from the Clerk dashboard.
+
+### Installation
+
+```bash
+flutter pub get
+```
+
+### Running the App
+
+```bash
+flutter run
+```
+
+## Development
+
+### Code Analysis
+
+Run the following command to check for linting issues:
+
+```bash
+flutter analyze
+```
+
+### Testing
+
+Run unit and widget tests with coverage reporting:
+
+```bash
+flutter test --coverage
+```
+
+## CI/CD
+
+The project uses GitHub Actions for continuous integration. The validation workflow ensures code quality through linting and automated testing, with versioning now managed via `pubspec.yaml`.
