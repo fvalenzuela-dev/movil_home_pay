@@ -1,23 +1,21 @@
-# Agent Context & Project Standards
+# AI Agent Guidelines - Movil Home Pay
 
-This document provides context for AI agents working on the HomePay Mobile repository.
+This project has transitioned from a Go-based backend to a **Flutter** mobile application architecture. Agents should adhere to the following technical context:
 
-## Project Nature
-- **Type**: Flutter Mobile Application
-- **Architecture**: Feature-driven (Auth, Cuentas, Categorias)
-- **State Management**: Bloc (as indicated by file structure)
+## Technical Context
+- **Primary Language**: Dart
+- **Framework**: Flutter
+- **Authentication**: Clerk (managed via `ClerkDataSource` and `TokenProvider`)
+- **State Management**: BLoC pattern
+- **Architecture**: Clean Architecture
 
-## Tech Stack Standards
-- **Flutter Version**: `3.41.7`
-- **Authentication**: Clerk (via `clerk_datasource.dart` and `AuthBloc`)
-- **API Communication**: Configured via `API_BASE_URL` in `.env` files.
-- **Versioning Source**: `pubspec.yaml` (Used by CI/CD workflows).
+## Development Workflow
+- **Environment**: Use `.env.example` to set up the local development environment.
+- **Versioning**: The source of truth for the project version is `pubspec.yaml`.
+- **Testing**: All features must include tests executable via `flutter test`.
+- **CI/CD**: PRs are validated through `flutter analyze` and `flutter test --coverage`.
 
-## Workflow Instructions
-- **Linting**: Always ensure code passes `flutter analyze`.
-- **Testing**: New features must include tests executable via `flutter test`.
-- **Environment**: Secrets and API keys must never be hardcoded; use the `TokenProvider` and environment variables.
-
-## Development Guidelines
-- The project has migrated from a Go-based backend focus to a Flutter mobile frontend.
-- Deployment workflows for Docker/GCP have been deprecated in favor of mobile-specific validation pipelines.
+## Key Directories
+- `lib/features/`: Contains feature-specific logic (Auth, Cuentas, Categorias).
+- `lib/core/`: Shared utilities, themes, and authentication providers.
+- `.github/workflows/`: Contains the Flutter validation and documentation pipelines.

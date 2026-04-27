@@ -1,61 +1,47 @@
-# HomePay Mobile
+# Movil Home Pay
 
-A Flutter-based mobile application for personal finance management, featuring secure authentication and management of accounts and categories.
+Initial project setup for a Flutter-based mobile application focused on financial management.
 
-## Features
+## Overview
 
-- **Auth**: Secure authentication integration using Clerk.
-- **Accounts (Cuentas)**: Manage and track various financial accounts.
-- **Categories (Categorias)**: Organize transactions with custom categories.
-
-## Tech Stack
-
-- **Framework**: Flutter 3.41.7 (Stable)
-- **Language**: Dart
-- **Authentication**: Clerk
-- **CI/CD**: GitHub Actions
+This project provides a platform for managing accounts and categories, utilizing Clerk for secure authentication and a Clean Architecture approach for maintainability.
 
 ## Prerequisites
 
-- [Flutter SDK](https://docs.flutter.dev/get-started/install) v3.41.7
-- Android Studio / Xcode for mobile emulation
+- **Flutter SDK**: `3.41.7` (Stable channel)
+- **Dart SDK**: Integrated with Flutter
 
-## Configuration
+## Environment Variables
 
-The project uses environment variables for API and Auth configuration. 
+Configure your environment by creating a `.env` file based on `.env.example`:
 
-1. Copy the example environment file:
-   ```bash
-   cp .env.example .env
-   ```
-2. Update `.env` with your local configuration:
-   - `API_BASE_URL`: The URL of the HomePay backend API.
-   - `CLERK_PUBLISHABLE_KEY`: Your publishable key from the Clerk dashboard.
+```env
+API_BASE_URL=http://localhost:8082
+CLERK_PUBLISHABLE_KEY=pk_test_your_key_here
+```
 
 ## Getting Started
 
-1. **Install dependencies**:
+1. **Clone the repository**
+2. **Install dependencies**:
    ```bash
    flutter pub get
    ```
-
-2. **Run static analysis**:
-   ```bash
-   flutter analyze
-   ```
-
-3. **Run tests**:
-   ```bash
-   flutter test --coverage
-   ```
-
-4. **Launch the application**:
+3. **Run the application**:
    ```bash
    flutter run
    ```
 
-## CI/CD
+## Continuous Integration
 
-This project uses GitHub Actions for continuous integration:
-- **Control de Versiones**: Monitors `pubspec.yaml` for version consistency.
-- **Validation**: Automatically runs `flutter analyze` and `flutter test` on every pull request to the `main` branch.
+The project uses GitHub Actions (defined in `.github/workflows/central-validation.yml`) for automated quality control:
+- **Analysis**: Runs `flutter analyze` on every pull request to ensure code quality.
+- **Tests**: Executes `flutter test` with coverage reports stored in the `coverage/` directory.
+- **Version Management**: Project versioning is now managed via `pubspec.yaml` (replacing the previous `VERSION` file system).
+
+## Architecture
+
+The codebase follows Clean Architecture principles:
+- **Features**: Scoped business logic (e.g., auth, cuentas, categorias).
+- **Layers**: Separation of concerns into `data`, `domain`, and `presentation` layers.
+- **State Management**: Implemented using the **BLoC** pattern.
