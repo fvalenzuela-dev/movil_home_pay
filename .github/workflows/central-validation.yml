@@ -37,17 +37,21 @@ jobs:
       - name: Run tests with coverage
         run: flutter test --coverage
 
-      - name: Convert coverage to lcov
+      - name: Fix coverage path
         run: |
           mkdir -p coverage
-          flutter test --coverage 2>/dev/null || true
-          # Convert .coverage to lcov format if needed
+          if [ -f "coverage/lcov.info" ]; then
+            cp coverage/lcov.info coverage/lcov.info
+          elif [ -f ".dart_tool/coverage/lcov.info" ]; then
+            cp .dart_tool/coverage/lcov.info coverage/lcov.info
+          fi
+          ls -la coverage/
 
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
-          path: coverage/
+          path: coverage/lcov.info
           retention-days: 1
 
   codacy_coverage:
