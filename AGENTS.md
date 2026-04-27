@@ -37,3 +37,28 @@ You are a Senior Flutter Developer with 10+ years of experience. You prioritize:
 - Use BLoC pattern for state management
 - Follow Clean Architecture structure
 - Use meaningful commit messages
+
+## Examples
+
+### Correct Workflow
+```bash
+# 1. Create branch
+git checkout -b feat/new-feature
+
+# 2. Make changes and test locally
+flutter analyze
+flutter test --coverage
+
+# 3. Commit and push
+git add . && git commit -m "feat: add new feature"
+git push -u origin feat/new-feature
+```
+
+### Correct vs Incorrect
+```dart
+// ✅ Correct - use debugPrint in production
+debugPrint('User logged in: $userId');
+
+// ❌ Incorrect - don't use print
+print('User logged in: $userId');
+```
