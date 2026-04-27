@@ -275,13 +275,21 @@ class _CuentaDetallePageState extends State<CuentaDetallePage> {
 
   IconData _getIcon(String nombre) {
     final lower = nombre.toLowerCase();
-    if (lower.contains('luz') || lower.contains('electricidad'))
+    if (lower.contains('luz') || lower.contains('electricidad')) {
       return Icons.bolt;
-    if (lower.contains('agua')) return Icons.water_drop;
-    if (lower.contains('internet') || lower.contains('wifi')) return Icons.wifi;
-    if (lower.contains('gas')) return Icons.local_fire_department;
-    if (lower.contains('telefono') || lower.contains('celular'))
+    }
+    if (lower.contains('agua')) {
+      return Icons.water_drop;
+    }
+    if (lower.contains('internet') || lower.contains('wifi')) {
+      return Icons.wifi;
+    }
+    if (lower.contains('gas')) {
+      return Icons.local_fire_department;
+    }
+    if (lower.contains('telefono') || lower.contains('celular')) {
       return Icons.phone_android;
+    }
     return Icons.receipt_long;
   }
 }

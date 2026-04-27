@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 /// Proveedor del JWT de Clerk para usarlo en los interceptores de Dio.
 /// Se configura una vez luego del login y se usa en cada request.
 class TokenProvider {
@@ -19,11 +21,11 @@ class TokenProvider {
       try {
         return await _getter!.call();
       } catch (e) {
-        print('[TokenProvider] Error getting token: $e');
+        debugPrint('[TokenProvider] Error getting token: $e');
         return null;
       }
     }
-    print('[TokenProvider] No getter configured');
+    debugPrint('[TokenProvider] No getter configured');
     return null;
   }
 

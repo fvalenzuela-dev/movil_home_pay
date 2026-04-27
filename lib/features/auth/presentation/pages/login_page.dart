@@ -46,7 +46,7 @@ class _LoginPageState extends State<LoginPage> {
           return null;
         }
         final token = await authState.sessionToken();
-        return token?.jwt;
+        return token.jwt;
       } catch (e) {
         return null;
       }

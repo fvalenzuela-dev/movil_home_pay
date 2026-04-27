@@ -90,7 +90,7 @@ class CuentaDatasource {
   Cuenta _fromJson(Map<String, dynamic> json) {
     // La API puede devolver: is_paid (bool), status (string: 'paid', 'pending', 'overdue')
     final isPaid = json['is_paid'] as bool? ?? false;
-    final status = json['status']?.toString()?.toLowerCase();
+    final status = json['status'].toString().toLowerCase();
     
     // Determinar el estado correctamente
     String estado;
