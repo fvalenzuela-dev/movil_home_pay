@@ -1,55 +1,51 @@
-# Home Pay Mobile
+# Movil Home Pay
 
-Initial project setup for the Home Pay mobile application using Flutter.
+Flutter mobile application for managing home payments, accounts, and categories.
+
+## Features
+
+- **Authentication:** Secure login using Clerk.
+- **Accounts (Cuentas):** Management and tracking of different payment accounts.
+- **Categories (Categorias):** Organization of payments by type.
 
 ## Prerequisites
 
-- [Flutter SDK](https://docs.flutter.dev/get-started/install) (version `3.41.7` stable)
-- [Clerk Account](https://clerk.com/) for authentication services
-
-## Environment Setup
-
-The project requires several environment variables to function correctly. Copy the example file and fill in your credentials:
-
-```bash
-cp .env.example .env
-```
-
-Required variables:
-- `API_BASE_URL`: The base URL for the backend API services (default: `http://localhost:8082`).
-- `CLERK_PUBLISHABLE_KEY`: Your publishable key from the Clerk dashboard.
+- **Flutter SDK:** 3.41.7 (Stable channel)
+- **Environment Variables:** Access to Clerk dashboard for API keys.
 
 ## Getting Started
 
-1. **Install dependencies:**
+1. **Environment Configuration**
+   Copy the example environment file and provide your local/production values:
+   ```bash
+   cp .env.example .env
+   ```
+   Key variables needed:
+   - `API_BASE_URL`: The endpoint for the backend services.
+   - `CLERK_PUBLISHABLE_KEY`: Your Clerk project publishable key.
+
+2. **Install Dependencies**
    ```bash
    flutter pub get
    ```
 
-2. **Analyze the code:**
-   ```bash
-   flutter analyze
-   ```
-
-3. **Run tests:**
-   ```bash
-   flutter test
-   ```
-
-4. **Run the app:**
+3. **Run the App**
    ```bash
    flutter run
    ```
 
-## Project Features
+## CI/CD & Quality Control
 
-- **Authentication**: Integrated with Clerk for secure user management.
-- **Cuentas**: Management of user accounts.
-- **Categorias**: Categorization for transactions/data.
+This project uses GitHub Actions for automated validation:
+- **Version Check:** Monitors versioning in `pubspec.yaml`.
+- **Flutter Analyze:** Static analysis of Dart code.
+- **Automated Testing:** Runs `flutter test` with coverage reports.
+- **Continuous Documentation:** Automatically detects drift in documentation.
 
-## CI/CD Pipeline
+## Architecture
 
-The project uses GitHub Actions for continuous validation:
-- **Version Control**: Monitored via `pubspec.yaml`.
-- **Validation**: Automatically runs Flutter analysis and tests on pull requests.
-- **Code Coverage**: Generated during the test phase and stored as artifacts.
+The project follows a modular feature-based architecture:
+- `lib/core`: Shared logic, auth providers, and utilities.
+- `lib/features/auth`: Login and user management implementation.
+- `lib/features/cuentas`: Account-related business logic and UI.
+- `lib/features/categorias`: Category management logic and UI.
