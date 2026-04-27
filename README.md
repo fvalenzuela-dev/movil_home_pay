@@ -1,63 +1,55 @@
-# Movil Home Pay
+# Home Pay Mobile
 
-This project is a Flutter mobile application for financial management, allowing users to track accounts (cuentas) and organize transactions into categories (categorias).
+Initial project setup for the Home Pay mobile application using Flutter.
 
-## Features
+## Prerequisites
 
-- **Authentication**: Secure login and user session management powered by Clerk.
-- **Account Management**: Track and manage different financial accounts.
-- **Category Organization**: Categorize financial data for better insights.
+- [Flutter SDK](https://docs.flutter.dev/get-started/install) (version `3.41.7` stable)
+- [Clerk Account](https://clerk.com/) for authentication services
 
-## Getting Started
+## Environment Setup
 
-### Prerequisites
-
-- **Flutter SDK**: `3.41.7` (Stable channel)
-- **Dart SDK**
-- **Clerk Account**: For authentication keys.
-
-### Configuration
-
-The app uses environment variables for configuration. Create a `.env` file in the root directory:
+The project requires several environment variables to function correctly. Copy the example file and fill in your credentials:
 
 ```bash
 cp .env.example .env
 ```
 
-Update the values in `.env`:
-- `API_BASE_URL`: The base URL for the backend API (default: `http://localhost:8082`).
+Required variables:
+- `API_BASE_URL`: The base URL for the backend API services (default: `http://localhost:8082`).
 - `CLERK_PUBLISHABLE_KEY`: Your publishable key from the Clerk dashboard.
 
-### Installation
+## Getting Started
 
-```bash
-flutter pub get
-```
+1. **Install dependencies:**
+   ```bash
+   flutter pub get
+   ```
 
-### Running the App
+2. **Analyze the code:**
+   ```bash
+   flutter analyze
+   ```
 
-```bash
-flutter run
-```
+3. **Run tests:**
+   ```bash
+   flutter test
+   ```
 
-## Development
+4. **Run the app:**
+   ```bash
+   flutter run
+   ```
 
-### Code Analysis
+## Project Features
 
-Run the following command to check for linting issues:
+- **Authentication**: Integrated with Clerk for secure user management.
+- **Cuentas**: Management of user accounts.
+- **Categorias**: Categorization for transactions/data.
 
-```bash
-flutter analyze
-```
+## CI/CD Pipeline
 
-### Testing
-
-Run unit and widget tests with coverage reporting:
-
-```bash
-flutter test --coverage
-```
-
-## CI/CD
-
-The project uses GitHub Actions for continuous integration. The validation workflow ensures code quality through linting and automated testing, with versioning now managed via `pubspec.yaml`.
+The project uses GitHub Actions for continuous validation:
+- **Version Control**: Monitored via `pubspec.yaml`.
+- **Validation**: Automatically runs Flutter analysis and tests on pull requests.
+- **Code Coverage**: Generated during the test phase and stored as artifacts.
