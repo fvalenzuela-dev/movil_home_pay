@@ -439,13 +439,9 @@ class _CategoryCard extends StatelessWidget {
 
 /// Dialog para crear/editar categoría con selector de icono
 class _CategoryFormDialog extends StatefulWidget {
-  final String? initialName;
-  final String? initialIconName;
   final void Function(String name, String? iconName) onSave;
 
   const _CategoryFormDialog({
-    this.initialName,
-    this.initialIconName,
     required this.onSave,
   });
 
@@ -460,8 +456,7 @@ class _CategoryFormDialogState extends State<_CategoryFormDialog> {
   @override
   void initState() {
     super.initState();
-    _nameController = TextEditingController(text: widget.initialName ?? '');
-    _selectedIconName = widget.initialIconName;
+    _nameController = TextEditingController();
   }
 
   @override
@@ -472,10 +467,8 @@ class _CategoryFormDialogState extends State<_CategoryFormDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final isEditing = widget.initialName != null;
-
     return AlertDialog(
-      title: Text(isEditing ? 'Editar Categoría' : 'Nueva Categoría'),
+      title: const Text('Nueva Categoría'),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -553,7 +546,7 @@ class _CategoryFormDialogState extends State<_CategoryFormDialog> {
               widget.onSave(name, _selectedIconName);
             }
           },
-          child: Text(isEditing ? 'Guardar' : 'Crear'),
+          child: const Text('Crear'),
         ),
       ],
     );
