@@ -1,6 +1,6 @@
 # movil_home_pay
 
-Initial project setup for the Home Pay mobile application, built with Flutter. This application provides management for accounts (cuentas) and categories (categorias) with integrated authentication.
+Initial project setup for the Home Pay mobile application, built with Flutter. This application provides management for accounts (cuentas) and categories (categorias) with integrated authentication..
 
 ## Tech Stack
 
