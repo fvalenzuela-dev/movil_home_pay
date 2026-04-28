@@ -1,57 +1,58 @@
 # Movil Home Pay
 
-Movil Home Pay is a mobile application built with Flutter designed for personal finance management, allowing users to manage accounts (cuentas) and categories (categorias).
+Movil Home Pay es una aplicación móvil desarrollada con Flutter para la gestión de finanzas personales, permitiendo a los usuarios administrar cuentas y categorías.
 
 ## Tech Stack
 
 - **Framework:** [Flutter](https://flutter.dev/) (Channel: stable, Version: 3.41.7)
 - **Language:** Dart
 - **Authentication:** [Clerk](https://clerk.com/)
-- **State Management:** BLoC (AuthBloc)
+- **State Management:** BLoC (flutter_bloc)
 
 ## Project Setup
 
 ### Prerequisites
 
-- Flutter SDK installed and configured.
-- A Clerk account and project configured.
+- Flutter SDK instalado y configurado.
+- Una cuenta de Clerk configurada.
 
 ### Environment Configuration
 
-The project requires several environment variables to function. Create a `.env` file in the root directory based on `.env.example`:
+El proyecto requiere variables de entorno. Crea un archivo `.env` en la raíz basado en `.env.example`:
 
 ```bash
 # API Configuration
-API_BASE_URL=your_api_endpoint
+API_BASE_URL=xxxxx
 
 # Clerk Authentication
-CLERK_PUBLISHABLE_KEY=your_publishable_key
-CLERK_SECRET_KEY=your_secret_key
+CLERK_PUBLISHABLE_KEY=xxxxxxxx
+CLERK_SECRET_KEY=xxxxxxxx
 ```
 
 ### Installation
 
-1. Fetch dependencies:
+1. Instalar dependencias:
    ```bash
    flutter pub get
    ```
 
-2. Run the application:
+2. Ejecutar la aplicación:
    ```bash
    flutter run
    ```
 
 ## CI/CD and Quality Assurance
 
-This project uses GitHub Actions for automated validation via the `central-validation.yml` workflow:
+Este proyecto usa GitHub Actions para validación automática:
 
-- **Version Check:** Monitors version consistency in `pubspec.yaml`.
-- **Static Analysis:** Runs `flutter analyze` to ensure code quality and adherence to linting rules.
-- **Tests:** Executes `flutter test` with coverage reporting.
-- **Documentation:** Continuous documentation workflow monitors PRs for documentation drift.
+- **Version Check:** Monitorea consistencia de versión en `pubspec.yaml`.
+- **Static Analysis:** Ejecuta `flutter analyze` para asegurar calidad de código.
+- **Tests:** Ejecuta `flutter test` con coverage.
 
 ## Features
 
-- **Authentication:** Secure login using Clerk integration.
-- **Accounts:** Manage different financial accounts.
-- **Categories:** Organize transactions using customizable categories.
+- **Autenticación:** Login seguro usando Clerk.
+- **Cuentas (Dashboard):** Gestión de cuentas financieras.
+- **Categorías:** Organización de transacciones con categorías personalizables.
+- **Empresas:** Gestión de empresas asociadas a transacciones.
+- **Estructura:** Clean Architecture con BLoC para manejo de estados.
