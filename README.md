@@ -1,63 +1,57 @@
 # Movil Home Pay
 
-Initial project setup for managing accounts (cuentas) and categories (categorias) with integrated authentication.
+A Flutter-based mobile application project. This project was recently initialized and migrated from a Go-based environment to a Flutter framework.
 
-## 🚀 Getting Started
+## Prerequisites
 
-This project is built using **Flutter** and uses **Clerk** for authentication management.
+- **Flutter SDK**: version 3.41.7 (stable)
+- **Dart SDK**
+- **Clerk Account**: For authentication services
 
-### Prerequisites
+## Getting Started
 
-- Flutter SDK (v3.41.7 stable recommended)
-- Dart SDK
-- A Clerk account for authentication keys
+### 1. Environment Configuration
 
-### ⚙️ Configuration
+Copy the `.env.example` file to a new file named `.env` and fill in the required credentials:
 
-The application requires environment variables to function correctly. 
+```bash
+cp .env.example .env
+```
 
-1. Copy the example environment file:
-   ```bash
-   cp .env.example .env
-   ```
-2. Open `.env` and fill in your specific configuration:
-   - `API_BASE_URL`: The base endpoint for the backend API.
-   - `CLERK_PUBLISHABLE_KEY`: Your Clerk Publishable Key.
-   - `CLERK_SECRET_KEY`: Your Clerk Secret Key.
+Required variables:
+- `API_BASE_URL`: The base URL for your API services.
+- `CLERK_PUBLISHABLE_KEY`: Your Clerk publishable key from the Clerk dashboard.
+- `CLERK_SECRET_KEY`: Your Clerk secret key.
 
-### 🛠️ Installation & Development
+### 2. Install Dependencies
 
-Install dependencies:
+Fetch the required Flutter packages:
+
 ```bash
 flutter pub get
 ```
 
-Run the application:
+### 3. Running the Project
+
+To run the application in development mode:
+
 ```bash
 flutter run
 ```
 
-### 🧪 Testing and Quality
+## Project Structure
 
-Run static analysis:
-```bash
-flutter analyze
-```
+- `lib/`: Main application source code.
+- `test/`: Unit and widget tests.
+- `.github/workflows/`: CI/CD pipelines including central validation (Flutter analyze and test).
 
-Run tests with coverage:
-```bash
-flutter test --coverage
-```
+## CI/CD and Quality Control
 
-## 🤖 CI/CD
+The project uses GitHub Actions to automate validation. The pipeline performs:
+- Version consistency checks via `pubspec.yaml`.
+- Code analysis using `flutter analyze`.
+- Testing with coverage reports using `flutter test --coverage`.
 
-The project uses GitHub Actions for continuous integration:
-- **Control de Versiones**: Tracks versioning through `pubspec.yaml`.
-- **CI Pipeline**: Automatically runs analysis and tests on pull requests.
-- **Continuous Documentation**: Keeps documentation in sync with code changes.
+## Authentication
 
-## 📁 Project Structure
-
-- `lib/features/auth`: Clerk authentication implementation (BLoC pattern).
-- `lib/features/accounts`: Management logic for financial accounts.
-- `lib/features/categorias`: Management logic for transaction categories.
+Authentication is managed via **Clerk**. Ensure you have the appropriate keys configured in your `.env` file for the auth providers to function correctly.
