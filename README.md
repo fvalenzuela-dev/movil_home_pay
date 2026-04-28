@@ -4,7 +4,7 @@ Initial project setup for managing accounts and categories, built with Flutter.
 
 ## Features
 
-- **Authentication**: Integrated with Clerk for secure user management.
+- **Authentication**: Integrated with Clerk for secure user management..
 - **Core Entities**: Foundation for managing Accounts (Cuentas) and Categories (Categorías).
 - **Architecture**: Clean Architecture structure with BLoC for state management.
 
