@@ -1,55 +1,45 @@
 # Movil Home Pay
 
-Initial project setup for managing accounts and categories, built with Flutter.
+A Flutter-based mobile application for financial management, featuring account (cuentas) and category (categorias) management with integrated Clerk authentication.
 
-## Features
-
-- **Authentication**: Integrated with Clerk for secure user management..
-- **Core Entities**: Foundation for managing Accounts (Cuentas) and Categories (Categorías).
-- **Architecture**: Clean Architecture structure with BLoC for state management.
-
-## Prerequisites
-
-- [Flutter SDK](https://docs.flutter.dev/get-started/install) (Stable channel, version 3.41.7 recommended)
-- Dart SDK
-
-## Environment Configuration
-
-The project uses environment variables for API and Authentication configuration. Create a `.env` file in the root directory based on the example provided:
-
-```bash
-cp .env.example .env
-```
-
-Required variables:
-- `API_BASE_URL`: Base endpoint for the backend services.
-- `CLERK_PUBLISHABLE_KEY`: Publishable key from your Clerk dashboard.
-- `CLERK_SECRET_KEY`: Secret key from your Clerk dashboard.
+## Tech Stack
+- **Framework:** Flutter (Channel: stable, Version: 3.41.7)
+- **Authentication:** Clerk
+- **Architecture:** Feature-driven (Auth, Cuentas, Categorias)
 
 ## Getting Started
 
-1. **Install Dependencies**:
+### Prerequisites
+- Flutter SDK (Recommended version: 3.41.7)
+- Clerk Account and API Keys
+
+### Configuration
+1. Copy the example environment file:
+   ```bash
+   cp .env.example .env
+   ```
+2. Configure the following variables in your `.env` file:
+   - `API_BASE_URL`: Base URL for the backend API.
+   - `CLERK_PUBLISHABLE_KEY`: Your Clerk publishable key.
+   - `CLERK_SECRET_KEY`: Your Clerk secret key.
+
+### Installation
+1. Fetch the required dependencies:
    ```bash
    flutter pub get
    ```
-
-2. **Static Analysis**:
-   ```bash
-   flutter analyze
-   ```
-
-3. **Run Tests**:
-   ```bash
-   flutter test --coverage
-   ```
-
-4. **Run the Application**:
+2. Run the application:
    ```bash
    flutter run
    ```
 
-## CI/CD Pipeline
+## CI/CD and Quality Control
+The project uses GitHub Actions for automated validation through the `central-validation.yml` workflow:
+- **Version Check:** Ensures version consistency using `pubspec.yaml`.
+- **Analysis:** Performs static code analysis using `flutter analyze`.
+- **Testing:** Runs unit tests and generates coverage reports via `flutter test --coverage`.
 
-This project uses GitHub Actions for continuous integration:
-- **Control de Versiones**: Monitors versioning specifically in `pubspec.yaml`.
-- **Validation**: Automatically runs Flutter analyze and tests on every pull request to ensure code quality and coverage.
+## Features
+- **Authentication:** Managed via Clerk (see `lib/features/auth`).
+- **Accounts (Cuentas):** Logic for managing user financial accounts.
+- **Categories (Categorias):** Classification system for transactions.
