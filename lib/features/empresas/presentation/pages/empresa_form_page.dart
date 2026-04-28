@@ -145,7 +145,7 @@ class _EmpresaFormPageState extends State<EmpresaFormPage> {
               }
 
               return DropdownButtonFormField<int>(
-                value: _selectedCategoryId > 0 ? _selectedCategoryId : null,
+                initialValue: _selectedCategoryId > 0 ? _selectedCategoryId : null,
                 decoration: const InputDecoration(
                   labelText: 'Categoría *',
                   prefixIcon: Icon(Icons.category),

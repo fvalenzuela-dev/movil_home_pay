@@ -90,8 +90,8 @@ class EmpresaDatasource {
       'auth_user_id': empresa.authUserId,
       'category_id': empresa.categoryId,
       'name': empresa.name.trim(),
-      if (website != null) 'website': website,
-      if (empresa.phone != null) 'phone': empresa.phone,
+      ...?website != null ? {'website': website} : null,
+      ...?empresa.phone != null ? {'phone': empresa.phone} : null,
       'is_active': empresa.isActive,
     };
 
@@ -115,8 +115,8 @@ class EmpresaDatasource {
     final data = {
       'category_id': empresa.categoryId,
       'name': empresa.name.trim(),
-      if (website != null) 'website': website,
-      if (empresa.phone != null) 'phone': empresa.phone,
+      ...?website != null ? {'website': website} : null,
+      ...?empresa.phone != null ? {'phone': empresa.phone} : null,
       'is_active': empresa.isActive,
     };
 
