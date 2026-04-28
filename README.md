@@ -1,28 +1,29 @@
 # Movil Home Pay
 
-Este es un proyecto de Flutter para la gestión de finanzas personales, incluyendo autenticación, cuentas y categorías.
+Proyecto móvil desarrollado con Flutter para la gestión de finanzas personales, incluyendo autenticación, cuentas y categorías.
 
-## Requisitos Previos
+## Requisitos
 
-- Flutter SDK (Versión 3.41.7 o superior)
-- Dart SDK
-- Cuenta en Clerk para la autenticación
+*   **Flutter**: 3.41.7 (canal stable)
+*   **Dart SDK**
+*   **Clerk**: Cuenta configurada para autenticación
 
 ## Configuración
 
-1. **Variables de Entorno:**
-   Copia el archivo `.env.example` a `.env` y completa los valores requeridos:
-   ```bash
-   cp .env.example .env
-   ```
-   - `API_BASE_URL`: URL base de la API (por defecto http://localhost:8082).
-   - `CLERK_PUBLISHABLE_KEY`: Tu llave pública obtenida desde el dashboard de Clerk.
+1.  **Variables de Entorno**: El proyecto requiere un archivo `.env` en la raíz. Puedes basarte en el archivo `.env.example` proporcionado:
+    ```bash
+    # API Configuration
+    API_BASE_URL=xxxxx
 
-2. **Instalación de Dependencias:**
-   Ejecuta el siguiente comando para obtener los paquetes de Flutter:
-   ```bash
-   flutter pub get
-   ```
+    # Clerk Authentication
+    CLERK_PUBLISHABLE_KEY=xxxxxxx
+    CLERK_SECRET_KEY=xxxxxxx
+    ```
+
+2.  **Instalación de Dependencias**:
+    ```bash
+    flutter pub get
+    ```
 
 ## Ejecución
 
@@ -33,15 +34,13 @@ flutter run
 
 ## Integración Continua (CI)
 
-El proyecto cuenta con flujos de trabajo en GitHub Actions para:
-- **Control de Versiones:** Validado automáticamente a través del archivo `pubspec.yaml` (anteriormente `VERSION`).
-- **Validación Central:** Ejecuta `flutter analyze` y `flutter test` con generación de reportes de cobertura en `coverage/lcov.info`.
-- **Documentación Continua:** Mantiene la documentación técnica sincronizada con los cambios en el código.
+El proyecto utiliza GitHub Actions para validación automática:
+- **Control de Versiones**: Se valida contra el archivo `pubspec.yaml`.
+- **Análisis Estático**: Ejecuta `flutter analyze`.
+- **Tests**: Ejecuta `flutter test --coverage` para asegurar la calidad del código.
 
-## Estructura del Proyecto
+## Arquitectura y Funcionalidades
 
-El proyecto sigue una arquitectura limpia (Clean Architecture):
-- `lib/features/auth`: Implementación de autenticación utilizando Clerk.
-- `lib/features/cuentas`: Módulo para la gestión de cuentas financieras.
-- `lib/features/categorias`: Módulo para la clasificación de transacciones.
-- `lib/core`: Utilidades compartidas, interceptores y proveedores de tokens de autenticación.
+- **Autenticación**: Integrada con Clerk.
+- **Módulos principales**: Gestión de Cuentas y Categorías.
+- **Estructura**: Sigue patrones de Clean Architecture con BLoC para el manejo de estados (según se indica en la estructura de archivos en `lib/features`).
