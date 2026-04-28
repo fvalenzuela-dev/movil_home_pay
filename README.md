@@ -1,6 +1,6 @@
 # Movil Home Pay
 
-A Flutter-based mobile application for financial management, featuring account (cuentas) and category (categorias) management with integrated Clerk authentication.
+A Flutter-based mobile application for financial management, featuring account (cuentas) and category (categorias) management with integrated Clerk authentication..
 
 ## Tech Stack
 - **Framework:** Flutter (Channel: stable, Version: 3.41.7)
