@@ -8,6 +8,9 @@ import '../../features/auth/domain/repositories/auth_repository.dart';
 import '../../features/cuentas/data/datasources/cuenta_datasource.dart';
 import '../../features/cuentas/data/repositories/cuenta_repository_impl.dart';
 import '../../features/cuentas/domain/repositories/cuenta_repository.dart';
+import '../../features/empresas/data/datasources/empresa_datasource.dart';
+import '../../features/empresas/data/repositories/empresa_repository_impl.dart';
+import '../../features/empresas/domain/repositories/empresa_repository.dart';
 import '../../features/admin/data/datasources/category_datasource.dart';
 import '../../features/admin/data/repositories/category_repository_impl.dart';
 import '../../features/admin/domain/repositories/category_repository.dart';
@@ -133,6 +136,11 @@ void _registerDataSources() {
   getIt.registerLazySingleton<CategoryDatasource>(
     () => CategoryDatasource(getIt<Dio>()),
   );
+
+  // Empresa data source
+  getIt.registerLazySingleton<EmpresaDatasource>(
+    () => EmpresaDatasource(getIt<Dio>()),
+  );
 }
 
 void _registerRepositories() {
@@ -149,5 +157,10 @@ void _registerRepositories() {
   // Category repository
   getIt.registerLazySingleton<CategoryRepository>(
     () => CategoryRepositoryImpl(getIt<CategoryDatasource>()),
+  );
+
+  // Empresa repository
+  getIt.registerLazySingleton<EmpresaRepository>(
+    () => EmpresaRepositoryImpl(getIt<EmpresaDatasource>()),
   );
 }

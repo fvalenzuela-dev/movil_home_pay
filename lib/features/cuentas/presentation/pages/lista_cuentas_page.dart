@@ -316,7 +316,7 @@ class _ListaCuentasPageState extends State<ListaCuentasPage> {
           ),
           ListTile(
             leading: const Icon(Icons.home),
-            title: const Text('Cuentas'),
+            title: const Text('Dashboard'),
             selected: true,
             onTap: () {
               Navigator.pop(context);
@@ -336,10 +336,7 @@ class _ListaCuentasPageState extends State<ListaCuentasPage> {
             title: const Text('Empresas'),
             onTap: () {
               Navigator.pop(context);
-              // Companies viene después
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Próximamente: Empresas')),
-              );
+              context.go('/empresas');
             },
           ),
           const Divider(),

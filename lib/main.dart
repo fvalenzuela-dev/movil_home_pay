@@ -18,10 +18,14 @@ import 'features/cuentas/presentation/pages/cuenta_detalle_page.dart';
 import 'features/admin/domain/repositories/category_repository.dart';
 import 'features/admin/presentation/bloc/category_bloc.dart';
 import 'features/admin/presentation/pages/categories_page.dart';
+import 'features/empresas/domain/repositories/empresa_repository.dart';
+import 'features/empresas/presentation/bloc/empresa_bloc.dart';
+import 'features/empresas/presentation/pages/lista_empresas_page.dart';
+import 'features/empresas/presentation/pages/empresa_form_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load(fileName: '.env');
+  await dotenv.load(fileName: '.env', isOptional: true);
   await initDependencies();
   runApp(const MovilHomePayApp());
 }
@@ -60,6 +64,22 @@ final _router = GoRouter(
       path: '/admin/categories',
       builder: (context, state) => const CategoriesPage(),
     ),
+    // Empresas routes
+    GoRoute(
+      path: '/empresas',
+      builder: (context, state) => const ListaEmpresasPage(),
+    ),
+    GoRoute(
+      path: '/empresas/create',
+      builder: (context, state) => const EmpresaFormPage(),
+    ),
+    GoRoute(
+      path: '/empresas/:id',
+      builder: (context, state) {
+        final id = state.pathParameters['id']!;
+        return EmpresaFormPage(empresaId: id);
+      },
+    ),
   ],
 );
 
@@ -78,6 +98,7 @@ class MovilHomePayApp extends StatelessWidget {
         BlocProvider(create: (_) => AuthBloc()..add(AuthCheckRequested())),
         BlocProvider(create: (_) => CuentasBloc(getIt<CuentaRepository>())),
         BlocProvider(create: (_) => CategoryBloc(getIt<CategoryRepository>())),
+        BlocProvider(create: (_) => EmpresaBloc(getIt<EmpresaRepository>())),
       ],
       child: ClerkAuth(
         config: ClerkAuthConfig(
