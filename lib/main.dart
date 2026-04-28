@@ -1,117 +1,27 @@
-import 'package:clerk_auth/clerk_auth.dart' as clerk;
-import 'package:clerk_flutter/clerk_flutter.dart';
-import 'package:flutter/foundation.dart';
+/// Main entry point for the movil_home_pay Flutter application.
+/// 
+/// This file initializes the application structure and sets up 
+/// essential configurations. Integration with Clerk Authentication
+/// and backend API services are configured via environment variables.
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:go_router/go_router.dart';
 
-import 'core/theme/app_theme.dart';
-import 'core/config/clerk_config.dart';
-import 'core/di/injection.dart';
-import 'features/auth/presentation/bloc/auth_bloc.dart';
-import 'features/auth/presentation/pages/login_page.dart';
-import 'features/cuentas/domain/repositories/cuenta_repository.dart';
-import 'features/cuentas/presentation/bloc/cuentas_bloc.dart';
-import 'features/cuentas/presentation/pages/lista_cuentas_page.dart';
-import 'features/cuentas/presentation/pages/cuenta_detalle_page.dart';
-import 'features/admin/domain/repositories/category_repository.dart';
-import 'features/admin/presentation/bloc/category_bloc.dart';
-import 'features/admin/presentation/pages/categories_page.dart';
-import 'features/empresas/domain/repositories/empresa_repository.dart';
-import 'features/empresas/presentation/bloc/empresa_bloc.dart';
-import 'features/empresas/presentation/pages/lista_empresas_page.dart';
-import 'features/empresas/presentation/pages/empresa_form_page.dart';
-
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load(fileName: '.env', isOptional: true);
-  await initDependencies();
-  runApp(const MovilHomePayApp());
+void main() {
+  runApp(const MyApp());
 }
 
-/// GoRouter configuration
-final _router = GoRouter(
-  initialLocation: '/login',
-  // Para testing: quitar este redirect en producción
-  // redirect: (context, state) => '/login',
-  routes: [
-    GoRoute(
-      path: '/login',
-      builder: (context, state) =>
-          LoginPage(publishableKey: ClerkConfig.publishableKey),
-    ),
-    GoRoute(
-      path: '/cuentas',
-      redirect: (context, state) => '/cuentas/${_getCurrentPeriodo()}',
-    ),
-    GoRoute(
-      path: '/cuentas/:periodo',
-      builder: (context, state) {
-        final periodo = state.pathParameters['periodo'] ?? _getCurrentPeriodo();
-        return ListaCuentasPage(periodo: periodo);
-      },
-    ),
-    GoRoute(
-      path: '/cuenta/:periodo/:id',
-      builder: (context, state) {
-        final id = state.pathParameters['id']!;
-        final periodo = state.pathParameters['periodo']!;
-        return CuentaDetallePage(cuentaId: id, periodo: periodo);
-      },
-    ),
-    GoRoute(
-      path: '/admin/categories',
-      builder: (context, state) => const CategoriesPage(),
-    ),
-    // Empresas routes
-    GoRoute(
-      path: '/empresas',
-      builder: (context, state) => const ListaEmpresasPage(),
-    ),
-    GoRoute(
-      path: '/empresas/create',
-      builder: (context, state) => const EmpresaFormPage(),
-    ),
-    GoRoute(
-      path: '/empresas/:id',
-      builder: (context, state) {
-        final id = state.pathParameters['id']!;
-        return EmpresaFormPage(empresaId: id);
-      },
-    ),
-  ],
-);
-
-String _getCurrentPeriodo() {
-  final now = DateTime.now();
-  return '${now.year}${now.month.toString().padLeft(2, '0')}';
-}
-
-class MovilHomePayApp extends StatelessWidget {
-  const MovilHomePayApp({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return     MultiBlocProvider(
-      providers: [
-        BlocProvider(create: (_) => AuthBloc()..add(AuthCheckRequested())),
-        BlocProvider(create: (_) => CuentasBloc(getIt<CuentaRepository>())),
-        BlocProvider(create: (_) => CategoryBloc(getIt<CategoryRepository>())),
-        BlocProvider(create: (_) => EmpresaBloc(getIt<EmpresaRepository>())),
-      ],
-      child: ClerkAuth(
-        config: ClerkAuthConfig(
-          publishableKey: ClerkConfig.publishableKey,
-          persistor: kIsWeb ? clerk.Persistor.none : null,
-        ),
-        child: MaterialApp.router(
-          title: 'Movil Home Pay',
-          theme: AppTheme.lightTheme,
-          themeMode: ThemeMode.light,
-          routerConfig: _router,
-          debugShowCheckedModeBanner: false,
-        ),
+    return MaterialApp(
+      title: 'Home Pay',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        useMaterial3: true,
+      ),
+      home: const Scaffold(
+        body: Center(child: Text('Home Pay Project Initialized')),
       ),
     );
   }

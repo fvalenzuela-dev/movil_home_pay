@@ -1,57 +1,53 @@
-# Movil Home Pay
+# movil_home_pay
 
-A Flutter-based mobile application project. This project was recently initialized and migrated from a Go-based environment to a Flutter framework.
+A new Flutter project for Home Pay services.
+
+## Description
+This project has been initialized as a Flutter application, replacing the previous Go-based architecture. It includes integrated CI/CD workflows for Flutter analysis, testing, and coverage reporting.
 
 ## Prerequisites
-
-- **Flutter SDK**: version 3.41.7 (stable)
-- **Dart SDK**
-- **Clerk Account**: For authentication services
+- Flutter SDK (Channel stable, Version 3.41.7 or higher)
+- Dart SDK
+- Android Studio / Xcode for mobile development
 
 ## Getting Started
 
-### 1. Environment Configuration
+### Environment Configuration
+1. Copy the example environment file:
+   ```bash
+   cp .env.example .env
+   ```
+2. Update the following variables in `.env` with your credentials:
+   - `API_BASE_URL`: The base URL for the backend services.
+   - `CLERK_PUBLISHABLE_KEY`: Your Clerk publishable key for authentication.
+   - `CLERK_SECRET_KEY`: Your Clerk secret key.
 
-Copy the `.env.example` file to a new file named `.env` and fill in the required credentials:
-
-```bash
-cp .env.example .env
-```
-
-Required variables:
-- `API_BASE_URL`: The base URL for your API services.
-- `CLERK_PUBLISHABLE_KEY`: Your Clerk publishable key from the Clerk dashboard.
-- `CLERK_SECRET_KEY`: Your Clerk secret key.
-
-### 2. Install Dependencies
-
-Fetch the required Flutter packages:
-
+### Installation
 ```bash
 flutter pub get
 ```
 
-### 3. Running the Project
-
-To run the application in development mode:
-
+### Running the App
 ```bash
 flutter run
 ```
 
-## Project Structure
+## Development
 
-- `lib/`: Main application source code.
-- `test/`: Unit and widget tests.
-- `.github/workflows/`: CI/CD pipelines including central validation (Flutter analyze and test).
+### Testing
+Run the test suite with coverage:
+```bash
+flutter test --coverage
+```
 
-## CI/CD and Quality Control
+### Static Analysis
+Check for code quality and linting issues:
+```bash
+flutter analyze
+```
 
-The project uses GitHub Actions to automate validation. The pipeline performs:
-- Version consistency checks via `pubspec.yaml`.
-- Code analysis using `flutter analyze`.
-- Testing with coverage reports using `flutter test --coverage`.
-
-## Authentication
-
-Authentication is managed via **Clerk**. Ensure you have the appropriate keys configured in your `.env` file for the auth providers to function correctly.
+## CI/CD
+The project uses GitHub Actions for continuous validation:
+- **Control de Versiones**: Monitors `pubspec.yaml` for version changes.
+- **Pruebas y Calidad**: Automatically runs flutter analyze and tests on pull requests.
+- **Continuous Documentation**: Ensures documentation stays in sync with code changes.
