@@ -1,58 +1,55 @@
 # Movil Home Pay
 
-Movil Home Pay es una aplicación móvil desarrollada con Flutter para la gestión de finanzas personales, permitiendo a los usuarios administrar cuentas y categorías.
+Initial project setup for managing accounts and categories, built with Flutter.
 
-## Tech Stack
+## Features
 
-- **Framework:** [Flutter](https://flutter.dev/) (Channel: stable, Version: 3.41.7)
-- **Language:** Dart
-- **Authentication:** [Clerk](https://clerk.com/)
-- **State Management:** BLoC (flutter_bloc)
+- **Authentication**: Integrated with Clerk for secure user management.
+- **Core Entities**: Foundation for managing Accounts (Cuentas) and Categories (Categorías).
+- **Architecture**: Clean Architecture structure with BLoC for state management.
 
-## Project Setup
+## Prerequisites
 
-### Prerequisites
+- [Flutter SDK](https://docs.flutter.dev/get-started/install) (Stable channel, version 3.41.7 recommended)
+- Dart SDK
 
-- Flutter SDK instalado y configurado.
-- Una cuenta de Clerk configurada.
+## Environment Configuration
 
-### Environment Configuration
-
-El proyecto requiere variables de entorno. Crea un archivo `.env` en la raíz basado en `.env.example`:
+The project uses environment variables for API and Authentication configuration. Create a `.env` file in the root directory based on the example provided:
 
 ```bash
-# API Configuration
-API_BASE_URL=xxxxx
-
-# Clerk Authentication
-CLERK_PUBLISHABLE_KEY=xxxxxxxx
-CLERK_SECRET_KEY=xxxxxxxx
+cp .env.example .env
 ```
 
-### Installation
+Required variables:
+- `API_BASE_URL`: Base endpoint for the backend services.
+- `CLERK_PUBLISHABLE_KEY`: Publishable key from your Clerk dashboard.
+- `CLERK_SECRET_KEY`: Secret key from your Clerk dashboard.
 
-1. Instalar dependencias:
+## Getting Started
+
+1. **Install Dependencies**:
    ```bash
    flutter pub get
    ```
 
-2. Ejecutar la aplicación:
+2. **Static Analysis**:
+   ```bash
+   flutter analyze
+   ```
+
+3. **Run Tests**:
+   ```bash
+   flutter test --coverage
+   ```
+
+4. **Run the Application**:
    ```bash
    flutter run
    ```
 
-## CI/CD and Quality Assurance
+## CI/CD Pipeline
 
-Este proyecto usa GitHub Actions para validación automática:
-
-- **Version Check:** Monitorea consistencia de versión en `pubspec.yaml`.
-- **Static Analysis:** Ejecuta `flutter analyze` para asegurar calidad de código.
-- **Tests:** Ejecuta `flutter test` con coverage.
-
-## Features
-
-- **Autenticación:** Login seguro usando Clerk.
-- **Cuentas (Dashboard):** Gestión de cuentas financieras.
-- **Categorías:** Organización de transacciones con categorías personalizables.
-- **Empresas:** Gestión de empresas asociadas a transacciones.
-- **Estructura:** Clean Architecture con BLoC para manejo de estados.
+This project uses GitHub Actions for continuous integration:
+- **Control de Versiones**: Monitors versioning specifically in `pubspec.yaml`.
+- **Validation**: Automatically runs Flutter analyze and tests on every pull request to ensure code quality and coverage.
