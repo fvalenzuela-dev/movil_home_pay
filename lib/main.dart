@@ -1,8 +1,8 @@
-/// Main entry point for the movil_home_pay Flutter application.
-/// 
-/// This file initializes the application structure and sets up 
-/// essential configurations. Integration with Clerk Authentication
-/// and backend API services are configured via environment variables.
+// Main entry point for the movil_home_pay Flutter application.
+//
+// This file initializes the application structure and sets up
+// essential configurations. Integration with Clerk Authentication
+// and backend API services are configured via environment variables.
 import 'package:flutter/material.dart';
 
 void main() {
