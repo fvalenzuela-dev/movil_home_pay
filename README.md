@@ -1,51 +1,48 @@
 # Movil Home Pay
 
-Flutter mobile application for payment management.
+A Flutter-based mobile application for managing home payments, featuring Clerk authentication and Clean Architecture.
 
-## 🚀 Getting Started
+## Prerequisites
 
-### Prerequisites
-- **Flutter SDK**: `3.41.7` (Stable channel)
-- **Dart SDK**
-- **Clerk Authentication**: An account and project configured on the [Clerk Dashboard](https://clerk.com/).
+- [Flutter SDK](https://docs.flutter.dev/get-started/install) (Stable channel, version 3.41.7 or higher)
+- [Dart SDK](https://dart.dev/get-started/sdk)
 
-### Configuration
-This project requires environment variables to function correctly. 
+## Getting Started
 
-1. Copy the example environment file:
-   ```bash
-   cp .env.example .env
-   ```
-2. Update the values in `.env` with your credentials:
-   - `API_BASE_URL`: The base endpoint for project APIs.
-   - `CLERK_PUBLISHABLE_KEY`: Your Clerk publishable key.
-   - `CLERK_SECRET_KEY`: Your Clerk secret key.
+### 1. Environment Setup
 
-### Installation
-Fetch the project dependencies using the Flutter CLI:
+Copy the example environment file and configure it with your credentials:
+
+```bash
+cp .env.example .env
+```
+
+The following variables are required:
+- `API_BASE_URL`: The base endpoint for the backend API.
+- `CLERK_PUBLISHABLE_KEY`: Your Clerk publishable key (found in the Clerk Dashboard).
+- `CLERK_SECRET_KEY`: Your Clerk secret key.
+
+### 2. Install Dependencies
+
 ```bash
 flutter pub get
 ```
 
-### Running the App
-To run the application in your connected device or emulator:
+### 3. Run the Project
+
 ```bash
 flutter run
 ```
 
-## 🧪 Quality Control & Testing
+## CI/CD & Validation
 
-The project uses GitHub Actions for continuous validation (see `.github/workflows/central-validation.yml`).
+The project uses GitHub Actions for continuous integration:
+- **Control de Versiones**: Monitors version consistency in `pubspec.yaml`.
+- **Central Validation**: Performs static analysis (`flutter analyze`) and runs unit tests with coverage reporting on every pull request.
+- **Continuous Documentation**: Automatically identifies and addresses documentation drift.
 
-- **Static Analysis**: Run `flutter analyze` to check for linting issues.
-- **Unit Testing**: Run `flutter test --coverage` to execute tests and generate coverage reports.
-- **Version Control**: Project versioning is managed via `pubspec.yaml`.
+## Project Architecture
 
-## 🏗 Architecture
-The project follows a modular structure:
-- `lib/core`: Shared logic and authentication providers.
-- `lib/features`: Feature-based modules (Auth, etc.) following the Data/Domain/Presentation pattern.
-- `lib/features/auth`: Integration with Clerk for user authentication.
-
-## 🛠 CI/CD
-Validation is automated through GitHub Actions. Note that legacy GCP deployment workflows have been removed in favor of Flutter-specific validation pipelines.
+This project follows a feature-driven Clean Architecture approach:
+- `lib/core`: Shared logic, authentication providers, and utilities.
+- `lib/features`: Independent modules (e.g., `auth`) containing data sources, repositories, domain entities, and BLoC-based presentation logic.
