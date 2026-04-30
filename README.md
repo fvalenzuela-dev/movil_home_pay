@@ -1,55 +1,68 @@
-# Movil Home Pay
+# Home Pay Mobile
 
-This project is a Flutter application designed for mobile platforms, integrating Clerk for authentication and a custom backend API.
+Flutter mobile application for the Home Pay ecosystem.
 
-## Prerequisites
-- Flutter SDK (Stable channel, recommended version: `3.41.7`)
+## 🛠 Tech Stack
+
+- **Framework:** Flutter (Channel: stable, Version: 3.41.7)
+- **Authentication:** Clerk
+- **State Management:** BLoC / Cubit
+- **CI/CD:** GitHub Actions
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- [Flutter SDK](https://docs.flutter.dev/get-started/install) (v3.41.7)
 - Dart SDK
-- An active Clerk account for authentication services
+- A mobile emulator or physical device (Android/iOS)
 
-## Environment Configuration
+### Environment Configuration
 
-The application requires several environment variables to function correctly. Create a `.env` file in the root directory based on the `.env.example` file:
+The project requires environment variables to function. 
 
-```bash
-# API Configuration
-API_BASE_URL=your_api_url_here
+1. Copy the example file:
+   ```bash
+   cp .env.example .env
+   ```
+2. Update `.env` with your specific configuration:
+   - `API_BASE_URL`: Base URL for the backend services.
+   - `CLERK_PUBLISHABLE_KEY`: Clerk authentication publishable key.
+   - `CLERK_SECRET_KEY`: Clerk secret key.
 
-# Clerk Authentication
-CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
-CLERK_SECRET_KEY=your_clerk_secret_key
-```
+### Installation
 
-## Getting Started
-
-1. **Install Dependencies**:
+1. Fetch the project dependencies:
    ```bash
    flutter pub get
    ```
 
-2. **Run Analysis**:
-   ```bash
-   flutter analyze
-   ```
-
-3. **Run Tests**:
-   ```bash
-   flutter test --coverage
-   ```
-
-4. **Launch Application**:
+2. Run the application in debug mode:
    ```bash
    flutter run
    ```
 
-## CI/CD Pipeline
+## 🧪 Quality Control
 
-The project uses GitHub Actions for automated validation. The `central-validation.yml` workflow performs the following checks on Pull Requests:
-- **Version Control**: Validates that the version in `pubspec.yaml` is correctly updated.
-- **Static Analysis**: Ensures code complies with Flutter linting rules.
-- **Unit Testing**: Executes the test suite and generates coverage reports (saved as artifacts).
+### Analysis & Linting
 
-## Project Structure
-- `lib/`: Main application source code.
-- `.github/workflows/`: CI/CD configuration files.
-- `test/`: Unit and widget tests.
+To check for potential issues and style violations:
+```bash
+flutter analyze
+```
+
+### Testing
+
+To run unit and widget tests with coverage reporting:
+```bash
+flutter test --coverage
+```
+
+## 🔄 CI/CD Pipelines
+
+- **Central Validation**: Triggered on pull requests. Performs version checks via `pubspec.yaml`, runs `flutter analyze`, and executes tests to ensure code quality.
+- **Continuous Documentation**: Automatically detects and suggests updates to documentation based on code changes.
+
+## 📦 Versioning
+
+This project follows semantic versioning managed within the `pubspec.yaml` file.
