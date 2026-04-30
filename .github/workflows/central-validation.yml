@@ -13,7 +13,6 @@ on:
 jobs:
   verificar_version:
     name: Control de Versiones
-    needs: [continuous_docs]
     uses: fvalenzuela-dev/.github/.github/workflows/version-check-new.yml@main
     with:
       version_file: "pubspec.yaml"
@@ -21,25 +20,10 @@ jobs:
     secrets:
       GITHUB_TOKEN_CUSTOM: ${{ secrets.GITHUB_TOKEN }}
 
-  continuous_docs:
-    name: 📚 Continuous Documentation
-    permissions:
-      contents: write
-      pull-requests: write
-    uses: fvalenzuela-dev/.github/.github/workflows/continuous-docs.yml@main
-    with:
-      pr_number: ${{ github.event.pull_request.number || '' }}
-      pr_title: ${{ github.event.pull_request.title || '' }}
-      pr_author: ${{ github.event.pull_request.user.login || '' }}
-      base_ref: ${{ github.event.pull_request.base.ref || '' }}
-      head_ref: ${{ github.event.pull_request.head.ref || '' }}
-    secrets:
-      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-    if: github.event_name == 'pull_request'
+
 
   build_and_test:
     name: Build & Test
-    needs: [continuous_docs]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
