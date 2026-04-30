@@ -2,7 +2,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:movil_home_pay/features/cuentas/data/datasources/cuenta_datasource.dart';
 import 'package:movil_home_pay/features/cuentas/data/repositories/cuenta_repository_impl.dart';
-import 'package:movil_home_pay/features/cuentas/domain/entities/cuenta.dart';
 
 import '../../../../fixtures/cuenta/cuenta_fixture.dart';
 

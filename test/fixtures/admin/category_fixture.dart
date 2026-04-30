@@ -91,9 +91,9 @@ class CategoryFixture {
     return {
       'id': id ?? 1,
       'name': name ?? 'Test Category',
-      if (iconName != null) 'icon_name': iconName,
-      if (createdAt != null) 'created_at': createdAt,
-      if (updatedAt != null) 'updated_at': updatedAt,
+      ...?iconName != null ? {'icon_name': iconName} : null,
+      ...?createdAt != null ? {'created_at': createdAt} : null,
+      ...?updatedAt != null ? {'updated_at': updatedAt} : null,
     };
   }
 

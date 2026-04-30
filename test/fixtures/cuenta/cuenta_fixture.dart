@@ -96,7 +96,7 @@ class CuentaFixture {
       'monto': monto ?? 10000.0,
       'monto_pagado': montoPagado ?? 0.0,
       'estado': estado ?? 'pendiente',
-      if (fechaPago != null) 'fecha_pago': fechaPago,
+      ...?fechaPago != null ? {'fecha_pago': fechaPago} : null,
       'periodo': periodo ?? '202404',
     };
   }

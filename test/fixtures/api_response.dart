@@ -9,8 +9,8 @@ class ApiResponseBuilder {
     return {
       'success': true,
       'data': data,
-      if (message != null) 'message': message,
-      if (statusCode != null) 'status_code': statusCode,
+      ...?message != null ? {'message': message} : null,
+      ...?statusCode != null ? {'status_code': statusCode} : null,
     };
   }
 
@@ -23,8 +23,8 @@ class ApiResponseBuilder {
     return {
       'success': false,
       'error': message,
-      if (code != null) 'code': code,
-      if (details != null) 'details': details,
+      ...?code != null ? {'code': code} : null,
+      ...?details != null ? {'details': details} : null,
     };
   }
 
@@ -60,7 +60,7 @@ class ApiResponseBuilder {
   static Map<String, dynamic> malformed({String? partialData}) {
     return {
       'success': true,
-      if (partialData != null) 'items': partialData,
+      ...?partialData != null ? {'items': partialData} : null,
       // missing expected fields like 'data', 'total_count', etc.
     };
   }
@@ -95,9 +95,9 @@ class ApiResponseBuilder {
     return success(data: {
       'id': userId,
       'email': email,
-      if (firstName != null) 'first_name': firstName,
-      if (lastName != null) 'last_name': lastName,
-      if (imageUrl != null) 'image_url': imageUrl,
+      ...?firstName != null ? {'first_name': firstName} : null,
+      ...?lastName != null ? {'last_name': lastName} : null,
+      ...?imageUrl != null ? {'image_url': imageUrl} : null,
     });
   }
 
@@ -131,7 +131,7 @@ class ApiResponseBuilder {
     return success(data: {
       'id': id,
       'name': name,
-      if (iconName != null) 'icon_name': iconName,
+      ...?iconName != null ? {'icon_name': iconName} : null,
     });
   }
 

@@ -94,8 +94,8 @@ class EmpresaFixture {
       'auth_user_id': authUserId ?? 'user_123',
       'category_id': categoryId ?? 1,
       'name': name ?? 'JSON Company',
-      if (website != null) 'website': website,
-      if (phone != null) 'phone': phone,
+      ...?website != null ? {'website': website} : null,
+      ...?phone != null ? {'phone': phone} : null,
       'is_active': isActive ?? true,
     };
   }

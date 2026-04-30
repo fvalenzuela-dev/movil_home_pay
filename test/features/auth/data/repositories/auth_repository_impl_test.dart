@@ -2,9 +2,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:movil_home_pay/features/auth/data/datasources/clerk_datasource.dart';
 import 'package:movil_home_pay/features/auth/data/repositories/auth_repository_impl.dart';
-import 'package:movil_home_pay/features/auth/domain/entities/user.dart';
-
-import '../../../../fixtures/auth/user_fixture.dart';
 
 class MockClerkDatasource extends Mock implements ClerkDatasource {}
 
