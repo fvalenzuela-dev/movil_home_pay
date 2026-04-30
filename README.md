@@ -1,56 +1,51 @@
-# Home Pay Mobile
+# Movil Home Pay
 
-This project is a Flutter mobile application integrated with Clerk for authentication and a custom API backend.
+Flutter mobile application for payment management.
 
-## Requirements
+## 🚀 Getting Started
 
-- **Flutter SDK**: 3.41.7 (Stable channel)
-- **Dart**: Included with Flutter
+### Prerequisites
+- **Flutter SDK**: `3.41.7` (Stable channel)
+- **Dart SDK**
+- **Clerk Authentication**: An account and project configured on the [Clerk Dashboard](https://clerk.com/).
 
-## Project Configuration
+### Configuration
+This project requires environment variables to function correctly. 
 
-The project uses environment variables for configuration. Copy the example file and fill in your credentials:
+1. Copy the example environment file:
+   ```bash
+   cp .env.example .env
+   ```
+2. Update the values in `.env` with your credentials:
+   - `API_BASE_URL`: The base endpoint for project APIs.
+   - `CLERK_PUBLISHABLE_KEY`: Your Clerk publishable key.
+   - `CLERK_SECRET_KEY`: Your Clerk secret key.
 
+### Installation
+Fetch the project dependencies using the Flutter CLI:
 ```bash
-cp .env.example .env
+flutter pub get
 ```
 
-### Environment Variables
+### Running the App
+To run the application in your connected device or emulator:
+```bash
+flutter run
+```
 
-- `API_BASE_URL`: The base endpoint for the backend services.
-- `CLERK_PUBLISHABLE_KEY`: Your Clerk publishable key (found in the Clerk Dashboard).
-- `CLERK_SECRET_KEY`: Your Clerk secret key.
+## 🧪 Quality Control & Testing
 
-## Getting Started
+The project uses GitHub Actions for continuous validation (see `.github/workflows/central-validation.yml`).
 
-1.  **Install dependencies**:
-    ```bash
-    flutter pub get
-    ```
+- **Static Analysis**: Run `flutter analyze` to check for linting issues.
+- **Unit Testing**: Run `flutter test --coverage` to execute tests and generate coverage reports.
+- **Version Control**: Project versioning is managed via `pubspec.yaml`.
 
-2.  **Run the application**:
-    ```bash
-    flutter run
-    ```
+## 🏗 Architecture
+The project follows a modular structure:
+- `lib/core`: Shared logic and authentication providers.
+- `lib/features`: Feature-based modules (Auth, etc.) following the Data/Domain/Presentation pattern.
+- `lib/features/auth`: Integration with Clerk for user authentication.
 
-3.  **Run code analysis**:
-    ```bash
-    flutter analyze
-    ```
-
-4.  **Run tests with coverage**:
-    ```bash
-    flutter test --coverage
-    ```
-
-## CI/CD and Automation
-
-This repository uses GitHub Actions for workflow automation:
-- **Central Validation**: Automatically runs on PRs to perform version checks (via `pubspec.yaml`), code analysis, and test coverage reporting.
-- **Continuous Documentation**: Monitors code changes to ensure documentation stays in sync with implementation.
-
-## Architecture
-
-The project follows a feature-driven architecture:
-- `lib/core`: Shared logic, providers, and authentication configuration.
-- `lib/features`: Modular features (e.g., `auth`) containing data, domain, and presentation layers.
+## 🛠 CI/CD
+Validation is automated through GitHub Actions. Note that legacy GCP deployment workflows have been removed in favor of Flutter-specific validation pipelines.
