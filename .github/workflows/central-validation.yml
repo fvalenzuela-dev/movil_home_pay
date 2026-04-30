@@ -13,6 +13,7 @@ on:
 jobs:
   verificar_version:
     name: Control de Versiones
+    needs: [continuous_docs]
     uses: fvalenzuela-dev/.github/.github/workflows/version-check-new.yml@main
     with:
       version_file: "pubspec.yaml"
@@ -38,6 +39,7 @@ jobs:
 
   build_and_test:
     name: Build & Test
+    needs: [continuous_docs]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
