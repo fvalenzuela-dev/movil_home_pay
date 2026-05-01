@@ -219,12 +219,12 @@ class _ListaCuentasPageState extends State<ListaCuentasPage> {
                       letterSpacing: 0.5,
                     ),
                   ),
-                  Text(
-                    'pendiente por pagar \$${totalPendiente.toStringAsFixed(2)}',
+                  const Text(
+                    'pendiente por pagar',
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
-                      color: AppTheme.outline.withValues(alpha: 0.7),
+                      color: AppTheme.outline,
                       letterSpacing: 0.5,
                     ),
                   ),
@@ -237,6 +237,16 @@ class _ListaCuentasPageState extends State<ListaCuentasPage> {
                   fontSize: 32,
                   fontWeight: FontWeight.w700,
                   color: AppTheme.primarySeed,
+                  letterSpacing: -0.02,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                '\$${totalPendiente.toStringAsFixed(2)}',
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.red,
                   letterSpacing: -0.02,
                 ),
               ),
