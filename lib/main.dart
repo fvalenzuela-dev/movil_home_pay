@@ -15,7 +15,9 @@ import 'features/empresas/presentation/bloc/empresa_bloc.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Load environment variables (optional - CI/CD may not have .env)
+  // Load environment variables
+  // For local dev: ensure .env exists (copy from .env.example)
+  // For CI/CD: .env is optional, falls back to defaults in config files
   await dotenv.load(fileName: '.env', isOptional: true);
 
   // Initialize dependencies
