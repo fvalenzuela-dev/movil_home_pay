@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:clerk_flutter/clerk_flutter.dart';
 
 import 'core/di/injection.dart';
 import 'core/router/app_router.dart';
@@ -20,34 +21,43 @@ void main() async {
   // Initialize dependencies
   await initDependencies();
 
-  runApp(const MovilHomePayApp());
+  runApp(MovilHomePayApp(
+    clerkPublishableKey: dotenv.env['CLERK_PUBLISHABLE_KEY'] ?? '',
+  ));
 }
 
 class MovilHomePayApp extends StatelessWidget {
-  const MovilHomePayApp({super.key});
+  final String clerkPublishableKey;
+
+  const MovilHomePayApp({super.key, required this.clerkPublishableKey});
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider<AuthBloc>(
-          create: (_) => getIt<AuthBloc>()..add(AuthCheckRequested()),
+    return ClerkAuth(
+      config: ClerkAuthConfig(
+        publishableKey: clerkPublishableKey,
+      ),
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider<AuthBloc>(
+            create: (_) => getIt<AuthBloc>()..add(AuthCheckRequested()),
+          ),
+          BlocProvider<CuentasBloc>(
+            create: (_) => getIt<CuentasBloc>(),
+          ),
+          BlocProvider<EmpresaBloc>(
+            create: (_) => getIt<EmpresaBloc>(),
+          ),
+          BlocProvider<CategoryBloc>(
+            create: (_) => getIt<CategoryBloc>()..add(CategoriesLoadRequested()),
+          ),
+        ],
+        child: MaterialApp.router(
+          title: 'Movil Home Pay',
+          theme: AppTheme.lightTheme,
+          debugShowCheckedModeBanner: false,
+          routerConfig: AppRouter.router,
         ),
-        BlocProvider<CuentasBloc>(
-          create: (_) => getIt<CuentasBloc>(),
-        ),
-        BlocProvider<EmpresaBloc>(
-          create: (_) => getIt<EmpresaBloc>(),
-        ),
-        BlocProvider<CategoryBloc>(
-          create: (_) => getIt<CategoryBloc>()..add(CategoriesLoadRequested()),
-        ),
-      ],
-      child: MaterialApp.router(
-        title: 'Movil Home Pay',
-        theme: AppTheme.lightTheme,
-        debugShowCheckedModeBanner: false,
-        routerConfig: AppRouter.router,
       ),
     );
   }

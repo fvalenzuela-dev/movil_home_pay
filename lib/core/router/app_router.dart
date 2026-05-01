@@ -12,12 +12,20 @@ import '../../features/empresas/presentation/pages/lista_empresas_page.dart';
 /// App Router configuration using go_router
 class AppRouter {
   static final _rootNavigatorKey = GlobalKey<NavigatorState>();
+  static final _shellNavigatorKey = GlobalKey<NavigatorState>();
 
   static GoRouter get router => _router;
 
   static final GoRouter _router = GoRouter(
     navigatorKey: _rootNavigatorKey,
     initialLocation: '/login',
+    redirect: (context, state) {
+      // Redirect root to cuentas
+      if (state.uri.path == '/') {
+        return '/cuentas';
+      }
+      return null;
+    },
     routes: [
       // Login
       GoRoute(
@@ -28,51 +36,54 @@ class AppRouter {
         ),
       ),
 
-      // Home with bottom navigation
+      // Shell route with bottom navigation
       ShellRoute(
+        navigatorKey: _shellNavigatorKey,
         builder: (context, state, child) => MainShell(child: child),
         routes: [
-          // Cuentas
+          // Cuentas - lista
           GoRoute(
             path: '/cuentas',
             name: 'cuentas',
             builder: (context, state) {
-              final periodo = state.uri.queryParameters['periodo'] ?? '202404';
+              final periodo = state.uri.queryParameters['periodo'] ?? _currentPeriodo();
               return ListaCuentasPage(periodo: periodo);
             },
-            routes: [
-              GoRoute(
-                path: 'detalle/:id',
-                name: 'cuenta-detalle',
-                builder: (context, state) {
-                  final id = state.pathParameters['id']!;
-                  final periodo = state.uri.queryParameters['periodo'] ?? '202404';
-                  return CuentaDetallePage(cuentaId: id, periodo: periodo);
-                },
-              ),
-            ],
+          ),
+          
+          // Cuentas - detalle
+          GoRoute(
+            path: '/cuentas/detalle/:id',
+            name: 'cuenta-detalle',
+            builder: (context, state) {
+              final id = state.pathParameters['id']!;
+              final periodo = state.uri.queryParameters['periodo'] ?? _currentPeriodo();
+              return CuentaDetallePage(cuentaId: id, periodo: periodo);
+            },
           ),
 
-          // Empresas
+          // Empresas - lista
           GoRoute(
             path: '/empresas',
             name: 'empresas',
             builder: (context, state) => const ListaEmpresasPage(),
-            routes: [
-              GoRoute(
-                path: 'nueva',
-                name: 'empresa-nueva',
-                builder: (context, state) => const EmpresaFormPage(),
-              ),
-              GoRoute(
-                path: 'editar/:id',
-                name: 'empresa-editar',
-                builder: (context, state) {
-                  final id = state.pathParameters['id']!;
-                  return EmpresaFormPage(empresaId: id);
-                },
-              ),
-            ],
+          ),
+          
+          // Empresas - nueva
+          GoRoute(
+            path: '/empresas/nueva',
+            name: 'empresa-nueva',
+            builder: (context, state) => const EmpresaFormPage(),
+          ),
+          
+          // Empresas - editar
+          GoRoute(
+            path: '/empresas/editar/:id',
+            name: 'empresa-editar',
+            builder: (context, state) {
+              final id = state.pathParameters['id']!;
+              return EmpresaFormPage(empresaId: id);
+            },
           ),
 
           // Categorías (Admin)
@@ -85,6 +96,11 @@ class AppRouter {
       ),
     ],
   );
+
+  static String _currentPeriodo() {
+    final now = DateTime.now();
+    return '${now.year}${now.month.toString().padLeft(2, '0')}';
+  }
 }
 
 /// Main shell with bottom navigation
@@ -98,16 +114,23 @@ class MainShell extends StatefulWidget {
 }
 
 class _MainShellState extends State<MainShell> {
-  int _currentIndex = 0;
+  int _getCurrentIndex(BuildContext context) {
+    final location = GoRouterState.of(context).uri.toString();
+    if (location.startsWith('/cuentas')) return 0;
+    if (location.startsWith('/empresas')) return 1;
+    if (location.startsWith('/categorias')) return 2;
+    return 0;
+  }
 
   @override
   Widget build(BuildContext context) {
+    final currentIndex = _getCurrentIndex(context);
+    
     return Scaffold(
       body: widget.child,
       bottomNavigationBar: NavigationBar(
-        selectedIndex: _currentIndex,
+        selectedIndex: currentIndex,
         onDestinationSelected: (index) {
-          setState(() => _currentIndex = index);
           switch (index) {
             case 0:
               context.goNamed('cuentas');

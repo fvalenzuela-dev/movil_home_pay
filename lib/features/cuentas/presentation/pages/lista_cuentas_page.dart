@@ -328,7 +328,7 @@ class _ListaCuentasPageState extends State<ListaCuentasPage> {
             title: const Text('Categorías'),
             onTap: () {
               Navigator.pop(context);
-              context.go('/admin/categories');
+              context.go('/categorias');
             },
           ),
           ListTile(
@@ -475,7 +475,7 @@ class _ListaCuentasPageState extends State<ListaCuentasPage> {
         color: Colors.transparent,
         child: InkWell(
           borderRadius: BorderRadius.circular(12),
-          onTap: () => context.push('/cuenta/${widget.periodo}/${cuenta.id}'),
+          onTap: () => context.push('/cuentas/detalle/${cuenta.id}?periodo=${widget.periodo}'),
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Row(

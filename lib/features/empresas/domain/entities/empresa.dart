@@ -5,6 +5,7 @@ class Empresa extends Equatable {
   final String id;
   final String authUserId;
   final int categoryId;
+  final String? categoryName;
   final String name;
   final String? website;
   final String? phone;
@@ -14,6 +15,7 @@ class Empresa extends Equatable {
     required this.id,
     required this.authUserId,
     required this.categoryId,
+    this.categoryName,
     required this.name,
     this.website,
     this.phone,
@@ -26,6 +28,7 @@ class Empresa extends Equatable {
       id: json['id'] ?? '',
       authUserId: json['auth_user_id'] ?? '',
       categoryId: json['category_id'] ?? 0,
+      categoryName: json['category_name'] ?? json['category']?['name'],
       name: json['name'] ?? '',
       website: json['website'],
       phone: json['phone'],
@@ -51,6 +54,7 @@ class Empresa extends Equatable {
     String? id,
     String? authUserId,
     int? categoryId,
+    String? categoryName,
     String? name,
     String? website,
     String? phone,
@@ -60,6 +64,7 @@ class Empresa extends Equatable {
       id: id ?? this.id,
       authUserId: authUserId ?? this.authUserId,
       categoryId: categoryId ?? this.categoryId,
+      categoryName: categoryName ?? this.categoryName,
       name: name ?? this.name,
       website: website ?? this.website,
       phone: phone ?? this.phone,
@@ -72,6 +77,7 @@ class Empresa extends Equatable {
         id,
         authUserId,
         categoryId,
+        categoryName,
         name,
         website,
         phone,

@@ -74,7 +74,7 @@ class _CuentaDetallePageState extends State<CuentaDetallePage> {
               context.read<CuentasBloc>().add(
                 CuentasLoadRequested(widget.periodo),
               );
-              context.go('/cuentas/${widget.periodo}');
+              context.go('/cuentas?periodo=${widget.periodo}');
             } else if (state is PagoFailure) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(

@@ -108,6 +108,7 @@ class EmpresaCard extends StatelessWidget {
 
   Widget _buildCategoryBadge(BuildContext context) {
     final theme = Theme.of(context);
+    final categoryName = empresa.categoryName;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
@@ -116,7 +117,7 @@ class EmpresaCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
       ),
       child: Text(
-        'Cat: ${empresa.categoryId}',
+        categoryName ?? 'Cat: ${empresa.categoryId}',
         style: theme.textTheme.labelSmall?.copyWith(
           color: theme.colorScheme.onSecondaryContainer,
         ),

@@ -63,7 +63,7 @@ class _LoginPageState extends State<LoginPage> {
       _hasNavigated = true;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
-          GoRouter.of(context).go('/cuentas/${_currentPeriodo()}');
+          GoRouter.of(context).go('/cuentas?periodo=${_currentPeriodo()}');
         }
       });
     }

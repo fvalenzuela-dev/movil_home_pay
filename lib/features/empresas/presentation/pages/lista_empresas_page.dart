@@ -124,7 +124,7 @@ class _ListaEmpresasPageState extends State<ListaEmpresasPage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => context.push('/empresas/create'),
+        onPressed: () => context.push('/empresas/nueva'),
         backgroundColor: AppTheme.primarySeed,
         child: const Icon(Icons.add, color: Colors.white),
       ),
@@ -176,8 +176,8 @@ class _ListaEmpresasPageState extends State<ListaEmpresasPage> {
                 final empresa = state.empresas[index];
                 return EmpresaCard(
                   empresa: empresa,
-                  onTap: () => context.push('/empresas/${empresa.id}'),
-                  onEdit: () => context.push('/empresas/${empresa.id}'),
+                  onTap: () => context.push('/empresas/editar/${empresa.id}'),
+                  onEdit: () => context.push('/empresas/editar/${empresa.id}'),
                   onDelete: () => _showDeleteConfirmation(context, empresa),
                 );
               },
@@ -317,7 +317,7 @@ class _ListaEmpresasPageState extends State<ListaEmpresasPage> {
             title: const Text('Categorías'),
             onTap: () {
               Navigator.pop(context);
-              context.go('/admin/categories');
+              context.go('/categorias');
             },
           ),
           const Divider(),

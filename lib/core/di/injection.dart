@@ -5,15 +5,19 @@ import 'package:get_it/get_it.dart';
 import '../../features/auth/data/datasources/clerk_datasource.dart';
 import '../../features/auth/data/repositories/auth_repository_impl.dart';
 import '../../features/auth/domain/repositories/auth_repository.dart';
+import '../../features/auth/presentation/bloc/auth_bloc.dart';
 import '../../features/cuentas/data/datasources/cuenta_datasource.dart';
 import '../../features/cuentas/data/repositories/cuenta_repository_impl.dart';
 import '../../features/cuentas/domain/repositories/cuenta_repository.dart';
+import '../../features/cuentas/presentation/bloc/cuentas_bloc.dart';
 import '../../features/empresas/data/datasources/empresa_datasource.dart';
 import '../../features/empresas/data/repositories/empresa_repository_impl.dart';
 import '../../features/empresas/domain/repositories/empresa_repository.dart';
+import '../../features/empresas/presentation/bloc/empresa_bloc.dart';
 import '../../features/admin/data/datasources/category_datasource.dart';
 import '../../features/admin/data/repositories/category_repository_impl.dart';
 import '../../features/admin/domain/repositories/category_repository.dart';
+import '../../features/admin/presentation/bloc/category_bloc.dart';
 import '../auth/token_provider.dart';
 import '../config/api_config.dart';
 
@@ -24,6 +28,7 @@ Future<void> initDependencies() async {
   _registerExternal();
   _registerDataSources();
   _registerRepositories();
+  _registerBlocs();
 }
 
 void _registerExternal() {
@@ -162,5 +167,27 @@ void _registerRepositories() {
   // Empresa repository
   getIt.registerLazySingleton<EmpresaRepository>(
     () => EmpresaRepositoryImpl(getIt<EmpresaDatasource>()),
+  );
+}
+
+void _registerBlocs() {
+  // Auth BLoC
+  getIt.registerFactory<AuthBloc>(
+    () => AuthBloc(),
+  );
+
+  // Cuentas BLoC
+  getIt.registerFactory<CuentasBloc>(
+    () => CuentasBloc(getIt<CuentaRepository>()),
+  );
+
+  // Category BLoC
+  getIt.registerFactory<CategoryBloc>(
+    () => CategoryBloc(getIt<CategoryRepository>()),
+  );
+
+  // Empresa BLoC
+  getIt.registerFactory<EmpresaBloc>(
+    () => EmpresaBloc(getIt<EmpresaRepository>()),
   );
 }
