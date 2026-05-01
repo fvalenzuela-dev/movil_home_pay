@@ -86,7 +86,8 @@ class _CategoriesPageState extends State<CategoriesPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showCreateDialog(context),
-        child: const Icon(Icons.add),
+        backgroundColor: AppTheme.primarySeed,
+        child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }
