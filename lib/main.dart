@@ -16,7 +16,9 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Load environment variables
-  await dotenv.load(fileName: '.env');
+  // For local dev: ensure .env exists (copy from .env.example)
+  // For CI/CD: .env is optional, falls back to defaults in config files
+  await dotenv.load(fileName: '.env', isOptional: true);
 
   // Initialize dependencies
   await initDependencies();
