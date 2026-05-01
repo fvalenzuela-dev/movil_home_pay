@@ -259,6 +259,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
         final category = categories[index];
         return _CategoryCard(
           category: category,
+          onTap: () => _showEditDialog(context, category),
           onEdit: () => _showEditDialog(context, category),
           onDelete: () => _showDeleteDialog(context, category),
         );
@@ -373,11 +374,13 @@ class _CategoriesPageState extends State<CategoriesPage> {
 /// Card individual para cada categoría
 class _CategoryCard extends StatelessWidget {
   final Category category;
+  final VoidCallback onTap;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
 
   const _CategoryCard({
     required this.category,
+    required this.onTap,
     required this.onEdit,
     required this.onDelete,
   });
@@ -391,42 +394,46 @@ class _CategoryCard extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
       ),
-      child: ListTile(
-        leading: CircleAvatar(
-          backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-          child: Icon(
-            category.icon,
-            color: Theme.of(context).colorScheme.onPrimaryContainer,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: ListTile(
+          leading: CircleAvatar(
+            backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+            child: Icon(
+              category.icon,
+              color: Theme.of(context).colorScheme.onPrimaryContainer,
+            ),
           ),
-        ),
-        title: Text(
-          category.name,
-          style: const TextStyle(fontWeight: FontWeight.w500),
-        ),
-        subtitle: category.createdAt != null
-            ? Text(
-                'Creada: ${_formatDate(category.createdAt!)}',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey[600],
-                ),
-              )
-            : null,
-        trailing: Wrap(
-          children: [
-            IconButton(
-              icon: const Icon(Icons.edit_outlined),
-              color: Colors.green[700],
-              onPressed: onEdit,
-              tooltip: 'Editar',
-            ),
-            IconButton(
-              icon: const Icon(Icons.delete_outline),
-              color: Colors.red[700],
-              onPressed: onDelete,
-              tooltip: 'Eliminar',
-            ),
-          ],
+          title: Text(
+            category.name,
+            style: const TextStyle(fontWeight: FontWeight.w500),
+          ),
+          subtitle: category.createdAt != null
+              ? Text(
+                  'Creada: ${_formatDate(category.createdAt!)}',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey[600],
+                  ),
+                )
+              : null,
+          trailing: Wrap(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.edit_outlined),
+                color: Colors.green[700],
+                onPressed: onEdit,
+                tooltip: 'Editar',
+              ),
+              IconButton(
+                icon: const Icon(Icons.delete_outline),
+                color: Colors.red[700],
+                onPressed: onDelete,
+                tooltip: 'Eliminar',
+              ),
+            ],
+          ),
         ),
       ),
     );
