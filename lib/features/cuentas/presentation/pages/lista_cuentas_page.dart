@@ -205,14 +205,28 @@ class _ListaCuentasPageState extends State<ListaCuentasPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Total Monthly Spending',
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                  color: AppTheme.outline,
-                  letterSpacing: 0.5,
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Total gastos del mes',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: AppTheme.outline,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                  Text(
+                    'pendiente por pagar',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: AppTheme.outline.withValues(alpha: 0.7),
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 4),
               Text(
@@ -236,7 +250,7 @@ class _ListaCuentasPageState extends State<ListaCuentasPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      'Current Budget',
+                      'presupuesto restante',
                       style: TextStyle(
                         fontSize: 12,
                         color: AppTheme.outline,
@@ -625,9 +639,7 @@ class _ListaCuentasPageState extends State<ListaCuentasPage> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildNavItem(Icons.home_outlined, 'Home', false),
               _buildNavItem(Icons.receipt_long, 'Bills', true),
-              _buildNavItem(Icons.shopping_cart_outlined, 'Shopping', false),
             ],
           ),
         ),
