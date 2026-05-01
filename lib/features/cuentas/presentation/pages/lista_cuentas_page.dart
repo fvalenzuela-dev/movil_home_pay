@@ -186,10 +186,12 @@ class _ListaCuentasPageState extends State<ListaCuentasPage> {
     return BlocBuilder<CuentasBloc, CuentasState>(
       builder: (context, state) {
         double totalSpending = 0;
+        double totalPendiente = 0;
         const double budgetLimit = 1800;
 
         if (state is CuentasLoaded) {
           totalSpending = state.cuentas.fold(0, (sum, c) => sum + c.monto);
+          totalPendiente = state.cuentas.fold(0, (sum, c) => sum + c.saldo);
         }
 
         final percentage = budgetLimit > 0 ? (totalSpending / budgetLimit * 100).clamp(0, 100) : 0;
@@ -218,7 +220,7 @@ class _ListaCuentasPageState extends State<ListaCuentasPage> {
                     ),
                   ),
                   Text(
-                    'pendiente por pagar',
+                    'pendiente por pagar \$${totalPendiente.toStringAsFixed(2)}',
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
