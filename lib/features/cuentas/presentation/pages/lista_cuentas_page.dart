@@ -511,7 +511,7 @@ child: Column(
         color: Colors.transparent,
         child: InkWell(
           borderRadius: BorderRadius.circular(12),
-          onTap: () => context.push('/cuentas/detalle/${cuenta.id}?periodo=${widget.periodo}'),
+          onTap: () => context.push('/cuentas/detalle/${cuenta.id}?periodo=$_currentPeriodo'),
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Row(
