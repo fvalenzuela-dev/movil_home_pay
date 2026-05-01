@@ -197,6 +197,10 @@ class _ListaEmpresasPageState extends State<ListaEmpresasPage> {
   }
 
   Widget _buildHeader(EmpresaListLoaded state) {
+    if (state.totalPages <= 1) {
+      return const SizedBox.shrink();
+    }
+
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Row(
@@ -209,13 +213,12 @@ class _ListaEmpresasPageState extends State<ListaEmpresasPage> {
                 'Total: ${state.totalCount} empresas',
                 style: Theme.of(context).textTheme.titleMedium,
               ),
-              if (state.totalPages > 1)
-                Text(
-                  'Página ${state.page} de ${state.totalPages}',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: AppTheme.outline,
-                      ),
-                ),
+              Text(
+                'Página ${state.page} de ${state.totalPages}',
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: AppTheme.outline,
+                    ),
+              ),
             ],
           ),
         ],
