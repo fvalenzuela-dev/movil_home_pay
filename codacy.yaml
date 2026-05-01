@@ -1,0 +1,14 @@
+---
+engines:
+  cppcheck:
+    enabled: true
+    exclude_paths:
+      - 'linux/**'
+      - 'android/**'
+      - 'ios/**'
+      - 'web/**'
+      - 'windows/**'
+      - 'macos/**'
+      - 'windows/flutter/**'
+      - 'linux/flutter/**'
+      - 'macos/flutter/**'

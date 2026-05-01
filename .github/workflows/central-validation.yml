@@ -5,42 +5,55 @@ on:
     branches-ignore:
       - main
       - develop
+  pull_request:
+    branches:
+      - main
+      - develop
 
 jobs:
   verificar_version:
     name: Control de Versiones
     uses: fvalenzuela-dev/.github/.github/workflows/version-check-new.yml@main
     with:
-      version_file: "VERSION"
+      version_file: "pubspec.yaml"
       base_branch: "main"
     secrets:
       GITHUB_TOKEN_CUSTOM: ${{ secrets.GITHUB_TOKEN }}
+
+
+
   build_and_test:
     name: Build & Test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
 
-      - name: Set up Go
-        uses: actions/setup-go@v5
+      - name: Set up Flutter
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2
         with:
-          go-version-file: go.mod
+          flutter-version: '3.41.7'
+          channel: 'stable'
 
       - name: Install dependencies
-        run: go mod download
+        run: flutter pub get
+
+      - name: Run Flutter analyze
+        run: flutter analyze
 
       - name: Run tests with coverage
-        run: go test -coverprofile=coverage.out -covermode=atomic ./...
+        run: flutter test --coverage
 
-      - name: Convert coverage to lcov
+      - name: Fix coverage path
         run: |
-          go install github.com/jandelgado/gcov2lcov@latest
           mkdir -p coverage
-          gcov2lcov -infile=coverage.out -outfile=coverage/lcov.info
+          if [ -f ".dart_tool/coverage/lcov.info" ]; then
+            cp .dart_tool/coverage/lcov.info coverage/lcov.info
+          fi
+          ls -la coverage/
 
       - name: Upload coverage report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: coverage-report
           path: coverage/lcov.info
