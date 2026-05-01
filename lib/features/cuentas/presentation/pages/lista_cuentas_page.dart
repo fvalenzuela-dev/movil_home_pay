@@ -225,7 +225,7 @@ child: Column(
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        '\$${totalSpending.toStringAsFixed(2)}',
+                        '\$${totalSpending.toStringAsFixed(0)}',
                         style: const TextStyle(
                           fontSize: 32,
                           fontWeight: FontWeight.w700,
@@ -249,7 +249,7 @@ child: Column(
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        '\$${totalPendiente.toStringAsFixed(2)}',
+                        '\$${totalPendiente.toStringAsFixed(0)}',
                         style: const TextStyle(
                           fontSize: 32,
                           fontWeight: FontWeight.w700,
