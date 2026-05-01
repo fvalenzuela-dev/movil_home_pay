@@ -87,7 +87,6 @@ class _ListaCuentasPageState extends State<ListaCuentasPage> {
           ],
         ),
       ),
-      bottomNavigationBar: _buildBottomNav(),
     );
   }
 
@@ -187,7 +186,6 @@ class _ListaCuentasPageState extends State<ListaCuentasPage> {
       builder: (context, state) {
         double totalSpending = 0;
         double totalPendiente = 0;
-        const double budgetLimit = 1800;
 
         if (state is CuentasLoaded) {
           totalSpending = state.cuentas.fold(0, (sum, c) => sum + c.monto);
@@ -649,28 +647,6 @@ child: Column(
     return AppTheme.primarySeed;
   }
 
-  Widget _buildBottomNav() {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border(
-          top: BorderSide(color: AppTheme.outlineVariant.withValues(alpha: 0.5)),
-        ),
-      ),
-      child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _buildNavItem(Icons.receipt_long, 'Bills', true),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
   void _showLogoutDialog() {
     showDialog(
       context: context,
@@ -712,34 +688,5 @@ child: Column(
         GoRouter.of(context).go('/login');
       }
     }
-  }
-
-  Widget _buildNavItem(IconData icon, String label, bool isSelected) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-      decoration: BoxDecoration(
-        color: isSelected ? const Color(0xFFEFF6FF) : Colors.transparent,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            icon,
-            color: isSelected ? AppTheme.primarySeed : AppTheme.onSurfaceVariant,
-            size: 24,
-          ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.w500,
-              color: isSelected ? AppTheme.primarySeed : AppTheme.onSurfaceVariant,
-            ),
-          ),
-        ],
-      ),
-    );
   }
 }
