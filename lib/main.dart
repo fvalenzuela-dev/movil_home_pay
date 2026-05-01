@@ -15,8 +15,8 @@ import 'features/empresas/presentation/bloc/empresa_bloc.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Load environment variables
-  await dotenv.load(fileName: '.env');
+  // Load environment variables (optional - CI/CD may not have .env)
+  await dotenv.load(fileName: '.env', isOptional: true);
 
   // Initialize dependencies
   await initDependencies();
