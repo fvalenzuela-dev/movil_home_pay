@@ -194,7 +194,8 @@ class _ListaCuentasPageState extends State<ListaCuentasPage> {
           totalPendiente = state.cuentas.fold(0, (sum, c) => sum + c.saldo);
         }
 
-        final percentage = budgetLimit > 0 ? (totalSpending / budgetLimit * 100).clamp(0, 100) : 0;
+        final totalPagado = totalSpending - totalPendiente;
+        final percentage = totalSpending > 0 ? (totalPagado / totalSpending * 100).clamp(0, 100) : 0;
 
         return Container(
           margin: const EdgeInsets.symmetric(horizontal: 16),
@@ -273,7 +274,7 @@ child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      'presupuesto restante',
+                      'pagado',
                       style: TextStyle(
                         fontSize: 12,
                         color: AppTheme.outline,
@@ -296,14 +297,14 @@ child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          '${percentage.toInt()}% used',
+                          '${percentage.toInt()}% pagado',
                           style: const TextStyle(
                             fontSize: 10,
                             color: AppTheme.outline,
                           ),
                         ),
                         Text(
-                          '\$${budgetLimit.toInt()} limit',
+                          'de \$${totalSpending.toStringAsFixed(0)}',
                           style: const TextStyle(
                             fontSize: 10,
                             color: AppTheme.outline,
