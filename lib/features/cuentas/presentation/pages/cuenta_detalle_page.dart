@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/theme/app_theme.dart';
 import '../../domain/entities/cuenta.dart';
 import '../bloc/cuentas_bloc.dart';
 import '../widgets/estado_badge.dart';
@@ -193,6 +194,10 @@ class _CuentaDetallePageState extends State<CuentaDetallePage> {
                     const SizedBox(height: 16),
                     ElevatedButton(
                       onPressed: () => _registrarPago(context, cuenta),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppTheme.primarySeed,
+                        foregroundColor: Colors.white,
+                      ),
                       child: const Text('Guardar'),
                     ),
                   ],
