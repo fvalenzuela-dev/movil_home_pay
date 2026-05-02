@@ -25,12 +25,13 @@ void main() async {
   // For CI/CD: .env is optional, falls back to defaults in config files
   await dotenv.load(fileName: '.env', isOptional: true);
 
+  // Validate Clerk publishable key early - will throw with clear message if invalid
+  final publishableKey = ClerkConfig.publishableKey;
+
   // Initialize dependencies
   await initDependencies();
 
-  runApp(MovilHomePayApp(
-    clerkPublishableKey: dotenv.env['CLERK_PUBLISHABLE_KEY'] ?? '',
-  ));
+  runApp(MovilHomePayApp(clerkPublishableKey: publishableKey));
 }
 
 class MovilHomePayApp extends StatelessWidget {
