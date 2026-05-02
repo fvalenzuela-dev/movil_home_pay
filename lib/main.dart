@@ -48,7 +48,7 @@ class MovilHomePayApp extends StatelessWidget {
         publishableKey: clerkPublishableKey,
         persistor: ClerkConfig.autoRestoreSession
             ? clerk.DefaultPersistor(getCacheDirectory: _getAppDocDir)
-            : null,
+            : clerk.Persistor.none,  // Use explicit none instead of null
       ),
       child: MultiBlocProvider(
         providers: [
