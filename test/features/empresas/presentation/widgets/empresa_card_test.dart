@@ -49,7 +49,15 @@ void main() {
       expect(find.text('https://netflix.com'), findsOneWidget);
     });
 
-    testWidgets('renders category badge with categoryId', (tester) async {
+    testWidgets('renders category badge with categoryName when provided', (tester) async {
+      final empresaWithCategory = testEmpresa.copyWith(categoryName: 'Streaming');
+      await tester.pumpWidget(createWidgetUnderTest(empresa: empresaWithCategory));
+
+      expect(find.text('Streaming'), findsOneWidget);
+      expect(find.text('Cat: 1'), findsNothing);
+    });
+
+    testWidgets('renders category badge with categoryId when categoryName is null', (tester) async {
       await tester.pumpWidget(createWidgetUnderTest(empresa: testEmpresa));
 
       expect(find.text('Cat: 1'), findsOneWidget);

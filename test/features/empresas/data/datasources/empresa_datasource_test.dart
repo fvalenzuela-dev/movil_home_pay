@@ -54,6 +54,47 @@ void main() {
         expect(result.totalCount, equals(2));
       });
 
+      test('parses categoryName from API response correctly', () async {
+        final empresasJson = [
+          {
+            'id': 'emp_1',
+            'auth_user_id': 'user_123',
+            'category_id': 1,
+            'category_name': 'Streaming',
+            'name': 'Netflix',
+            'is_active': true,
+          },
+          {
+            'id': 'emp_2',
+            'auth_user_id': 'user_123',
+            'category_id': 2,
+            'category_name': 'Música',
+            'name': 'Spotify',
+            'is_active': true,
+          },
+        ];
+        final responseData = ApiResponseBuilder.paginatedList(
+          items: empresasJson,
+          totalCount: 2,
+        );
+
+        when(() => mockDio.get(
+          any(),
+          queryParameters: any(named: 'queryParameters'),
+          options: any(named: 'options'),
+          cancelToken: any(named: 'cancelToken'),
+        )).thenAnswer((_) async => Response(
+          requestOptions: RequestOptions(path: ApiConfig.companiesUrl()),
+          statusCode: 200,
+          data: responseData,
+        ));
+
+        final result = await datasource.getCompanies(page: 1, pageSize: 20);
+
+        expect(result.items[0].categoryName, equals('Streaming'));
+        expect(result.items[1].categoryName, equals('Música'));
+      });
+
       test('returns empty list when no companies exist', () async {
         final responseData = ApiResponseBuilder.emptyList();
 
