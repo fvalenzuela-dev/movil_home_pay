@@ -23,12 +23,11 @@ class ClerkConfig {
       );
     }
 
-    // Clerk publishable keys are typically 150+ characters
-    if (key.length < 100) {
+    // Clerk publishable keys are typically 50-100 characters
+    if (key.length < 40) {
       throw FormatException(
-        'CLERK_PUBLISHABLE_KEY appears truncated. '
-        'Expected 150+ characters but got ${key.length}. '
-        'Please copy the full key from https://dashboard.clerk.com',
+        'CLERK_PUBLISHABLE_KEY appears too short (${key.length} chars). '
+        'Please verify the key from https://dashboard.clerk.com is complete.',
       );
     }
 
