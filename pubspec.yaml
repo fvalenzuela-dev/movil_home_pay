@@ -29,6 +29,9 @@ dependencies:
   # Dependency Injection
   get_it: ^8.0.3
 
+  # Path utilities
+  path_provider: ^2.1.5
+
   # Clerk Auth
   clerk_flutter: ^0.0.14-beta
   clerk_auth: ^0.0.14-beta
