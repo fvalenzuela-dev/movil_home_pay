@@ -18,4 +18,8 @@ class ClerkConfig {
 
   /// Force the app to use production clerk domain
   static const bool useProduction = false;
+
+  /// Whether to automatically restore previous sessions on app startup.
+  /// When false, users must explicitly sign in each time the app starts.
+  static const bool autoRestoreSession = false;
 }

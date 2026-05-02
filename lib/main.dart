@@ -1,8 +1,13 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:clerk_auth/clerk_auth.dart' as clerk;
 import 'package:clerk_flutter/clerk_flutter.dart';
+import 'package:path_provider/path_provider.dart';
 
+import 'core/config/clerk_config.dart';
 import 'core/di/injection.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
@@ -35,9 +40,14 @@ class MovilHomePayApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Use no persistor to prevent automatic session restoration on startup.
+    // Users must explicitly sign in each time the app starts.
     return ClerkAuth(
       config: ClerkAuthConfig(
         publishableKey: clerkPublishableKey,
+        persistor: ClerkConfig.autoRestoreSession
+            ? clerk.DefaultPersistor(getCacheDirectory: _getAppDocDir)
+            : null,
       ),
       child: MultiBlocProvider(
         providers: [
@@ -63,4 +73,9 @@ class MovilHomePayApp extends StatelessWidget {
       ),
     );
   }
+}
+
+Future<Directory> _getAppDocDir() async {
+  final dir = await getApplicationDocumentsDirectory();
+  return dir;
 }
