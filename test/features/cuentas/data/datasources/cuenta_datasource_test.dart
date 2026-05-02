@@ -189,6 +189,38 @@ void main() {
           throwsA(isA<ArgumentError>()),
         );
       });
+
+      test('throws StateError when cuenta not found', () async {
+        final cuentasJson = [
+          {
+            'id': 'cta_existing',
+            'account_id': 'acc_123',
+            'account_name': 'Netflix',
+            'amount_billed': 15000.0,
+            'amount_paid': 0.0,
+            'is_paid': false,
+            'status': 'pending',
+            'period': '202404',
+          },
+        ];
+        final responseData = ApiResponseBuilder.success(data: cuentasJson);
+
+        when(() => mockDio.get(
+          any(),
+          queryParameters: any(named: 'queryParameters'),
+          options: any(named: 'options'),
+          cancelToken: any(named: 'cancelToken'),
+        )).thenAnswer((_) async => Response(
+          requestOptions: RequestOptions(path: ApiConfig.periodBillingsUrl('202404')),
+          statusCode: 200,
+          data: responseData,
+        ));
+
+        expect(
+          () => datasource.getDetalle('cta_not_found', '202404'),
+          throwsA(isA<StateError>()),
+        );
+      });
     });
 
     group('registrarPago', () {

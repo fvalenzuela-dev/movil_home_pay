@@ -1,7 +1,10 @@
+import 'package:clerk_flutter/clerk_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/auth/token_provider.dart';
+import '../../../../core/theme/app_theme.dart';
 import '../../domain/entities/category.dart';
 import '../bloc/category_bloc.dart';
 import '../bloc/category_event.dart';
@@ -22,73 +25,121 @@ class _CategoriesPageState extends State<CategoriesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      drawer: _buildDrawer(context),
       appBar: AppBar(
-        title: const Text('Categorías'),
-        centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.menu),
           onPressed: () => _scaffoldKey.currentState?.openDrawer(),
         ),
+        title: const Text('Categorías'),
+        actions: [
+          IconButton(
+            onPressed: () => _showLogoutDialog(),
+            icon: const Icon(Icons.logout),
+          ),
+        ],
       ),
-      body: BlocConsumer<CategoryBloc, CategoryState>(
-        listener: (context, state) {
-          if (state is CategoryError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-                backgroundColor: Colors.red,
-              ),
-            );
-          } else if (state is CategoryCreated) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Categoría creada exitosamente'),
-                backgroundColor: Colors.green,
-              ),
-            );
-          } else if (state is CategoryUpdated) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Categoría actualizada'),
-                backgroundColor: Colors.green,
-              ),
-            );
-          } else if (state is CategoryDeleted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Categoría eliminada'),
-                backgroundColor: Colors.green,
-              ),
-            );
-          }
-        },
-        builder: (context, state) {
-          if (state is CategoryLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          if (state is CategoriesLoaded) {
-            if (state.categories.isEmpty) {
-              return _buildEmptyState(context);
+      drawer: _buildDrawer(context),
+      backgroundColor: AppTheme.surfaceContainerLowest,
+      body: SafeArea(
+        child: BlocConsumer<CategoryBloc, CategoryState>(
+          listener: (context, state) {
+            if (state is CategoryError) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(state.message),
+                  backgroundColor: Colors.red,
+                ),
+              );
+            } else if (state is CategoryCreated) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Categoría creada exitosamente'),
+                  backgroundColor: Colors.green,
+                ),
+              );
+            } else if (state is CategoryUpdated) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Categoría actualizada'),
+                  backgroundColor: Colors.green,
+                ),
+              );
+            } else if (state is CategoryDeleted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Categoría eliminada'),
+                  backgroundColor: Colors.green,
+                ),
+              );
             }
-            return _buildCategoryList(context, state.categories);
-          }
+          },
+          builder: (context, state) {
+            if (state is CategoryLoading) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-          if (state is CategoryError) {
-            return _buildErrorState(context, state.message);
-          }
+            if (state is CategoriesLoaded) {
+              if (state.categories.isEmpty) {
+                return _buildEmptyState(context);
+              }
+              return _buildCategoryList(context, state.categories);
+            }
 
-          // Initial state - load categories
-          context.read<CategoryBloc>().add(const CategoriesLoadRequested());
-          return const Center(child: CircularProgressIndicator());
-        },
+            if (state is CategoryError) {
+              return _buildErrorState(context, state.message);
+            }
+
+            // Initial state - load categories
+            context.read<CategoryBloc>().add(const CategoriesLoadRequested());
+            return const Center(child: CircularProgressIndicator());
+          },
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showCreateDialog(context),
-        child: const Icon(Icons.add),
+        backgroundColor: AppTheme.primarySeed,
+        child: const Icon(Icons.add, color: Colors.white),
       ),
     );
+  }
+
+  void _showLogoutDialog() {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Cerrar Sesión'),
+        content: const Text('¿Estás seguro que quieres cerrar sesión?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: const Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(dialogContext);
+              _logout();
+            },
+            child: const Text('Cerrar'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _logout() async {
+    try {
+      final authState = ClerkAuth.of(context, listen: false);
+      await authState.signOut();
+      TokenProvider.clearToken();
+      if (mounted) {
+        GoRouter.of(context).go('/login');
+      }
+    } catch (e) {
+      debugPrint('Error en logout: $e');
+      if (mounted) {
+        GoRouter.of(context).go('/login');
+      }
+    }
   }
 
   Widget _buildDrawer(BuildContext context) {
@@ -257,6 +308,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
         final category = categories[index];
         return _CategoryCard(
           category: category,
+          onTap: () => _showEditDialog(context, category),
           onEdit: () => _showEditDialog(context, category),
           onDelete: () => _showDeleteDialog(context, category),
         );
@@ -371,11 +423,13 @@ class _CategoriesPageState extends State<CategoriesPage> {
 /// Card individual para cada categoría
 class _CategoryCard extends StatelessWidget {
   final Category category;
+  final VoidCallback onTap;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
 
   const _CategoryCard({
     required this.category,
+    required this.onTap,
     required this.onEdit,
     required this.onDelete,
   });
@@ -384,47 +438,50 @@ class _CategoryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
-      color: Colors.white,
       elevation: 2,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
       ),
-      child: ListTile(
-        leading: CircleAvatar(
-          backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-          child: Icon(
-            category.icon,
-            color: Theme.of(context).colorScheme.onPrimaryContainer,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: ListTile(
+          leading: CircleAvatar(
+            backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+            child: Icon(
+              category.icon,
+              color: Theme.of(context).colorScheme.onPrimaryContainer,
+            ),
           ),
-        ),
-        title: Text(
-          category.name,
-          style: const TextStyle(fontWeight: FontWeight.w500),
-        ),
-        subtitle: category.createdAt != null
-            ? Text(
-                'Creada: ${_formatDate(category.createdAt!)}',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey[600],
-                ),
-              )
-            : null,
-        trailing: Wrap(
-          children: [
-            IconButton(
-              icon: const Icon(Icons.edit_outlined),
-              color: Colors.green[700],
-              onPressed: onEdit,
-              tooltip: 'Editar',
-            ),
-            IconButton(
-              icon: const Icon(Icons.delete_outline),
-              color: Colors.red[700],
-              onPressed: onDelete,
-              tooltip: 'Eliminar',
-            ),
-          ],
+          title: Text(
+            category.name,
+            style: const TextStyle(fontWeight: FontWeight.w500),
+          ),
+          subtitle: category.createdAt != null
+              ? Text(
+                  'Creada: ${_formatDate(category.createdAt!)}',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey[600],
+                  ),
+                )
+              : null,
+          trailing: Wrap(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.edit_outlined),
+                color: Colors.green[700],
+                onPressed: onEdit,
+                tooltip: 'Editar',
+              ),
+              IconButton(
+                icon: const Icon(Icons.delete_outline),
+                color: Colors.red[700],
+                onPressed: onDelete,
+                tooltip: 'Eliminar',
+              ),
+            ],
+          ),
         ),
       ),
     );

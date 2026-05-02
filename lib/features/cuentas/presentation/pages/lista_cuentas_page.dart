@@ -87,7 +87,6 @@ class _ListaCuentasPageState extends State<ListaCuentasPage> {
           ],
         ),
       ),
-      bottomNavigationBar: _buildBottomNav(),
     );
   }
 
@@ -186,13 +185,15 @@ class _ListaCuentasPageState extends State<ListaCuentasPage> {
     return BlocBuilder<CuentasBloc, CuentasState>(
       builder: (context, state) {
         double totalSpending = 0;
-        const double budgetLimit = 1800;
+        double totalPendiente = 0;
 
         if (state is CuentasLoaded) {
           totalSpending = state.cuentas.fold(0, (sum, c) => sum + c.monto);
+          totalPendiente = state.cuentas.fold(0, (sum, c) => sum + c.saldo);
         }
 
-        final percentage = budgetLimit > 0 ? (totalSpending / budgetLimit * 100).clamp(0, 100) : 0;
+        final totalPagado = totalSpending - totalPendiente;
+        final percentage = totalSpending > 0 ? (totalPagado / totalSpending * 100).clamp(0, 100) : 0;
 
         return Container(
           margin: const EdgeInsets.symmetric(horizontal: 16),
@@ -202,27 +203,62 @@ class _ListaCuentasPageState extends State<ListaCuentasPage> {
             borderRadius: BorderRadius.circular(12),
             border: Border.all(color: AppTheme.outlineVariant.withValues(alpha: 0.5)),
           ),
-          child: Column(
+child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Total Monthly Spending',
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                  color: AppTheme.outline,
-                  letterSpacing: 0.5,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                '\$${totalSpending.toStringAsFixed(2)}',
-                style: const TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.w700,
-                  color: AppTheme.primarySeed,
-                  letterSpacing: -0.02,
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Total gastos del mes',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          color: AppTheme.outline,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        '\$${totalSpending.toStringAsFixed(0)}',
+                        style: const TextStyle(
+                          fontSize: 32,
+                          fontWeight: FontWeight.w700,
+                          color: AppTheme.primarySeed,
+                          letterSpacing: -0.02,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      const Text(
+                        'pendiente por pagar',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          color: AppTheme.outline,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        '\$${totalPendiente.toStringAsFixed(0)}',
+                        style: const TextStyle(
+                          fontSize: 32,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.red,
+                          letterSpacing: -0.02,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
               const SizedBox(height: 16),
               // Budget Progress
@@ -236,7 +272,7 @@ class _ListaCuentasPageState extends State<ListaCuentasPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      'Current Budget',
+                      'pagado',
                       style: TextStyle(
                         fontSize: 12,
                         color: AppTheme.outline,
@@ -259,14 +295,14 @@ class _ListaCuentasPageState extends State<ListaCuentasPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          '${percentage.toInt()}% used',
+                          '${percentage.toInt()}% pagado',
                           style: const TextStyle(
                             fontSize: 10,
                             color: AppTheme.outline,
                           ),
                         ),
                         Text(
-                          '\$${budgetLimit.toInt()} limit',
+                          'de \$${totalSpending.toStringAsFixed(0)}',
                           style: const TextStyle(
                             fontSize: 10,
                             color: AppTheme.outline,
@@ -475,7 +511,7 @@ class _ListaCuentasPageState extends State<ListaCuentasPage> {
         color: Colors.transparent,
         child: InkWell(
           borderRadius: BorderRadius.circular(12),
-          onTap: () => context.push('/cuentas/detalle/${cuenta.id}?periodo=${widget.periodo}'),
+          onTap: () => context.push('/cuentas/detalle/${cuenta.id}?periodo=$_currentPeriodo'),
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Row(
@@ -611,30 +647,6 @@ class _ListaCuentasPageState extends State<ListaCuentasPage> {
     return AppTheme.primarySeed;
   }
 
-  Widget _buildBottomNav() {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border(
-          top: BorderSide(color: AppTheme.outlineVariant.withValues(alpha: 0.5)),
-        ),
-      ),
-      child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _buildNavItem(Icons.home_outlined, 'Home', false),
-              _buildNavItem(Icons.receipt_long, 'Bills', true),
-              _buildNavItem(Icons.shopping_cart_outlined, 'Shopping', false),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
   void _showLogoutDialog() {
     showDialog(
       context: context,
@@ -676,34 +688,5 @@ class _ListaCuentasPageState extends State<ListaCuentasPage> {
         GoRouter.of(context).go('/login');
       }
     }
-  }
-
-  Widget _buildNavItem(IconData icon, String label, bool isSelected) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-      decoration: BoxDecoration(
-        color: isSelected ? const Color(0xFFEFF6FF) : Colors.transparent,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            icon,
-            color: isSelected ? AppTheme.primarySeed : AppTheme.onSurfaceVariant,
-            size: 24,
-          ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.w500,
-              color: isSelected ? AppTheme.primarySeed : AppTheme.onSurfaceVariant,
-            ),
-          ),
-        ],
-      ),
-    );
   }
 }

@@ -62,7 +62,10 @@ class CuentaDatasource {
     _sanitizarId(id);
 
     final cuentas = await getCuentasPorPeriodo(periodo);
-    return cuentas.firstWhere((c) => c.id == id);
+    return cuentas.firstWhere(
+      (c) => c.id == id,
+      orElse: () => throw StateError('No se encontró la cuenta con id: $id'),
+    );
   }
 
   /// PUT /accounts/{accountID}/billings/{id}
