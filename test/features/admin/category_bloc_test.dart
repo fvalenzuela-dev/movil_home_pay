@@ -19,7 +19,7 @@ void main() {
   final testCategory = Category(
     id: 1,
     name: 'Utilities',
-    iconName: 'luz',
+    iconApk: 'luz',
     createdAt: DateTime(2026, 1, 1),
     updatedAt: DateTime(2026, 1, 1),
   );
@@ -65,31 +65,31 @@ void main() {
     blocTest<CategoryBloc, CategoryState>(
       'emits [CategoryLoading, CategoryCreated, CategoriesLoaded] when CategoryCreateRequested succeeds',
       setUp: () {
-        when(() => mockRepository.createCategory(any()))
+        when(() => mockRepository.createCategory(any(), iconApk: any(named: 'iconApk'), colorApk: any(named: 'colorApk')))
             .thenAnswer((_) async => testCategory);
         when(() => mockRepository.getCategories(page: any(named: 'page'), limit: any(named: 'limit')))
             .thenAnswer((_) async => [testCategory]);
       },
       build: () => CategoryBloc(mockRepository),
-      act: (bloc) => bloc.add(const CategoryCreateRequested('Utilities')),
+      act: (bloc) => bloc.add(const CategoryCreateRequested('Utilities', iconApk: 'luz', colorApk: 'catPrimary')),
       expect: () => [
         isA<CategoryLoading>(),
         isA<CategoryCreated>(),
         isA<CategoriesLoaded>(),
       ],
       verify: (_) {
-        verify(() => mockRepository.createCategory('Utilities')).called(1);
+        verify(() => mockRepository.createCategory('Utilities', iconApk: 'luz', colorApk: 'catPrimary')).called(1);
       },
     );
 
     blocTest<CategoryBloc, CategoryState>(
       'emits [CategoryLoading, CategoryError] when CategoryCreateRequested fails',
       setUp: () {
-        when(() => mockRepository.createCategory(any()))
+        when(() => mockRepository.createCategory(any(), iconApk: any(named: 'iconApk'), colorApk: any(named: 'colorApk')))
             .thenThrow(Exception('Duplicate category'));
       },
       build: () => CategoryBloc(mockRepository),
-      act: (bloc) => bloc.add(const CategoryCreateRequested('Utilities')),
+      act: (bloc) => bloc.add(const CategoryCreateRequested('Utilities', iconApk: 'luz', colorApk: 'catPrimary')),
       expect: () => [
         isA<CategoryLoading>(),
         isA<CategoryError>(),
@@ -99,20 +99,20 @@ void main() {
     blocTest<CategoryBloc, CategoryState>(
       'emits [CategoryLoading, CategoryUpdated, CategoriesLoaded] when CategoryUpdateRequested succeeds',
       setUp: () {
-        when(() => mockRepository.updateCategory(any(), any()))
+        when(() => mockRepository.updateCategory(any(), any(), iconApk: any(named: 'iconApk'), colorApk: any(named: 'colorApk')))
             .thenAnswer((_) async => testCategory);
         when(() => mockRepository.getCategories(page: any(named: 'page'), limit: any(named: 'limit')))
             .thenAnswer((_) async => [testCategory]);
       },
       build: () => CategoryBloc(mockRepository),
-      act: (bloc) => bloc.add(const CategoryUpdateRequested(1, 'Utilities')),
+      act: (bloc) => bloc.add(const CategoryUpdateRequested(1, 'Utilities', iconApk: 'luz', colorApk: 'catPrimary')),
       expect: () => [
         isA<CategoryLoading>(),
         isA<CategoryUpdated>(),
         isA<CategoriesLoaded>(),
       ],
       verify: (_) {
-        verify(() => mockRepository.updateCategory(1, 'Utilities')).called(1);
+        verify(() => mockRepository.updateCategory(1, 'Utilities', iconApk: 'luz', colorApk: 'catPrimary')).called(1);
       },
     );
 

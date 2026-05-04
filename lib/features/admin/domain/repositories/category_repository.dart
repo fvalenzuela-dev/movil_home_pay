@@ -9,10 +9,10 @@ abstract class CategoryRepository {
   Future<Category> getCategoryById(int id);
 
   /// Create a new category
-  Future<Category> createCategory(String name);
+  Future<Category> createCategory(String name, {String? iconApk, String? colorApk});
 
   /// Update a category
-  Future<Category> updateCategory(int id, String name);
+  Future<Category> updateCategory(int id, String name, {String? iconApk, String? colorApk});
 
   /// Delete a category (soft delete)
   Future<void> deleteCategory(int id);

@@ -25,7 +25,7 @@ void main() {
         Category(
           id: 1,
           name: 'Utilities',
-          iconName: 'luz',
+          iconApk: 'luz',
           createdAt: DateTime(2026, 1, 1),
           updatedAt: DateTime(2026, 1, 1),
         ),
@@ -66,7 +66,7 @@ void main() {
       final category = Category(
         id: 1,
         name: 'Utilities',
-        iconName: 'luz',
+        iconApk: 'luz',
         createdAt: DateTime(2026, 1, 1),
         updatedAt: DateTime(2026, 1, 1),
       );
@@ -75,7 +75,7 @@ void main() {
       final state3 = CategoryCreated(Category(
         id: 2,
         name: 'Utilities',
-        iconName: 'luz',
+        iconApk: 'luz',
         createdAt: DateTime(2026, 1, 1),
         updatedAt: DateTime(2026, 1, 1),
       ));
@@ -89,7 +89,7 @@ void main() {
       final category = Category(
         id: 1,
         name: 'Utilities',
-        iconName: 'luz',
+        iconApk: 'luz',
         createdAt: DateTime(2026, 1, 1),
         updatedAt: DateTime(2026, 1, 1),
       );
@@ -113,7 +113,7 @@ void main() {
     group('CategoriesLoaded edge cases', () {
       test('handles single category', () {
         final categories = [
-          Category(id: 1, name: 'Utilities', iconName: 'luz'),
+          Category(id: 1, name: 'Utilities', iconApk: 'luz'),
         ];
         final state = CategoriesLoaded(categories);
 
@@ -124,7 +124,7 @@ void main() {
       test('handles many categories', () {
         final categories = List.generate(
           100,
-          (i) => Category(id: i, name: 'Category $i', iconName: 'luz'),
+          (i) => Category(id: i, name: 'Category $i', iconApk: 'luz'),
         );
         final state = CategoriesLoaded(categories);
 
@@ -133,7 +133,7 @@ void main() {
 
       test('categories list is mutable but props is immutable', () {
         final categories = [
-          Category(id: 1, name: 'Utilities', iconName: 'luz'),
+          Category(id: 1, name: 'Utilities', iconApk: 'luz'),
         ];
         final state = CategoriesLoaded(categories);
 

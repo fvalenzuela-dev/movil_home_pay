@@ -16,22 +16,24 @@ class CategoriesLoadRequested extends CategoryEvent {
 /// Crear una nueva categoría
 class CategoryCreateRequested extends CategoryEvent {
   final String name;
-  final String? iconName;
-  const CategoryCreateRequested(this.name, [this.iconName]);
+  final String? iconApk;
+  final String? colorApk;
+  const CategoryCreateRequested(this.name, {this.iconApk, this.colorApk});
 
   @override
-  List<Object?> get props => [name, iconName];
+  List<Object?> get props => [name, iconApk, colorApk];
 }
 
 /// Actualizar una categoría existente
 class CategoryUpdateRequested extends CategoryEvent {
   final int id;
   final String name;
-  final String? iconName;
-  const CategoryUpdateRequested(this.id, this.name, [this.iconName]);
+  final String? iconApk;
+  final String? colorApk;
+  const CategoryUpdateRequested(this.id, this.name, {this.iconApk, this.colorApk});
 
   @override
-  List<Object?> get props => [id, name, iconName];
+  List<Object?> get props => [id, name, iconApk, colorApk];
 }
 
 /// Eliminar una categoría

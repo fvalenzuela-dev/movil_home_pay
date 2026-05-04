@@ -82,17 +82,46 @@ void main() {
       test('delegates to datasource with correct name', () async {
         final category = CategoryFixture.createValidCategory(name: 'New Category');
 
-        when(() => mockDatasource.createCategory('New Category'))
+        when(() => mockDatasource.createCategory('New Category', iconApk: any(named: 'iconApk'), colorApk: any(named: 'colorApk')))
             .thenAnswer((_) async => category);
 
         final result = await repository.createCategory('New Category');
 
         expect(result.name, equals('New Category'));
-        verify(() => mockDatasource.createCategory('New Category')).called(1);
+        verify(() => mockDatasource.createCategory('New Category', iconApk: any(named: 'iconApk'), colorApk: any(named: 'colorApk'))).called(1);
+      });
+
+      test('delegates icon_apk and color_apk to datasource', () async {
+        final category = CategoryFixture.createCategoryWithPlatformFields(
+          name: 'Platform Category',
+          iconApk: 'netflix',
+          colorApk: 'primary',
+        );
+
+        when(() => mockDatasource.createCategory(
+          'Platform Category',
+          iconApk: 'netflix',
+          colorApk: 'primary',
+        )).thenAnswer((_) async => category);
+
+        final result = await repository.createCategory(
+          'Platform Category',
+          iconApk: 'netflix',
+          colorApk: 'primary',
+        );
+
+        expect(result.name, equals('Platform Category'));
+        expect(result.iconApk, equals('netflix'));
+        expect(result.colorApk, equals('primary'));
+        verify(() => mockDatasource.createCategory(
+          'Platform Category',
+          iconApk: 'netflix',
+          colorApk: 'primary',
+        )).called(1);
       });
 
       test('forwards exceptions from datasource', () async {
-        when(() => mockDatasource.createCategory(any()))
+        when(() => mockDatasource.createCategory(any(), iconApk: any(named: 'iconApk'), colorApk: any(named: 'colorApk')))
             .thenThrow(Exception('Validation error'));
 
         expect(
@@ -106,17 +135,50 @@ void main() {
       test('delegates to datasource with correct id and name', () async {
         final category = CategoryFixture.createValidCategory(id: 1, name: 'Updated');
 
-        when(() => mockDatasource.updateCategory(1, 'Updated'))
+        when(() => mockDatasource.updateCategory(1, 'Updated', iconApk: any(named: 'iconApk'), colorApk: any(named: 'colorApk')))
             .thenAnswer((_) async => category);
 
         final result = await repository.updateCategory(1, 'Updated');
 
         expect(result.name, equals('Updated'));
-        verify(() => mockDatasource.updateCategory(1, 'Updated')).called(1);
+        verify(() => mockDatasource.updateCategory(1, 'Updated', iconApk: any(named: 'iconApk'), colorApk: any(named: 'colorApk'))).called(1);
+      });
+
+      test('delegates icon_apk and color_apk to datasource', () async {
+        final category = CategoryFixture.createCategoryWithPlatformFields(
+          id: 1,
+          name: 'Updated Platform Category',
+          iconApk: 'spotify',
+          colorApk: 'success',
+        );
+
+        when(() => mockDatasource.updateCategory(
+          1,
+          'Updated Platform Category',
+          iconApk: 'spotify',
+          colorApk: 'success',
+        )).thenAnswer((_) async => category);
+
+        final result = await repository.updateCategory(
+          1,
+          'Updated Platform Category',
+          iconApk: 'spotify',
+          colorApk: 'success',
+        );
+
+        expect(result.name, equals('Updated Platform Category'));
+        expect(result.iconApk, equals('spotify'));
+        expect(result.colorApk, equals('success'));
+        verify(() => mockDatasource.updateCategory(
+          1,
+          'Updated Platform Category',
+          iconApk: 'spotify',
+          colorApk: 'success',
+        )).called(1);
       });
 
       test('forwards exceptions from datasource', () async {
-        when(() => mockDatasource.updateCategory(any(), any()))
+        when(() => mockDatasource.updateCategory(any(), any(), iconApk: any(named: 'iconApk'), colorApk: any(named: 'colorApk')))
             .thenThrow(Exception('Update failed'));
 
         expect(

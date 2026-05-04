@@ -6,14 +6,20 @@ class CategoryFixture {
   static Category createValidCategory({
     int? id,
     String? name,
-    String? iconName,
+    String? iconApk,
+    String? iconWeb,
+    String? colorApk,
+    String? colorWeb,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
     return Category(
       id: id ?? 1,
       name: name ?? 'Streaming',
-      iconName: iconName ?? 'netflix',
+      iconApk: iconApk ?? 'netflix',
+      iconWeb: iconWeb,
+      colorApk: colorApk,
+      colorWeb: colorWeb,
       createdAt: createdAt ?? DateTime(2024, 1, 15),
       updatedAt: updatedAt ?? DateTime(2024, 1, 15),
     );
@@ -27,12 +33,12 @@ class CategoryFixture {
     );
   }
 
-  /// Creates a category with null iconName
+  /// Creates a category with null iconApk
   static Category createCategoryWithoutIcon() {
     return Category(
       id: 2,
       name: 'Utilities',
-      iconName: null,
+      iconApk: null,
       createdAt: DateTime(2024, 1, 1),
     );
   }
@@ -42,7 +48,7 @@ class CategoryFixture {
     return Category(
       id: 10,
       name: 'Netflix',
-      iconName: 'netflix',
+      iconApk: 'netflix',
       createdAt: DateTime(2024, 1, 1),
     );
   }
@@ -52,7 +58,7 @@ class CategoryFixture {
     return Category(
       id: 4,
       name: 'Electricidad',
-      iconName: 'luz',
+      iconApk: 'luz',
       createdAt: DateTime(2024, 1, 1),
     );
   }
@@ -62,7 +68,7 @@ class CategoryFixture {
     return Category(
       id: 5,
       name: 'Agua',
-      iconName: 'agua',
+      iconApk: 'agua',
       createdAt: DateTime(2024, 1, 1),
     );
   }
@@ -74,7 +80,7 @@ class CategoryFixture {
       return Category(
         id: index + 1,
         name: 'Category $index',
-        iconName: icons[index % icons.length],
+        iconApk: icons[index % icons.length],
         createdAt: DateTime(2024, 1, index + 1),
       );
     });
@@ -84,14 +90,20 @@ class CategoryFixture {
   static Map<String, dynamic> createCategoryJson({
     int? id,
     String? name,
-    String? iconName,
+    String? iconApk,
+    String? iconWeb,
+    String? colorApk,
+    String? colorWeb,
     String? createdAt,
     String? updatedAt,
   }) {
     return {
       'id': id ?? 1,
       'name': name ?? 'Test Category',
-      ...?iconName != null ? {'icon_name': iconName} : null,
+      ...?iconApk != null ? {'icon_apk': iconApk} : null,
+      ...?iconWeb != null ? {'icon_web': iconWeb} : null,
+      ...?colorApk != null ? {'color_apk': colorApk} : null,
+      ...?colorWeb != null ? {'color_web': colorWeb} : null,
       ...?createdAt != null ? {'created_at': createdAt} : null,
       ...?updatedAt != null ? {'updated_at': updatedAt} : null,
     };
@@ -102,7 +114,7 @@ class CategoryFixture {
     return Category(
       id: id,
       name: 'Specific Category $id',
-      iconName: 'star',
+      iconApk: 'star',
       createdAt: DateTime(2024, 1, 1),
     );
   }
@@ -113,9 +125,25 @@ class CategoryFixture {
     return Category(
       id: 1,
       name: 'Updated Category',
-      iconName: 'refresh',
+      iconApk: 'refresh',
       createdAt: created,
       updatedAt: DateTime(2024, 6, 15),
+    );
+  }
+
+  /// Creates a category with platform-specific icon and color
+  static Category createCategoryWithPlatformFields({
+    int? id,
+    String? name,
+    String iconApk = 'netflix',
+    String colorApk = 'primary',
+  }) {
+    return Category(
+      id: id ?? 1,
+      name: name ?? 'Streaming',
+      iconApk: iconApk,
+      colorApk: colorApk,
+      createdAt: DateTime(2024, 1, 15),
     );
   }
 }
