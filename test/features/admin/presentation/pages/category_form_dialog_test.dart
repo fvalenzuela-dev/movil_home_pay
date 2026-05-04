@@ -74,12 +74,10 @@ void main() {
 
     testWidgets('save button calls onSave with entered name and defaults', (tester) async {
       String? savedName;
-      String? savedIcon;
       String? savedColor;
 
       await showDialogAndPump(tester, null, (name, iconApk, colorApk) {
         savedName = name;
-        savedIcon = iconApk;
         savedColor = colorApk;
       });
 
