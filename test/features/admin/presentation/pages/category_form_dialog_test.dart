@@ -38,23 +38,20 @@ void main() {
     }
 
     testWidgets('renders name TextField with autofocus', (tester) async {
-      await showDialogAndPump(tester, null, (_, __, ___) {});
+      await showDialogAndPump(tester, null, (name, iconApk, colorApk) {});
       
       expect(find.byType(TextField), findsOneWidget);
       final textField = tester.widget<TextField>(find.byType(TextField));
       expect(textField.autofocus, isTrue);
     });
 
-    testWidgets('renders icon picker grid with CategoryIcons.iconNames', (tester) async {
-      await showDialogAndPump(tester, null, (_, __, ___) {});
+    testWidgets('renders icon picker with CategoryIcons.iconNames', (tester) async {
+      await showDialogAndPump(tester, null, (name, iconApk, colorApk) {});
 
-      // Icon grid should have icons from CategoryIcons.iconNames
-      expect(find.byType(GridView), findsOneWidget);
-      
-      // Verify at least some icons are rendered (grid contains icon containers)
+      // Icon picker should have InkWell containers for icons from CategoryIcons.iconNames
       expect(
         find.descendant(
-          of: find.byType(GridView),
+          of: find.byType(Wrap),
           matching: find.byType(InkWell),
         ),
         findsAtLeastNWidgets(1),
@@ -62,12 +59,9 @@ void main() {
     });
 
     testWidgets('renders color picker with 6 CategoryColor circles', (tester) async {
-      await showDialogAndPump(tester, null, (_, __, ___) {});
+      await showDialogAndPump(tester, null, (name, iconApk, colorApk) {});
 
-      // Should have a horizontal scrollable list for colors (ListView.separated)
-      expect(find.byType(ListView), findsOneWidget);
-      
-      // Find circular containers (color indicators)
+      // Find circular containers (color indicators) in the Row
       final colorCircles = find.byWidgetPredicate(
         (widget) => widget is Container && 
                      widget.decoration is BoxDecoration && 
@@ -77,12 +71,10 @@ void main() {
     });
 
     testWidgets('tapping color selects it and updates state', (tester) async {
-      CategoryColor? selectedColor;
+      String? savedColor;
       
       await showDialogAndPump(tester, null, (name, iconApk, colorApk) {
-        selectedColor = colorApk != null 
-            ? CategoryColorExtension.fromApiName(colorApk) 
-            : null;
+        savedColor = colorApk;
       });
 
       // Find color circles
@@ -98,12 +90,15 @@ void main() {
       await tester.tap(colorCircles.at(1));
       await tester.pump();
       
-      // Verify state was updated
-      expect(colorCircles, findsNWidgets(6));
+      // Verify state was updated by saving
+      await tester.tap(find.widgetWithText(FilledButton, 'Crear'));
+      await tester.pumpAndSettle();
+      
+      expect(savedColor, equals('secondary'));
     });
 
     testWidgets('save button disabled when name is empty', (tester) async {
-      await showDialogAndPump(tester, null, (_, __, ___) {});
+      await showDialogAndPump(tester, null, (name, iconApk, colorApk) {});
 
       // Find the FilledButton "Crear"
       final saveButton = find.widgetWithText(FilledButton, 'Crear');
@@ -115,7 +110,7 @@ void main() {
     });
 
     testWidgets('save button enabled when name is not empty', (tester) async {
-      await showDialogAndPump(tester, null, (_, __, ___) {});
+      await showDialogAndPump(tester, null, (name, iconApk, colorApk) {});
 
       // Enter a name
       await tester.enterText(find.byType(TextField), 'Test Category');
@@ -145,9 +140,9 @@ void main() {
       await tester.enterText(find.byType(TextField), 'Food');
       await tester.pump();
       
-      // Select an icon
+      // Select an icon (tap first InkWell in the Wrap)
       final iconInkWells = find.descendant(
-        of: find.byType(GridView),
+        of: find.byType(Wrap),
         matching: find.byType(InkWell),
       );
       await tester.tap(iconInkWells.first);
@@ -168,12 +163,12 @@ void main() {
       
       // Verify callback params
       expect(savedName, equals('Food'));
-      expect(savedIcon, isNotNull); // First icon in grid
+      expect(savedIcon, isNotNull); // First icon in wrap
       expect(savedColor, equals('tertiary'));
     });
 
     testWidgets('cancel button closes dialog', (tester) async {
-      await showDialogAndPump(tester, null, (_, __, ___) {});
+      await showDialogAndPump(tester, null, (name, iconApk, colorApk) {});
 
       // Verify dialog is shown
       expect(find.byType(AlertDialog), findsOneWidget);
@@ -187,7 +182,7 @@ void main() {
     });
 
     testWidgets('renders live preview with CircleAvatar', (tester) async {
-      await showDialogAndPump(tester, null, (_, __, ___) {});
+      await showDialogAndPump(tester, null, (name, iconApk, colorApk) {});
 
       // Should have CircleAvatar for preview
       expect(find.byType(CircleAvatar), findsOneWidget);
@@ -207,7 +202,7 @@ void main() {
         colorApk: 'secondary',
       );
       
-      await showDialogAndPump(tester, testCategory, (_, __, ___) {});
+      await showDialogAndPump(tester, testCategory, (name, iconApk, colorApk) {});
 
       // Name should be pre-filled
       expect(find.text('Existing Category'), findsOneWidget);
@@ -219,13 +214,13 @@ void main() {
         name: 'Existing Category',
       );
       
-      await showDialogAndPump(tester, testCategory, (_, __, ___) {});
+      await showDialogAndPump(tester, testCategory, (name, iconApk, colorApk) {});
 
       expect(find.text('Editar Categoría'), findsOneWidget);
     });
 
     testWidgets('renders title "Nueva Categoría" when creating', (tester) async {
-      await showDialogAndPump(tester, null, (_, __, ___) {});
+      await showDialogAndPump(tester, null, (name, iconApk, colorApk) {});
 
       expect(find.text('Nueva Categoría'), findsOneWidget);
     });
