@@ -98,7 +98,7 @@ void main() {
         final responseData = ApiResponseBuilder.categoryResponse(
           id: 1,
           name: 'Streaming',
-          iconName: 'netflix',
+          iconApk: 'netflix',
         );
 
         when(() => mockDio.get(
@@ -142,6 +142,46 @@ void main() {
 
         expect(result.name, equals('New Category'));
       });
+
+      test('sends icon_apk and color_apk to API when provided', () async {
+        final responseData = ApiResponseBuilder.categoryResponse(
+          id: 100,
+          name: 'Category With Platform Fields',
+          iconApk: 'netflix',
+          colorApk: 'primary',
+        );
+
+        when(() => mockDio.post(
+          any(),
+          data: any(named: 'data'),
+          queryParameters: any(named: 'queryParameters'),
+          options: any(named: 'options'),
+          cancelToken: any(named: 'cancelToken'),
+        )).thenAnswer((_) async => Response(
+          requestOptions: RequestOptions(path: '/categories'),
+          statusCode: 201,
+          data: responseData,
+        ));
+
+        final result = await datasource.createCategory(
+          'Category With Platform Fields',
+          iconApk: 'netflix',
+          colorApk: 'primary',
+        );
+
+        expect(result.name, equals('Category With Platform Fields'));
+        expect(result.iconApk, equals('netflix'));
+        expect(result.colorApk, equals('primary'));
+
+        // Verify the API was called
+        verify(() => mockDio.post(
+          any(),
+          data: any(named: 'data'),
+          queryParameters: any(named: 'queryParameters'),
+          options: any(named: 'options'),
+          cancelToken: any(named: 'cancelToken'),
+        )).called(1);
+      });
     });
 
     group('updateCategory', () {
@@ -166,6 +206,47 @@ void main() {
         final result = await datasource.updateCategory(1, 'Updated Name');
 
         expect(result.name, equals('Updated Name'));
+      });
+
+      test('sends icon_apk and color_apk to API when provided', () async {
+        final responseData = ApiResponseBuilder.categoryResponse(
+          id: 1,
+          name: 'Updated With Platform Fields',
+          iconApk: 'spotify',
+          colorApk: 'success',
+        );
+
+        when(() => mockDio.put(
+          any(),
+          data: any(named: 'data'),
+          queryParameters: any(named: 'queryParameters'),
+          options: any(named: 'options'),
+          cancelToken: any(named: 'cancelToken'),
+        )).thenAnswer((_) async => Response(
+          requestOptions: RequestOptions(path: '/categories/1'),
+          statusCode: 200,
+          data: responseData,
+        ));
+
+        final result = await datasource.updateCategory(
+          1,
+          'Updated With Platform Fields',
+          iconApk: 'spotify',
+          colorApk: 'success',
+        );
+
+        expect(result.name, equals('Updated With Platform Fields'));
+        expect(result.iconApk, equals('spotify'));
+        expect(result.colorApk, equals('success'));
+
+        // Verify the API was called
+        verify(() => mockDio.put(
+          any(),
+          data: any(named: 'data'),
+          queryParameters: any(named: 'queryParameters'),
+          options: any(named: 'options'),
+          cancelToken: any(named: 'cancelToken'),
+        )).called(1);
       });
     });
 
@@ -196,7 +277,7 @@ void main() {
           'data': {
             'id': 5,
             'name': 'Parsed Category',
-            'icon_name': 'test',
+            'icon_apk': 'netflix',
             'created_at': '2024-01-15T00:00:00Z',
             'updated_at': '2024-01-15T00:00:00Z',
           }
@@ -216,6 +297,60 @@ void main() {
         final result = await datasource.getCategories();
 
         expect(result[0].name, equals('Parsed Category'));
+      });
+
+      test('parses icon_apk, icon_web, color_apk, color_web from JSON', () async {
+        final categoryJson = CategoryFixture.createCategoryJson(
+          id: 1,
+          name: 'Platform Category',
+          iconApk: 'netflix',
+          iconWeb: 'youtube',
+          colorApk: 'primary',
+          colorWeb: 'secondary',
+        );
+
+        when(() => mockDio.get(
+          any(),
+          queryParameters: any(named: 'queryParameters'),
+          options: any(named: 'options'),
+          cancelToken: any(named: 'cancelToken'),
+        )).thenAnswer((_) async => Response(
+          requestOptions: RequestOptions(path: '/categories'),
+          statusCode: 200,
+          data: {'data': [categoryJson]},
+        ));
+
+        final result = await datasource.getCategories();
+
+        expect(result[0].iconApk, equals('netflix'));
+        expect(result[0].iconWeb, equals('youtube'));
+        expect(result[0].colorApk, equals('primary'));
+        expect(result[0].colorWeb, equals('secondary'));
+      });
+
+      test('handles missing platform-specific fields (null values)', () async {
+        final categoryJson = CategoryFixture.createCategoryJson(
+          id: 1,
+          name: 'Minimal Category',
+        );
+
+        when(() => mockDio.get(
+          any(),
+          queryParameters: any(named: 'queryParameters'),
+          options: any(named: 'options'),
+          cancelToken: any(named: 'cancelToken'),
+        )).thenAnswer((_) async => Response(
+          requestOptions: RequestOptions(path: '/categories'),
+          statusCode: 200,
+          data: {'data': [categoryJson]},
+        ));
+
+        final result = await datasource.getCategories();
+
+        expect(result[0].iconApk, isNull);
+        expect(result[0].iconWeb, isNull);
+        expect(result[0].colorApk, isNull);
+        expect(result[0].colorWeb, isNull);
       });
 
       test('handles string ID and converts to int', () async {

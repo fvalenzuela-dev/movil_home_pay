@@ -34,7 +34,11 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
   ) async {
     emit(CategoryLoading());
     try {
-      final category = await _repository.createCategory(event.name);
+      final category = await _repository.createCategory(
+        event.name,
+        iconApk: event.iconApk,
+        colorApk: event.colorApk,
+      );
       emit(CategoryCreated(category));
       // Recargar la lista
       final categories = await _repository.getCategories();
@@ -50,7 +54,12 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
   ) async {
     emit(CategoryLoading());
     try {
-      final category = await _repository.updateCategory(event.id, event.name);
+      final category = await _repository.updateCategory(
+        event.id,
+        event.name,
+        iconApk: event.iconApk,
+        colorApk: event.colorApk,
+      );
       emit(CategoryUpdated(category));
       // Recargar la lista
       final categories = await _repository.getCategories();

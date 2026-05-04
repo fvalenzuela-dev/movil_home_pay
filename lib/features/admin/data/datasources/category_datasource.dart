@@ -28,19 +28,27 @@ class CategoryDatasource {
   }
 
   /// POST /categories
-  Future<Category> createCategory(String name) async {
+  Future<Category> createCategory(String name, {String? iconApk, String? colorApk}) async {
+    final data = {'name': name};
+    if (iconApk != null) data['icon_apk'] = iconApk;
+    if (colorApk != null) data['color_apk'] = colorApk;
+
     final response = await _dio.post(
       '${ApiConfig.baseUrl}/categories',
-      data: {'name': name},
+      data: data,
     );
     return _fromJson(response.data);
   }
 
   /// PUT /categories/{id}
-  Future<Category> updateCategory(int id, String name) async {
+  Future<Category> updateCategory(int id, String name, {String? iconApk, String? colorApk}) async {
+    final data = {'name': name};
+    if (iconApk != null) data['icon_apk'] = iconApk;
+    if (colorApk != null) data['color_apk'] = colorApk;
+
     final response = await _dio.put(
       '${ApiConfig.baseUrl}/categories/$id',
-      data: {'name': name},
+      data: data,
     );
     return _fromJson(response.data);
   }
@@ -68,6 +76,10 @@ class CategoryDatasource {
     return Category(
       id: id,
       name: data['name']?.toString() ?? json['name']?.toString() ?? '',
+      iconApk: data['icon_apk']?.toString(),
+      iconWeb: data['icon_web']?.toString(),
+      colorApk: data['color_apk']?.toString(),
+      colorWeb: data['color_web']?.toString(),
       createdAt: (data['created_at'] ?? json['created_at']) != null
           ? DateTime.tryParse((data['created_at'] ?? json['created_at']).toString())
           : null,

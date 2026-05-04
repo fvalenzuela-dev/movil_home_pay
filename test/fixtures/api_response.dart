@@ -127,11 +127,19 @@ class ApiResponseBuilder {
     required int id,
     required String name,
     String? iconName,
+    String? iconApk,
+    String? iconWeb,
+    String? colorApk,
+    String? colorWeb,
   }) {
     return success(data: {
       'id': id,
       'name': name,
       ...?iconName != null ? {'icon_name': iconName} : null,
+      ...?iconApk != null ? {'icon_apk': iconApk} : null,
+      ...?iconWeb != null ? {'icon_web': iconWeb} : null,
+      ...?colorApk != null ? {'color_apk': colorApk} : null,
+      ...?colorWeb != null ? {'color_web': colorWeb} : null,
     });
   }
 

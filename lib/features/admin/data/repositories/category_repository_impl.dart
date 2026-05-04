@@ -19,13 +19,13 @@ class CategoryRepositoryImpl implements CategoryRepository {
   }
 
   @override
-  Future<Category> createCategory(String name) {
-    return _datasource.createCategory(name);
+  Future<Category> createCategory(String name, {String? iconApk, String? colorApk}) {
+    return _datasource.createCategory(name, iconApk: iconApk, colorApk: colorApk);
   }
 
   @override
-  Future<Category> updateCategory(int id, String name) {
-    return _datasource.updateCategory(id, name);
+  Future<Category> updateCategory(int id, String name, {String? iconApk, String? colorApk}) {
+    return _datasource.updateCategory(id, name, iconApk: iconApk, colorApk: colorApk);
   }
 
   @override

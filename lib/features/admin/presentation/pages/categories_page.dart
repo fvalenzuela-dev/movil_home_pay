@@ -317,74 +317,28 @@ class _CategoriesPageState extends State<CategoriesPage> {
   }
 
   void _showCreateDialog(BuildContext context) {
-    final controller = TextEditingController();
-
     showDialog(
       context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: const Text('Nueva Categoría'),
-        content: TextField(
-          controller: controller,
-          decoration: const InputDecoration(
-            labelText: 'Nombre',
-            hintText: 'Ej: Netflix, Agua, Luz',
-            border: OutlineInputBorder(),
-          ),
-          autofocus: true,
-          textCapitalization: TextCapitalization.words,
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext),
-            child: const Text('Cancelar'),
-          ),
-          FilledButton(
-            onPressed: () {
-              final name = controller.text.trim();
-              if (name.isNotEmpty) {
-                context.read<CategoryBloc>().add(CategoryCreateRequested(name));
-                Navigator.pop(dialogContext);
-              }
-            },
-            child: const Text('Crear'),
-          ),
-        ],
+      builder: (dialogContext) => CategoryFormDialog(
+        onSave: (name, iconApk, colorApk) {
+          context.read<CategoryBloc>().add(
+                CategoryCreateRequested(name, iconApk: iconApk, colorApk: colorApk),
+              );
+        },
       ),
     );
   }
 
   void _showEditDialog(BuildContext context, Category category) {
-    final controller = TextEditingController(text: category.name);
-
     showDialog(
       context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: const Text('Editar Categoría'),
-        content: TextField(
-          controller: controller,
-          decoration: const InputDecoration(
-            labelText: 'Nombre',
-            border: OutlineInputBorder(),
-          ),
-          autofocus: true,
-          textCapitalization: TextCapitalization.words,
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext),
-            child: const Text('Cancelar'),
-          ),
-          FilledButton(
-            onPressed: () {
-              final name = controller.text.trim();
-              if (name.isNotEmpty) {
-                context.read<CategoryBloc>().add(CategoryUpdateRequested(category.id, name));
-                Navigator.pop(dialogContext);
-              }
-            },
-            child: const Text('Guardar'),
-          ),
-        ],
+      builder: (dialogContext) => CategoryFormDialog(
+        category: category,
+        onSave: (name, iconApk, colorApk) {
+          context.read<CategoryBloc>().add(
+                CategoryUpdateRequested(category.id, name, iconApk: iconApk, colorApk: colorApk),
+              );
+        },
       ),
     );
   }
@@ -447,10 +401,12 @@ class _CategoryCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         child: ListTile(
           leading: CircleAvatar(
-            backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+            backgroundColor: category.categoryColor?.withValues(alpha: 0.15) ??
+                Theme.of(context).colorScheme.primaryContainer,
             child: Icon(
               category.icon,
-              color: Theme.of(context).colorScheme.onPrimaryContainer,
+              color: category.categoryColor ??
+                  Theme.of(context).colorScheme.onPrimaryContainer,
             ),
           ),
           title: Text(
@@ -492,26 +448,32 @@ class _CategoryCard extends StatelessWidget {
   }
 }
 
-/// Dialog para crear/editar categoría con selector de icono
-class _CategoryFormDialog extends StatefulWidget {
-  final void Function(String name, String? iconName) onSave;
+/// Dialog para crear/editar categoría con selector de icono y color
+class CategoryFormDialog extends StatefulWidget {
+  final Category? category;
+  final void Function(String name, String? iconApk, String? colorApk) onSave;
 
-  const _CategoryFormDialog({
+  const CategoryFormDialog({
+    super.key,
+    this.category,
     required this.onSave,
   });
 
   @override
-  State<_CategoryFormDialog> createState() => _CategoryFormDialogState();
+  State<CategoryFormDialog> createState() => CategoryFormDialogState();
 }
 
-class _CategoryFormDialogState extends State<_CategoryFormDialog> {
+class CategoryFormDialogState extends State<CategoryFormDialog> {
   late TextEditingController _nameController;
-  String? _selectedIconName;
+  String? _selectedIconApk;
+  String _selectedColorApiName = 'primary'; // Default to 'primary'
 
   @override
   void initState() {
     super.initState();
-    _nameController = TextEditingController();
+    _nameController = TextEditingController(text: widget.category?.name ?? '');
+    _selectedIconApk = widget.category?.iconApk;
+    _selectedColorApiName = widget.category?.colorApk ?? 'primary';
   }
 
   @override
@@ -520,10 +482,15 @@ class _CategoryFormDialogState extends State<_CategoryFormDialog> {
     super.dispose();
   }
 
+  CategoryColor? get _selectedColor =>
+      CategoryColorExtension.fromApiName(_selectedColorApiName);
+
   @override
   Widget build(BuildContext context) {
+    final isEditing = widget.category != null;
+
     return AlertDialog(
-      title: const Text('Nueva Categoría'),
+      title: Text(isEditing ? 'Editar Categoría' : 'Nueva Categoría'),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -540,51 +507,117 @@ class _CategoryFormDialogState extends State<_CategoryFormDialog> {
               textCapitalization: TextCapitalization.words,
             ),
             const SizedBox(height: 16),
+
+            // Live preview
+            Center(
+              child: Column(
+                children: [
+                  const Text(
+                    'Vista previa',
+                    style: TextStyle(fontWeight: FontWeight.w500),
+                  ),
+                  const SizedBox(height: 8),
+                  CircleAvatar(
+                    radius: 30,
+                    backgroundColor: _selectedColor?.colorValue.withValues(alpha: 0.15) ??
+                        Theme.of(context).colorScheme.primaryContainer,
+                    child: Icon(
+                      _selectedIconApk != null
+                          ? CategoryIcons.getIcon(_selectedIconApk)
+                          : Icons.category,
+                      color: _selectedColor?.colorValue ??
+                          Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // Color picker
+            const Text(
+              'Color',
+              style: TextStyle(fontWeight: FontWeight.w500),
+            ),
+            const SizedBox(height: 8),
+            Container(
+              height: 48,
+              alignment: Alignment.centerLeft,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: CategoryColor.values.map((color) {
+                  final isSelected = color.apiName == _selectedColorApiName;
+                  return GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _selectedColorApiName = color.apiName;
+                      });
+                    },
+                    child: Container(
+                      width: 40,
+                      height: 40,
+                      margin: const EdgeInsets.only(right: 8),
+                      decoration: BoxDecoration(
+                        color: color.colorValue,
+                        shape: BoxShape.circle,
+                        border: isSelected
+                            ? Border.all(color: Colors.black, width: 3)
+                            : null,
+                      ),
+                      child: isSelected
+                          ? const Icon(Icons.check, color: Colors.white, size: 20)
+                          : null,
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // Icon picker
             const Text(
               'Icono',
               style: TextStyle(fontWeight: FontWeight.w500),
             ),
             const SizedBox(height: 8),
-            SizedBox(
-              height: 150,
-              child: GridView.count(
-                crossAxisCount: 5,
-                mainAxisSpacing: 8,
-                crossAxisSpacing: 8,
-                children: CategoryIcons.iconNames.map((iconName) {
-                  final icon = CategoryIcons.getIcon(iconName);
-                  final isSelected = _selectedIconName == iconName;
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: CategoryIcons.iconNames.map((iconName) {
+                final icon = CategoryIcons.getIcon(iconName);
+                final isSelected = _selectedIconApk == iconName;
 
-                  return InkWell(
-                    onTap: () {
-                      setState(() {
-                        _selectedIconName = isSelected ? null : iconName;
-                      });
-                    },
-                    borderRadius: BorderRadius.circular(8),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: isSelected
-                            ? Theme.of(context).colorScheme.primaryContainer
-                            : Colors.grey[100],
-                        borderRadius: BorderRadius.circular(8),
-                        border: isSelected
-                            ? Border.all(
-                                color: Theme.of(context).colorScheme.primary,
-                                width: 2,
-                              )
-                            : null,
-                      ),
-                      child: Icon(
-                        icon,
-                        color: isSelected
-                            ? Theme.of(context).colorScheme.primary
-                            : Colors.grey[600],
-                      ),
+                return InkWell(
+                  onTap: () {
+                    setState(() {
+                      _selectedIconApk = isSelected ? null : iconName;
+                    });
+                  },
+                  borderRadius: BorderRadius.circular(8),
+                  child: Container(
+                    width: 48,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? Theme.of(context).colorScheme.primaryContainer
+                          : Colors.grey[100],
+                      borderRadius: BorderRadius.circular(8),
+                      border: isSelected
+                          ? Border.all(
+                              color: Theme.of(context).colorScheme.primary,
+                              width: 2,
+                            )
+                          : null,
                     ),
-                  );
-                }).toList(),
-              ),
+                    child: Icon(
+                      icon,
+                      color: isSelected
+                          ? Theme.of(context).colorScheme.primary
+                          : Colors.grey[600],
+                    ),
+                  ),
+                );
+              }).toList(),
             ),
           ],
         ),
@@ -598,10 +631,11 @@ class _CategoryFormDialogState extends State<_CategoryFormDialog> {
           onPressed: () {
             final name = _nameController.text.trim();
             if (name.isNotEmpty) {
-              widget.onSave(name, _selectedIconName);
+              widget.onSave(name, _selectedIconApk, _selectedColorApiName);
+              Navigator.pop(context);
             }
           },
-          child: const Text('Crear'),
+          child: Text(isEditing ? 'Guardar' : 'Crear'),
         ),
       ],
     );
