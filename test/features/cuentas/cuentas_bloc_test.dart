@@ -140,5 +140,48 @@ void main() {
         isA<PagoFailure>(),
       ],
     );
+
+    blocTest<CuentasBloc, CuentasState>(
+      'emits [CuentasLoading, ReopenSuccess] when CuentaReopenRequested succeeds',
+      setUp: () {
+        when(() => mockRepository.reopenAccount(any(), any(), any()))
+            .thenAnswer((_) async => true);
+      },
+      build: () => CuentasBloc(mockRepository),
+      act: (bloc) => bloc.add(const CuentaReopenRequested(
+        cuentaId: '1',
+        accountId: 'acc-1',
+        montoOriginal: 15000,
+      )),
+      expect: () => [
+        isA<CuentasLoading>(),
+        isA<ReopenSuccess>(),
+      ],
+      verify: (_) {
+        verify(() => mockRepository.reopenAccount(
+              '1',
+              'acc-1',
+              15000,
+            )).called(1);
+      },
+    );
+
+    blocTest<CuentasBloc, CuentasState>(
+      'emits [CuentasLoading, ReopenFailure] when CuentaReopenRequested fails',
+      setUp: () {
+        when(() => mockRepository.reopenAccount(any(), any(), any()))
+            .thenThrow(Exception('Reopen failed'));
+      },
+      build: () => CuentasBloc(mockRepository),
+      act: (bloc) => bloc.add(const CuentaReopenRequested(
+        cuentaId: '1',
+        accountId: 'acc-1',
+        montoOriginal: 15000,
+      )),
+      expect: () => [
+        isA<CuentasLoading>(),
+        isA<ReopenFailure>(),
+      ],
+    );
   });
 }

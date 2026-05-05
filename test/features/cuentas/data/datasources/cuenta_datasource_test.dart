@@ -279,6 +279,114 @@ void main() {
       });
     });
 
+    group('reopenAccount', () {
+      test('returns true when account reopened successfully', () async {
+        final responseData = {
+          'billing': {'is_paid': false, 'amount_paid': 0},
+        };
+
+        when(() => mockDio.put(
+          any(),
+          data: any(named: 'data'),
+          queryParameters: any(named: 'queryParameters'),
+          options: any(named: 'options'),
+          cancelToken: any(named: 'cancelToken'),
+        )).thenAnswer((_) async => Response(
+          requestOptions: RequestOptions(path: '${ApiConfig.baseUrl}/accounts/acc_123/billings/cta_001'),
+          statusCode: 200,
+          data: responseData,
+        ));
+
+        final result = await datasource.reopenAccount(
+          'cta_001',
+          'acc_123',
+          15000.0,
+        );
+
+        expect(result, isTrue);
+      });
+
+      test('sends correct payload with amount_billed, amount_paid=0, is_paid=false', () async {
+        final responseData = {
+          'billing': {'is_paid': false, 'amount_paid': 0},
+        };
+
+        when(() => mockDio.put(
+          any(),
+          data: any(named: 'data'),
+          queryParameters: any(named: 'queryParameters'),
+          options: any(named: 'options'),
+          cancelToken: any(named: 'cancelToken'),
+        )).thenAnswer((_) async => Response(
+          requestOptions: RequestOptions(path: '${ApiConfig.baseUrl}/accounts/acc_123/billings/cta_001'),
+          statusCode: 200,
+          data: responseData,
+        ));
+
+        await datasource.reopenAccount('cta_001', 'acc_123', 15000.0);
+
+        verify(() => mockDio.put(
+          any(),
+          data: predicate<Map<String, dynamic>>((data) {
+            expect(data['amount_billed'], equals(15000.0));
+            expect(data['amount_paid'], equals(0));
+            expect(data['is_paid'], equals(false));
+            return true;
+          }),
+          queryParameters: any(named: 'queryParameters'),
+          options: any(named: 'options'),
+          cancelToken: any(named: 'cancelToken'),
+        )).called(1);
+      });
+
+      test('returns false when API returns is_paid still true', () async {
+        final responseData = {
+          'billing': {'is_paid': true, 'amount_paid': 15000},
+        };
+
+        when(() => mockDio.put(
+          any(),
+          data: any(named: 'data'),
+          queryParameters: any(named: 'queryParameters'),
+          options: any(named: 'options'),
+          cancelToken: any(named: 'cancelToken'),
+        )).thenAnswer((_) async => Response(
+          requestOptions: RequestOptions(path: '${ApiConfig.baseUrl}/accounts/acc_123/billings/cta_001'),
+          statusCode: 200,
+          data: responseData,
+        ));
+
+        final result = await datasource.reopenAccount(
+          'cta_001',
+          'acc_123',
+          15000.0,
+        );
+
+        expect(result, isFalse);
+      });
+
+      test('throws ArgumentError for negative montoOriginal', () async {
+        expect(
+          () => datasource.reopenAccount('cta_001', 'acc_123', -100.0),
+          throwsA(isA<ArgumentError>()),
+        );
+      });
+
+      test('throws ArgumentError for empty cuentaId', () async {
+        expect(
+          () => datasource.reopenAccount('', 'acc_123', 15000.0),
+          throwsA(isA<ArgumentError>()),
+        );
+      });
+
+      test('throws ArgumentError for invalid cuentaId characters', () async {
+        expect(
+          () => datasource.reopenAccount('cta@invalid!', 'acc_123', 15000.0),
+          throwsA(isA<ArgumentError>()),
+        );
+      });
+    });
+
     group('_fromJson', () {
       test('parses Cuenta correctly from API response', () async {
         final cuentaJson = {
