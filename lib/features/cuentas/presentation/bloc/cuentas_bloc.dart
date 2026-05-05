@@ -42,6 +42,19 @@ class PagoRegistrado extends CuentasEvent {
   List<Object?> get props => [cuentaId, accountId, montoTotal, montoPagado];
 }
 
+class CuentaReopenRequested extends CuentasEvent {
+  final String cuentaId;
+  final String accountId;
+  final double montoOriginal;
+  const CuentaReopenRequested({
+    required this.cuentaId,
+    required this.accountId,
+    required this.montoOriginal,
+  });
+  @override
+  List<Object?> get props => [cuentaId, accountId, montoOriginal];
+}
+
 // States
 abstract class CuentasState extends Equatable {
   const CuentasState();
@@ -82,6 +95,20 @@ class PagoFailure extends CuentasState {
   List<Object?> get props => [message];
 }
 
+class ReopenSuccess extends CuentasState {
+  final String cuentaId;
+  const ReopenSuccess(this.cuentaId);
+  @override
+  List<Object?> get props => [cuentaId];
+}
+
+class ReopenFailure extends CuentasState {
+  final String message;
+  const ReopenFailure(this.message);
+  @override
+  List<Object?> get props => [message];
+}
+
 class CuentasError extends CuentasState {
   final String message;
   const CuentasError(this.message);
@@ -97,6 +124,7 @@ class CuentasBloc extends Bloc<CuentasEvent, CuentasState> {
     on<CuentasLoadRequested>(_onLoadRequested);
     on<CuentaDetalleRequested>(_onDetalleRequested);
     on<PagoRegistrado>(_onPagoRegistrado);
+    on<CuentaReopenRequested>(_onReopenRequested);
   }
 
   Future<void> _onLoadRequested(
@@ -159,6 +187,23 @@ class CuentasBloc extends Bloc<CuentasEvent, CuentasState> {
       emit(PagoSuccess(event.cuentaId));
     } catch (e) {
       emit(PagoFailure(e.toString()));
+    }
+  }
+
+  Future<void> _onReopenRequested(
+    CuentaReopenRequested event,
+    Emitter<CuentasState> emit,
+  ) async {
+    emit(CuentasLoading());
+    try {
+      await _repository.reopenAccount(
+        event.cuentaId,
+        event.accountId,
+        event.montoOriginal,
+      );
+      emit(ReopenSuccess(event.cuentaId));
+    } catch (e) {
+      emit(ReopenFailure(e.toString()));
     }
   }
 }

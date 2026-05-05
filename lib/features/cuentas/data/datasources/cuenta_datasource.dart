@@ -69,7 +69,7 @@ class CuentaDatasource {
     return _fromJson(billing);
   }
 
-  /// PUT /accounts/{accountID}/billings/{id}
+  /// PUT /accounts/{accountID}/billings/{id} — registra un pago
   Future<bool> registrarPago(
     String cuentaId,
     String accountId,
@@ -89,6 +89,29 @@ class CuentaDatasource {
     );
     final billing = response.data['billing'] ?? response.data;
     return billing['is_paid'] == true;
+  }
+
+  /// PUT /accounts/{accountID}/billings/{id} — reabre una cuenta pagada
+  /// Resetea amount_paid a 0 y is_paid a false para marcar como no pagada
+  Future<bool> reopenAccount(String cuentaId, String accountId, double montoOriginal) async {
+    _sanitizarId(cuentaId);
+    _sanitizarId(accountId);
+
+    if (montoOriginal < 0) {
+      throw ArgumentError('El monto no puede ser negativo');
+    }
+
+    final response = await _dio.put(
+      '${ApiConfig.baseUrl}/accounts/$accountId/billings/$cuentaId',
+      data: {
+        'amount_billed': montoOriginal,
+        'amount_paid': 0,
+        'is_paid': false,
+      },
+    );
+    final billing = response.data['billing'] ?? response.data;
+    // Verificar que la cuenta quedó como no pagada
+    return billing['is_paid'] != true && (billing['amount_paid'] ?? 0) == 0;
   }
 
   Cuenta _fromJson(Map<String, dynamic> json) {

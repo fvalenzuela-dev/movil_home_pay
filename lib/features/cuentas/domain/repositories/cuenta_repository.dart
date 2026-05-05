@@ -13,4 +13,10 @@ abstract class CuentaRepository {
     double montoTotal,
     double montoPagado,
   );
+
+  /// Reabre una cuenta pagada, reseteando el estado a no pagada
+  /// [cuentaId] - ID del billing
+  /// [accountId] - ID de la cuenta
+  /// [montoOriginal] - El monto facturado original (amount_billed) que se preserva
+  Future<bool> reopenAccount(String cuentaId, String accountId, double montoOriginal);
 }
