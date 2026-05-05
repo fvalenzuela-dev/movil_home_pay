@@ -85,6 +85,23 @@ class _CuentaDetallePageState extends State<CuentaDetallePage> {
                   backgroundColor: Colors.red,
                 ),
               );
+            } else if (state is ReopenSuccess) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Cuenta reabierta exitosamente'),
+                  backgroundColor: Colors.green,
+                ),
+              );
+              context.read<CuentasBloc>().add(
+                CuentaDetalleRequested(widget.cuentaId, widget.accountId, widget.periodo),
+              );
+            } else if (state is ReopenFailure) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(state.message),
+                  backgroundColor: Colors.red,
+                ),
+              );
             }
           },
           builder: (context, state) {
@@ -209,17 +226,36 @@ class _CuentaDetallePageState extends State<CuentaDetallePage> {
           ] else ...[
             Card(
               color: Colors.green.shade50,
-              child: const Padding(
-                padding: EdgeInsets.all(16),
-                child: Row(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
                   children: [
-                    Icon(Icons.check_circle, color: Colors.green),
-                    SizedBox(width: 12),
-                    Text(
-                      'Esta cuenta ya está pagada',
-                      style: TextStyle(
-                        color: Colors.green,
-                        fontWeight: FontWeight.bold,
+                    const Row(
+                      children: [
+                        Icon(Icons.check_circle, color: Colors.green),
+                        SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            'Esta cuenta ya está pagada',
+                            style: TextStyle(
+                              color: Colors.green,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton.icon(
+                        onPressed: () => _showReopenConfirmation(context, cuenta),
+                        icon: const Icon(Icons.refresh),
+                        label: const Text('Reabrir cuenta'),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: Colors.orange.shade700,
+                          side: BorderSide(color: Colors.orange.shade700),
+                        ),
                       ),
                     ),
                   ],
@@ -298,5 +334,46 @@ class _CuentaDetallePageState extends State<CuentaDetallePage> {
       return Icons.phone_android;
     }
     return Icons.receipt_long;
+  }
+
+  Future<void> _showReopenConfirmation(BuildContext context, Cuenta cuenta) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Reabrir cuenta'),
+        content: const Text(
+          '¿Estás seguro de que deseas reabrir esta cuenta pagada?\n\n'
+          'El monto pagado se eliminará y la cuenta volverá a estado pendiente.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancelar'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.orange.shade700,
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('Reabrir'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true && context.mounted) {
+      _handleReopen(context, cuenta);
+    }
+  }
+
+  void _handleReopen(BuildContext context, Cuenta cuenta) {
+    context.read<CuentasBloc>().add(
+      CuentaReopenRequested(
+        cuentaId: cuenta.id,
+        accountId: cuenta.accountId,
+        montoOriginal: cuenta.monto,
+      ),
+    );
   }
 }

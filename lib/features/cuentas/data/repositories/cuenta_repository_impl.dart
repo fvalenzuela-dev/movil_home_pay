@@ -32,4 +32,13 @@ class CuentaRepositoryImpl implements CuentaRepository {
       montoPagado,
     );
   }
+
+  @override
+  Future<bool> reopenAccount(
+    String cuentaId,
+    String accountId,
+    double montoOriginal,
+  ) {
+    return _datasource.reopenAccount(cuentaId, accountId, montoOriginal);
+  }
 }
