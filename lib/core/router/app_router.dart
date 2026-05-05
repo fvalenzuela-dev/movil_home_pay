@@ -58,7 +58,8 @@ class AppRouter {
             builder: (context, state) {
               final id = state.pathParameters['id']!;
               final periodo = state.uri.queryParameters['periodo'] ?? _currentPeriodo();
-              return CuentaDetallePage(cuentaId: id, periodo: periodo);
+              final accountId = state.uri.queryParameters['accountId'] ?? '';
+              return CuentaDetallePage(cuentaId: id, accountId: accountId, periodo: periodo);
             },
           ),
 

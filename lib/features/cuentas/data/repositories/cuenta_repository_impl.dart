@@ -14,8 +14,8 @@ class CuentaRepositoryImpl implements CuentaRepository {
   }
 
   @override
-  Future<Cuenta> getDetalleCuenta(String id, String periodo) {
-    return _datasource.getDetalle(id, periodo);
+  Future<Cuenta> getDetalleCuenta(String accountId, String cuentaId) {
+    return _datasource.getDetalle(accountId, cuentaId);
   }
 
   @override

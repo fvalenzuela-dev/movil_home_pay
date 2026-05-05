@@ -56,16 +56,17 @@ class CuentaDatasource {
     return items.map((json) => _fromJson(json)).toList();
   }
 
-  /// GET /periods/{period}/billings — filtra por id
-  Future<Cuenta> getDetalle(String id, String periodo) async {
-    _validarPeriodo(periodo);
-    _sanitizarId(id);
+  /// GET /accounts/{accountId}/billings/{billingId} — direct endpoint
+  Future<Cuenta> getDetalle(String accountId, String cuentaId) async {
+    _sanitizarId(accountId);
+    _sanitizarId(cuentaId);
 
-    final cuentas = await getCuentasPorPeriodo(periodo);
-    return cuentas.firstWhere(
-      (c) => c.id == id,
-      orElse: () => throw StateError('No se encontró la cuenta con id: $id'),
+    final response = await _dio.get(
+      ApiConfig.accountBillingUrl(accountId, cuentaId),
     );
+    final data = response.data;
+    final billing = data['billing'] ?? data['data'] ?? data;
+    return _fromJson(billing);
   }
 
   /// PUT /accounts/{accountID}/billings/{id}

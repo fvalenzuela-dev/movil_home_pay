@@ -63,6 +63,39 @@ void main() {
     );
 
     blocTest<CuentasBloc, CuentasState>(
+      'emits [CuentasLoading, CuentaDetalleLoaded] when CuentaDetalleRequested succeeds',
+      setUp: () {
+        when(() => mockRepository.getDetalleCuenta(any(), any()))
+            .thenAnswer((_) async => testCuenta);
+      },
+      build: () => CuentasBloc(mockRepository),
+      seed: () => CuentasLoaded([testCuenta], '202604'),
+      act: (bloc) => bloc.add(const CuentaDetalleRequested('1', 'acc-1', '202604')),
+      expect: () => [
+        isA<CuentasLoading>(),
+        isA<CuentaDetalleLoaded>(),
+      ],
+      verify: (_) {
+        verify(() => mockRepository.getDetalleCuenta('acc-1', '1')).called(1);
+      },
+    );
+
+    blocTest<CuentasBloc, CuentasState>(
+      'emits [CuentasLoading, CuentasError] when CuentaDetalleRequested fails',
+      setUp: () {
+        when(() => mockRepository.getDetalleCuenta(any(), any()))
+            .thenThrow(Exception('Not found'));
+      },
+      build: () => CuentasBloc(mockRepository),
+      seed: () => CuentasLoaded([testCuenta], '202604'),
+      act: (bloc) => bloc.add(const CuentaDetalleRequested('1', 'acc-1', '202604')),
+      expect: () => [
+        isA<CuentasLoading>(),
+        isA<CuentasError>(),
+      ],
+    );
+
+    blocTest<CuentasBloc, CuentasState>(
       'emits [CuentasLoading, PagoSuccess] when PagoRegistrado succeeds',
       setUp: () {
         when(() => mockRepository.registrarPago(any(), any(), any(), any()))

@@ -5,7 +5,7 @@ abstract class CuentaRepository {
   /// Get list of accounts for a specific period (yyyymm format)
   Future<List<Cuenta>> getCuentasPorPeriodo(String periodo);
 
-  Future<Cuenta> getDetalleCuenta(String id, String periodo);
+  Future<Cuenta> getDetalleCuenta(String accountId, String cuentaId);
 
   Future<bool> registrarPago(
     String cuentaId,
