@@ -55,16 +55,16 @@ void main() {
     });
 
     group('getDetalleCuenta', () {
-      test('delegates to datasource with correct id and periodo', () async {
+      test('delegates to datasource with correct accountId and cuentaId', () async {
         final cuenta = CuentaFixture.createValidCuenta(id: 'cta_detail');
 
-        when(() => mockDatasource.getDetalle('cta_detail', '202404'))
+        when(() => mockDatasource.getDetalle('acc_123', 'cta_detail'))
             .thenAnswer((_) async => cuenta);
 
-        final result = await repository.getDetalleCuenta('cta_detail', '202404');
+        final result = await repository.getDetalleCuenta('acc_123', 'cta_detail');
 
         expect(result.id, equals('cta_detail'));
-        verify(() => mockDatasource.getDetalle('cta_detail', '202404')).called(1);
+        verify(() => mockDatasource.getDetalle('acc_123', 'cta_detail')).called(1);
       });
 
       test('forwards exceptions from datasource', () async {
@@ -72,7 +72,7 @@ void main() {
             .thenThrow(Exception('Not found'));
 
         expect(
-          () => repository.getDetalleCuenta('cta_invalid', '202404'),
+          () => repository.getDetalleCuenta('acc_123', 'cta_invalid'),
           throwsA(isA<Exception>()),
         );
       });

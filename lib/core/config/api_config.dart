@@ -23,4 +23,8 @@ class ApiConfig {
   /// Build URL para companies con pagination
   static String companiesUrl({int page = 1, int pageSize = 20}) =>
       '$baseUrl$companiesPath?page=$page&page_size=$pageSize';
+
+  /// Direct billing endpoint: GET /accounts/{accountId}/billings/{billingId}
+  static String accountBillingUrl(String accountId, String billingId) =>
+      '$baseUrl/accounts/$accountId/billings/$billingId';
 }

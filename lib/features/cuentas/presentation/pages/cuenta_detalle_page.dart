@@ -11,11 +11,13 @@ import '../widgets/estado_badge.dart';
 /// Detalle de un billing
 class CuentaDetallePage extends StatefulWidget {
   final String cuentaId;
+  final String accountId;
   final String periodo;
 
   const CuentaDetallePage({
     super.key,
     required this.cuentaId,
+    required this.accountId,
     required this.periodo,
   });
 
@@ -31,7 +33,7 @@ class _CuentaDetallePageState extends State<CuentaDetallePage> {
   void initState() {
     super.initState();
     context.read<CuentasBloc>().add(
-      CuentaDetalleRequested(widget.cuentaId, widget.periodo),
+      CuentaDetalleRequested(widget.cuentaId, widget.accountId, widget.periodo),
     );
   }
 

@@ -20,10 +20,11 @@ class CuentasLoadRequested extends CuentasEvent {
 
 class CuentaDetalleRequested extends CuentasEvent {
   final String cuentaId;
+  final String accountId;
   final String periodo;
-  const CuentaDetalleRequested(this.cuentaId, this.periodo);
+  const CuentaDetalleRequested(this.cuentaId, this.accountId, this.periodo);
   @override
-  List<Object?> get props => [cuentaId, periodo];
+  List<Object?> get props => [cuentaId, accountId, periodo];
 }
 
 class PagoRegistrado extends CuentasEvent {
@@ -117,14 +118,30 @@ class CuentasBloc extends Bloc<CuentasEvent, CuentasState> {
   ) async {
     emit(CuentasLoading());
     try {
+      final accountId = _deriveAccountId(event.cuentaId) ?? event.accountId;
       final cuenta = await _repository.getDetalleCuenta(
+        accountId,
         event.cuentaId,
-        event.periodo,
       );
       emit(CuentaDetalleLoaded(cuenta));
     } catch (e) {
       emit(CuentasError(e.toString()));
     }
+  }
+
+  String? _deriveAccountId(String cuentaId) {
+    final currentState = state;
+    if (currentState is CuentasLoaded) {
+      try {
+        final cuenta = currentState.cuentas.firstWhere(
+          (c) => c.id == cuentaId,
+        );
+        return cuenta.accountId;
+      } catch (_) {
+        return null;
+      }
+    }
+    return null;
   }
 
   Future<void> _onPagoRegistrado(

@@ -136,21 +136,18 @@ void main() {
     });
 
     group('getDetalle', () {
-      test('returns Cuenta when found in period', () async {
-        // Datasource expects account_name, amount_billed, amount_paid fields
-        final cuentasJson = [
-          {
-            'id': 'cta_detail',
-            'account_id': 'acc_123',
-            'account_name': 'Netflix',
-            'amount_billed': 15000.0,
-            'amount_paid': 0.0,
-            'is_paid': false,
-            'status': 'pending',
-            'period': '202404',
-          },
-        ];
-        final responseData = ApiResponseBuilder.success(data: cuentasJson);
+      test('calls direct endpoint /accounts/{accountId}/billings/{billingId}', () async {
+        final cuentaJson = {
+          'id': 'cta_direct',
+          'account_id': 'acc_123',
+          'account_name': 'Direct Service',
+          'amount_billed': 15000.0,
+          'amount_paid': 0.0,
+          'is_paid': false,
+          'status': 'pending',
+          'period': '202404',
+        };
+        final responseData = {'billing': cuentaJson};
 
         when(() => mockDio.get(
           any(),
@@ -158,67 +155,42 @@ void main() {
           options: any(named: 'options'),
           cancelToken: any(named: 'cancelToken'),
         )).thenAnswer((_) async => Response(
-          requestOptions: RequestOptions(path: ApiConfig.periodBillingsUrl('202404')),
+          requestOptions: RequestOptions(path: ApiConfig.accountBillingUrl('acc_123', 'cta_direct')),
           statusCode: 200,
           data: responseData,
         ));
 
-        final result = await datasource.getDetalle('cta_detail', '202404');
+        final result = await datasource.getDetalle('acc_123', 'cta_direct');
 
-        expect(result.id, equals('cta_detail'));
-        expect(result.nombre, equals('Netflix'));
+        expect(result.id, equals('cta_direct'));
+        expect(result.nombre, equals('Direct Service'));
       });
 
-      test('throws ArgumentError for invalid ID characters', () async {
+      test('throws ArgumentError for invalid accountId characters', () async {
         expect(
-          () => datasource.getDetalle('cta@invalid!', '202404'),
+          () => datasource.getDetalle('acc@invalid!', 'cta_001'),
           throwsA(isA<ArgumentError>()),
         );
       });
 
-      test('throws ArgumentError for empty ID', () async {
+      test('throws ArgumentError for invalid cuentaId characters', () async {
         expect(
-          () => datasource.getDetalle('', '202404'),
+          () => datasource.getDetalle('acc_123', 'cta@invalid!'),
           throwsA(isA<ArgumentError>()),
         );
       });
 
-      test('throws ArgumentError for invalid periodo', () async {
+      test('throws ArgumentError for empty accountId', () async {
         expect(
-          () => datasource.getDetalle('cta_001', '2024'),
+          () => datasource.getDetalle('', 'cta_001'),
           throwsA(isA<ArgumentError>()),
         );
       });
 
-      test('throws StateError when cuenta not found', () async {
-        final cuentasJson = [
-          {
-            'id': 'cta_existing',
-            'account_id': 'acc_123',
-            'account_name': 'Netflix',
-            'amount_billed': 15000.0,
-            'amount_paid': 0.0,
-            'is_paid': false,
-            'status': 'pending',
-            'period': '202404',
-          },
-        ];
-        final responseData = ApiResponseBuilder.success(data: cuentasJson);
-
-        when(() => mockDio.get(
-          any(),
-          queryParameters: any(named: 'queryParameters'),
-          options: any(named: 'options'),
-          cancelToken: any(named: 'cancelToken'),
-        )).thenAnswer((_) async => Response(
-          requestOptions: RequestOptions(path: ApiConfig.periodBillingsUrl('202404')),
-          statusCode: 200,
-          data: responseData,
-        ));
-
+      test('throws ArgumentError for empty cuentaId', () async {
         expect(
-          () => datasource.getDetalle('cta_not_found', '202404'),
-          throwsA(isA<StateError>()),
+          () => datasource.getDetalle('acc_123', ''),
+          throwsA(isA<ArgumentError>()),
         );
       });
     });

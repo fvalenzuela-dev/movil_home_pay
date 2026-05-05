@@ -8,6 +8,7 @@ on:
 
 jobs:
   check-linked-issue:
+    name: Check Linked Issue
     runs-on: ubuntu-latest
     permissions:
       pull-requests: read
