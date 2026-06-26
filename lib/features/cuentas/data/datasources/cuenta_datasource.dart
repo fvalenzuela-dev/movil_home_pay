@@ -56,16 +56,29 @@ class CuentaDatasource {
     return items.map((json) => _fromJson(json)).toList();
   }
 
+  /// Extrae la lista de billings de una respuesta que puede venir envuelta
+  /// en distintos niveles: [...], {billings: [...]}, {data: {billings: [...]}}.
+  static List<dynamic> _extraerBillings(dynamic body) {
+    dynamic node = body;
+    // Desenvuelve hasta 3 niveles de Map buscando la lista bajo claves conocidas.
+    for (var i = 0; i < 3 && node is Map; i++) {
+      node = node['billings'] ?? node['data'] ?? node['items'] ?? node['results'];
+    }
+    if (node is List) return node;
+    if (node is Map<String, dynamic>) return [node]; // respuesta de un solo objeto
+    return const [];
+  }
+
   /// POST /periods/{period}/open — abre todas las cuentas del periodo
   Future<List<Cuenta>> abrirPeriodo(String periodo) async {
     _validarPeriodo(periodo);
 
     final response = await _dio.post(ApiConfig.periodOpenUrl(periodo));
 
-    final data = response.data;
-    final List<dynamic> items =
-        data['billings'] ?? data['data'] ?? data['items'] ?? [];
-    return items.map((json) => _fromJson(json)).toList();
+    final items = _extraerBillings(response.data);
+    return items
+        .map((json) => _fromJson(json as Map<String, dynamic>))
+        .toList();
   }
 
   /// GET /accounts/{accountId}/billings/{billingId} — direct endpoint

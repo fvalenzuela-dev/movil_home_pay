@@ -100,6 +100,25 @@ void main() {
         expect(result.first.id, equals('cta_only'));
       });
 
+      test('parses billings nested under a data envelope', () async {
+        // Arrange: backend wraps the list as { data: { billings: [...] } }
+        stubPost({
+          'data': {
+            'billings': [
+              billingJson(id: 'cta_nested_1'),
+              billingJson(id: 'cta_nested_2'),
+            ],
+          },
+        });
+
+        // Act
+        final result = await datasource.abrirPeriodo('202404');
+
+        // Assert
+        expect(result, hasLength(2));
+        expect(result.first.id, equals('cta_nested_1'));
+      });
+
       test('returns empty list when no billings are returned', () async {
         // Arrange
         stubPost({'billings': []});
