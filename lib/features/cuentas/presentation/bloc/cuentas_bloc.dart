@@ -55,6 +55,25 @@ class CuentaReopenRequested extends CuentasEvent {
   List<Object?> get props => [cuentaId, accountId, montoOriginal];
 }
 
+class AgregarCuentaIndividualRequested extends CuentasEvent {
+  final String accountId;
+  final double monto;
+  final double montoPagado;
+  final String? periodo;
+  final String? nombre;
+
+  const AgregarCuentaIndividualRequested({
+    required this.accountId,
+    required this.monto,
+    this.montoPagado = 0,
+    this.periodo,
+    this.nombre,
+  });
+
+  @override
+  List<Object?> get props => [accountId, monto, montoPagado, periodo, nombre];
+}
+
 // States
 abstract class CuentasState extends Equatable {
   const CuentasState();
@@ -109,6 +128,13 @@ class ReopenFailure extends CuentasState {
   List<Object?> get props => [message];
 }
 
+class CuentaAgregadaFailure extends CuentasState {
+  final String message;
+  const CuentaAgregadaFailure(this.message);
+  @override
+  List<Object?> get props => [message];
+}
+
 class CuentasError extends CuentasState {
   final String message;
   const CuentasError(this.message);
@@ -125,6 +151,7 @@ class CuentasBloc extends Bloc<CuentasEvent, CuentasState> {
     on<CuentaDetalleRequested>(_onDetalleRequested);
     on<PagoRegistrado>(_onPagoRegistrado);
     on<CuentaReopenRequested>(_onReopenRequested);
+    on<AgregarCuentaIndividualRequested>(_onAgregarCuentaIndividualRequested);
   }
 
   Future<void> _onLoadRequested(
@@ -205,5 +232,38 @@ class CuentasBloc extends Bloc<CuentasEvent, CuentasState> {
     } catch (e) {
       emit(ReopenFailure(e.toString()));
     }
+  }
+
+  Future<void> _onAgregarCuentaIndividualRequested(
+    AgregarCuentaIndividualRequested event,
+    Emitter<CuentasState> emit,
+  ) async {
+    emit(CuentasLoading());
+    try {
+      await _repository.agregarCuentaIndividual(
+        accountId: event.accountId,
+        monto: event.monto,
+        montoPagado: event.montoPagado,
+        periodo: event.periodo,
+        nombre: event.nombre,
+      );
+      // Reload the cuentas list after adding
+      final currentState = state;
+      final periodo = event.periodo ?? _derivePeriodo(currentState);
+      if (periodo != null) {
+        final cuentas = await _repository.getCuentasPorPeriodo(periodo);
+        emit(CuentasLoaded(cuentas, periodo));
+      } else {
+        emit(CuentasLoaded([], ''));
+      }
+    } catch (e) {
+      emit(CuentaAgregadaFailure(e.toString()));
+    }
+  }
+
+  String? _derivePeriodo(CuentasState state) {
+    if (state is CuentasLoaded) return state.periodo;
+    if (state is CuentaDetalleLoaded) return state.cuenta.periodo;
+    return null;
   }
 }

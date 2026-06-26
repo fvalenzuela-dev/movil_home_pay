@@ -41,4 +41,21 @@ class CuentaRepositoryImpl implements CuentaRepository {
   ) {
     return _datasource.reopenAccount(cuentaId, accountId, montoOriginal);
   }
+
+  @override
+  Future<Cuenta> agregarCuentaIndividual({
+    required String accountId,
+    required double monto,
+    double montoPagado = 0,
+    String? periodo,
+    String? nombre,
+  }) {
+    return _datasource.agregarCuentaIndividual(
+      accountId: accountId,
+      monto: monto,
+      montoPagado: montoPagado,
+      periodo: periodo,
+      nombre: nombre,
+    );
+  }
 }

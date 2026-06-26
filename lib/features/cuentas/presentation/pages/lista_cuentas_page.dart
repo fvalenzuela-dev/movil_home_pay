@@ -67,6 +67,11 @@ class _ListaCuentasPageState extends State<ListaCuentasPage> {
       key: _scaffoldKey,
       drawer: _buildDrawer(context),
       backgroundColor: AppTheme.surfaceContainerLowest,
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => context.push('/cuentas/agregar/$_currentPeriodo'),
+        backgroundColor: AppTheme.primarySeed,
+        child: const Icon(Icons.add, color: Colors.white),
+      ),
       body: SafeArea(
         child: CustomScrollView(
           slivers: [

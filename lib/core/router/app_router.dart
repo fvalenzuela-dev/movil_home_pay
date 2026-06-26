@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../features/admin/presentation/pages/categories_page.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
+import '../../features/cuentas/presentation/pages/agregar_cuenta_page.dart';
 import '../../features/cuentas/presentation/pages/cuenta_detalle_page.dart';
 import '../../features/cuentas/presentation/pages/lista_cuentas_page.dart';
 import '../../features/empresas/presentation/pages/empresa_form_page.dart';
@@ -60,6 +61,16 @@ class AppRouter {
               final periodo = state.uri.queryParameters['periodo'] ?? _currentPeriodo();
               final accountId = state.uri.queryParameters['accountId'] ?? '';
               return CuentaDetallePage(cuentaId: id, accountId: accountId, periodo: periodo);
+            },
+          ),
+
+          // Cuentas - agregar
+          GoRoute(
+            path: '/cuentas/agregar/:periodo',
+            name: 'cuenta-agregar',
+            builder: (context, state) {
+              final periodo = state.pathParameters['periodo']!;
+              return AgregarCuentaPage(periodo: periodo);
             },
           ),
 
