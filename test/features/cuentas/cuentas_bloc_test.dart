@@ -242,5 +242,41 @@ void main() {
         ],
       );
     });
+
+    group('AbrirPeriodoRequested', () {
+      blocTest<CuentasBloc, CuentasState>(
+        'emits [CuentasLoading, AbrirPeriodoSuccess, CuentasLoaded] when open period succeeds',
+        setUp: () {
+          when(() => mockRepository.abrirPeriodo(any()))
+              .thenAnswer((_) async => [testCuenta, testCuenta]);
+        },
+        build: () => CuentasBloc(mockRepository),
+        act: (bloc) => bloc.add(const AbrirPeriodoRequested('202604')),
+        expect: () => [
+          isA<CuentasLoading>(),
+          isA<AbrirPeriodoSuccess>()
+              .having((s) => s.cantidad, 'cantidad', 2),
+          isA<CuentasLoaded>()
+              .having((s) => s.periodo, 'periodo', '202604'),
+        ],
+        verify: (_) {
+          verify(() => mockRepository.abrirPeriodo('202604')).called(1);
+        },
+      );
+
+      blocTest<CuentasBloc, CuentasState>(
+        'emits [CuentasLoading, AbrirPeriodoFailure] when open period fails',
+        setUp: () {
+          when(() => mockRepository.abrirPeriodo(any()))
+              .thenThrow(Exception('Server error'));
+        },
+        build: () => CuentasBloc(mockRepository),
+        act: (bloc) => bloc.add(const AbrirPeriodoRequested('202604')),
+        expect: () => [
+          isA<CuentasLoading>(),
+          isA<AbrirPeriodoFailure>(),
+        ],
+      );
+    });
   });
 }

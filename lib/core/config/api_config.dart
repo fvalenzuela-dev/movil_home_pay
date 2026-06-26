@@ -20,6 +20,10 @@ class ApiConfig {
   static String periodBillingsUrl(String period) =>
       '$baseUrl$periodsPath/$period$billingsPath';
 
+  /// Build URL para abrir todas las cuentas de un periodo (POST /periods/{period}/open)
+  static String periodOpenUrl(String period) =>
+      '$baseUrl$periodsPath/$period/open';
+
   /// Build URL para companies con pagination
   static String companiesUrl({int page = 1, int pageSize = 20}) =>
       '$baseUrl$companiesPath?page=$page&page_size=$pageSize';

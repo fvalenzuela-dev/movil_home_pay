@@ -56,6 +56,18 @@ class CuentaDatasource {
     return items.map((json) => _fromJson(json)).toList();
   }
 
+  /// POST /periods/{period}/open — abre todas las cuentas del periodo
+  Future<List<Cuenta>> abrirPeriodo(String periodo) async {
+    _validarPeriodo(periodo);
+
+    final response = await _dio.post(ApiConfig.periodOpenUrl(periodo));
+
+    final data = response.data;
+    final List<dynamic> items =
+        data['billings'] ?? data['data'] ?? data['items'] ?? [];
+    return items.map((json) => _fromJson(json)).toList();
+  }
+
   /// GET /accounts/{accountId}/billings/{billingId} — direct endpoint
   Future<Cuenta> getDetalle(String accountId, String cuentaId) async {
     _sanitizarId(accountId);

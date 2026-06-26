@@ -231,5 +231,32 @@ void main() {
         );
       });
     });
+
+    group('abrirPeriodo', () {
+      test('delegates to datasource and returns opened cuentas', () async {
+        final cuentas = [
+          CuentaFixture.createValidCuenta(id: 'cta_1'),
+          CuentaFixture.createValidCuenta(id: 'cta_2'),
+        ];
+
+        when(() => mockDatasource.abrirPeriodo('202404'))
+            .thenAnswer((_) async => cuentas);
+
+        final result = await repository.abrirPeriodo('202404');
+
+        expect(result, hasLength(2));
+        verify(() => mockDatasource.abrirPeriodo('202404')).called(1);
+      });
+
+      test('forwards exceptions from datasource', () async {
+        when(() => mockDatasource.abrirPeriodo(any()))
+            .thenThrow(Exception('Server error'));
+
+        expect(
+          () => repository.abrirPeriodo('202404'),
+          throwsA(isA<Exception>()),
+        );
+      });
+    });
   });
 }

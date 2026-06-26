@@ -20,6 +20,11 @@ abstract class CuentaRepository {
   /// [montoOriginal] - El monto facturado original (amount_billed) que se preserva
   Future<bool> reopenAccount(String cuentaId, String accountId, double montoOriginal);
 
+  /// Abre todas las cuentas (billings) de un periodo en una sola operación
+  /// [periodo] - Periodo en formato YYYYMM
+  /// Retorna la lista de cuentas abiertas
+  Future<List<Cuenta>> abrirPeriodo(String periodo);
+
   /// Agrega una cuenta individual (billing) para una cuenta específica
   /// [accountId] - ID de la cuenta
   /// [monto] - Monto facturado (amount_billed)

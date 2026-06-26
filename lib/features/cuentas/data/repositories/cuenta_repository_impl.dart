@@ -43,6 +43,11 @@ class CuentaRepositoryImpl implements CuentaRepository {
   }
 
   @override
+  Future<List<Cuenta>> abrirPeriodo(String periodo) {
+    return _datasource.abrirPeriodo(periodo);
+  }
+
+  @override
   Future<Cuenta> agregarCuentaIndividual({
     required String accountId,
     required double monto,
