@@ -114,6 +114,41 @@ class CuentaDatasource {
     return billing['is_paid'] != true && (billing['amount_paid'] ?? 0) == 0;
   }
 
+  /// POST /accounts/{accountId}/billings — crea un billing individual para una cuenta
+  Future<Cuenta> agregarCuentaIndividual({
+    required String accountId,
+    required double monto,
+    double montoPagado = 0,
+    String? periodo,
+    String? nombre,
+  }) async {
+    _sanitizarId(accountId);
+
+    if (monto < 0) {
+      throw ArgumentError('El monto no puede ser negativo');
+    }
+
+    final body = <String, dynamic>{
+      'amount_billed': monto,
+      'amount_paid': montoPagado,
+    };
+    if (periodo != null && periodo.isNotEmpty) {
+      body['period'] = periodo;
+    }
+    if (nombre != null && nombre.isNotEmpty) {
+      body['account_name'] = nombre;
+    }
+
+    final response = await _dio.post(
+      '${ApiConfig.baseUrl}/accounts/$accountId/billings',
+      data: body,
+    );
+
+    final data = response.data;
+    final billing = data['billing'] ?? data['data'] ?? data;
+    return _fromJson(billing);
+  }
+
   Cuenta _fromJson(Map<String, dynamic> json) {
     // La API puede devolver: is_paid (bool), status (string: 'paid', 'pending', 'overdue')
     final isPaid = json['is_paid'] as bool? ?? false;

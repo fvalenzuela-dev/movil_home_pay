@@ -131,5 +131,105 @@ void main() {
         );
       });
     });
+
+    group('agregarCuentaIndividual', () {
+      test('delegates to datasource with correct parameters', () async {
+        final cuenta = CuentaFixture.createValidCuenta(
+          id: 'cta_new',
+          accountId: 'acc_123',
+          nombre: 'Netflix',
+          monto: 14990.0,
+          estado: 'pendiente',
+        );
+
+        when(() => mockDatasource.agregarCuentaIndividual(
+          periodo: any(named: 'periodo'),
+          accountId: any(named: 'accountId'),
+          monto: any(named: 'monto'),
+          nombre: any(named: 'nombre'),
+        )).thenAnswer((_) async => cuenta);
+
+        final result = await repository.agregarCuentaIndividual(
+          periodo: '202404',
+          accountId: 'acc_123',
+          monto: 14990.0,
+          nombre: 'Netflix',
+        );
+
+        expect(result.id, equals('cta_new'));
+        expect(result.estado, equals('pendiente'));
+        verify(() => mockDatasource.agregarCuentaIndividual(
+          periodo: '202404',
+          accountId: 'acc_123',
+          monto: 14990.0,
+          nombre: 'Netflix',
+        )).called(1);
+      });
+
+      test('works without optional nombre', () async {
+        final cuenta = CuentaFixture.createValidCuenta(
+          id: 'cta_no_name',
+          accountId: 'acc_456',
+          nombre: 'acc_456',
+        );
+
+        when(() => mockDatasource.agregarCuentaIndividual(
+          periodo: any(named: 'periodo'),
+          accountId: any(named: 'accountId'),
+          monto: any(named: 'monto'),
+          nombre: any(named: 'nombre'),
+        )).thenAnswer((_) async => cuenta);
+
+        final result = await repository.agregarCuentaIndividual(
+          periodo: '202404',
+          accountId: 'acc_456',
+          monto: 5000.0,
+        );
+
+        expect(result.id, equals('cta_no_name'));
+        verify(() => mockDatasource.agregarCuentaIndividual(
+          periodo: '202404',
+          accountId: 'acc_456',
+          monto: 5000.0,
+          nombre: null,
+        )).called(1);
+      });
+
+      test('forwards exceptions from datasource', () async {
+        when(() => mockDatasource.agregarCuentaIndividual(
+          periodo: any(named: 'periodo'),
+          accountId: any(named: 'accountId'),
+          monto: any(named: 'monto'),
+          nombre: any(named: 'nombre'),
+        )).thenThrow(Exception('Network error'));
+
+        expect(
+          () => repository.agregarCuentaIndividual(
+            periodo: '202404',
+            accountId: 'acc_123',
+            monto: 10000.0,
+          ),
+          throwsA(isA<Exception>()),
+        );
+      });
+
+      test('forwards DioException on duplicate account', () async {
+        when(() => mockDatasource.agregarCuentaIndividual(
+          periodo: any(named: 'periodo'),
+          accountId: any(named: 'accountId'),
+          monto: any(named: 'monto'),
+          nombre: any(named: 'nombre'),
+        )).thenThrow(Exception('Duplicate'));
+
+        expect(
+          () => repository.agregarCuentaIndividual(
+            periodo: '202404',
+            accountId: 'acc_duplicate',
+            monto: 10000.0,
+          ),
+          throwsA(isA<Exception>()),
+        );
+      });
+    });
   });
 }

@@ -19,4 +19,18 @@ abstract class CuentaRepository {
   /// [accountId] - ID de la cuenta
   /// [montoOriginal] - El monto facturado original (amount_billed) que se preserva
   Future<bool> reopenAccount(String cuentaId, String accountId, double montoOriginal);
+
+  /// Agrega una cuenta individual (billing) para una cuenta específica
+  /// [accountId] - ID de la cuenta
+  /// [monto] - Monto facturado (amount_billed)
+  /// [montoPagado] - Monto pagado (default: 0)
+  /// [periodo] - Periodo opcional en formato YYYYMM (envía en body si se provee)
+  /// [nombre] - Nombre opcional de la cuenta
+  Future<Cuenta> agregarCuentaIndividual({
+    required String accountId,
+    required double monto,
+    double montoPagado = 0,
+    String? periodo,
+    String? nombre,
+  });
 }

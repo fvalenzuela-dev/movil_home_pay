@@ -183,5 +183,64 @@ void main() {
         isA<ReopenFailure>(),
       ],
     );
+
+    group('AgregarCuentaIndividualRequested', () {
+      blocTest<CuentasBloc, CuentasState>(
+        'emits [CuentasLoading, CuentasLoaded] when add account succeeds and reloads cuentas',
+        setUp: () {
+          when(() => mockRepository.agregarCuentaIndividual(
+            periodo: any(named: 'periodo'),
+            accountId: any(named: 'accountId'),
+            monto: any(named: 'monto'),
+            nombre: any(named: 'nombre'),
+          )).thenAnswer((_) async => testCuenta);
+          when(() => mockRepository.getCuentasPorPeriodo(any()))
+              .thenAnswer((_) async => [testCuenta]);
+        },
+        build: () => CuentasBloc(mockRepository),
+        act: (bloc) => bloc.add(const AgregarCuentaIndividualRequested(
+          periodo: '202604',
+          accountId: 'acc-1',
+          monto: 15000,
+          nombre: 'Netflix',
+        )),
+        expect: () => [
+          isA<CuentasLoading>(),
+          isA<CuentasLoaded>(),
+        ],
+        verify: (_) {
+          verify(() => mockRepository.agregarCuentaIndividual(
+            periodo: '202604',
+            accountId: 'acc-1',
+            monto: 15000,
+            nombre: 'Netflix',
+          )).called(1);
+          verify(() => mockRepository.getCuentasPorPeriodo('202604')).called(1);
+        },
+      );
+
+      blocTest<CuentasBloc, CuentasState>(
+        'emits [CuentasLoading, CuentaAgregadaFailure] when add account fails',
+        setUp: () {
+          when(() => mockRepository.agregarCuentaIndividual(
+            periodo: any(named: 'periodo'),
+            accountId: any(named: 'accountId'),
+            monto: any(named: 'monto'),
+            nombre: any(named: 'nombre'),
+          )).thenThrow(Exception('Account already exists'));
+        },
+        build: () => CuentasBloc(mockRepository),
+        act: (bloc) => bloc.add(const AgregarCuentaIndividualRequested(
+          periodo: '202604',
+          accountId: 'acc-1',
+          monto: 15000,
+          nombre: 'Netflix',
+        )),
+        expect: () => [
+          isA<CuentasLoading>(),
+          isA<CuentaAgregadaFailure>(),
+        ],
+      );
+    });
   });
 }
