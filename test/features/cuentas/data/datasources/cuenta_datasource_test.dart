@@ -136,7 +136,7 @@ void main() {
     });
 
     group('getDetalle', () {
-      test('calls direct endpoint /accounts/{accountId}/billings/{billingId}', () async {
+      test('calls direct endpoint /billings/{billingId}', () async {
         final cuentaJson = {
           'id': 'cta_direct',
           'account_id': 'acc_123',
@@ -155,41 +155,33 @@ void main() {
           options: any(named: 'options'),
           cancelToken: any(named: 'cancelToken'),
         )).thenAnswer((_) async => Response(
-          requestOptions: RequestOptions(path: ApiConfig.accountBillingUrl('acc_123', 'cta_direct')),
+          requestOptions: RequestOptions(path: ApiConfig.billingUrl('cta_direct')),
           statusCode: 200,
           data: responseData,
         ));
 
-        final result = await datasource.getDetalle('acc_123', 'cta_direct');
+        final result = await datasource.getDetalle('cta_direct');
 
         expect(result.id, equals('cta_direct'));
         expect(result.nombre, equals('Direct Service'));
-      });
-
-      test('throws ArgumentError for invalid accountId characters', () async {
-        expect(
-          () => datasource.getDetalle('acc@invalid!', 'cta_001'),
-          throwsA(isA<ArgumentError>()),
-        );
+        verify(() => mockDio.get(
+          ApiConfig.billingUrl('cta_direct'),
+          queryParameters: any(named: 'queryParameters'),
+          options: any(named: 'options'),
+          cancelToken: any(named: 'cancelToken'),
+        )).called(1);
       });
 
       test('throws ArgumentError for invalid cuentaId characters', () async {
         expect(
-          () => datasource.getDetalle('acc_123', 'cta@invalid!'),
-          throwsA(isA<ArgumentError>()),
-        );
-      });
-
-      test('throws ArgumentError for empty accountId', () async {
-        expect(
-          () => datasource.getDetalle('', 'cta_001'),
+          () => datasource.getDetalle('cta@invalid!'),
           throwsA(isA<ArgumentError>()),
         );
       });
 
       test('throws ArgumentError for empty cuentaId', () async {
         expect(
-          () => datasource.getDetalle('acc_123', ''),
+          () => datasource.getDetalle(''),
           throwsA(isA<ArgumentError>()),
         );
       });
@@ -208,19 +200,52 @@ void main() {
           options: any(named: 'options'),
           cancelToken: any(named: 'cancelToken'),
         )).thenAnswer((_) async => Response(
-          requestOptions: RequestOptions(path: '${ApiConfig.baseUrl}/accounts/acc_123/billings/cta_001'),
+          requestOptions: RequestOptions(path: ApiConfig.billingUrl('cta_001')),
           statusCode: 200,
           data: responseData,
         ));
 
         final result = await datasource.registrarPago(
           'cta_001',
-          'acc_123',
           15000.0,
           15000.0,
         );
 
         expect(result, isTrue);
+      });
+
+      test('hits /billings/{id} with is_paid and paid_at when fully paid', () async {
+        final responseData = {
+          'billing': {'is_paid': true},
+        };
+
+        when(() => mockDio.put(
+          any(),
+          data: any(named: 'data'),
+          queryParameters: any(named: 'queryParameters'),
+          options: any(named: 'options'),
+          cancelToken: any(named: 'cancelToken'),
+        )).thenAnswer((_) async => Response(
+          requestOptions: RequestOptions(path: ApiConfig.billingUrl('cta_001')),
+          statusCode: 200,
+          data: responseData,
+        ));
+
+        await datasource.registrarPago('cta_001', 15000.0, 15000.0);
+
+        verify(() => mockDio.put(
+          ApiConfig.billingUrl('cta_001'),
+          data: predicate<Map<String, dynamic>>((data) {
+            expect(data['amount_billed'], equals(15000.0));
+            expect(data['amount_paid'], equals(15000.0));
+            expect(data['is_paid'], equals(true));
+            expect(data['paid_at'], isA<String>());
+            return true;
+          }),
+          queryParameters: any(named: 'queryParameters'),
+          options: any(named: 'options'),
+          cancelToken: any(named: 'cancelToken'),
+        )).called(1);
       });
 
       test('returns false when is_paid is false', () async {
@@ -235,14 +260,13 @@ void main() {
           options: any(named: 'options'),
           cancelToken: any(named: 'cancelToken'),
         )).thenAnswer((_) async => Response(
-          requestOptions: RequestOptions(path: '${ApiConfig.baseUrl}/accounts/acc_123/billings/cta_001'),
+          requestOptions: RequestOptions(path: ApiConfig.billingUrl('cta_001')),
           statusCode: 200,
           data: responseData,
         ));
 
         final result = await datasource.registrarPago(
           'cta_001',
-          'acc_123',
           15000.0,
           10000.0,
         );
@@ -250,30 +274,62 @@ void main() {
         expect(result, isFalse);
       });
 
+      test('omits paid_at when payment is partial', () async {
+        final responseData = {
+          'billing': {'is_paid': false},
+        };
+
+        when(() => mockDio.put(
+          any(),
+          data: any(named: 'data'),
+          queryParameters: any(named: 'queryParameters'),
+          options: any(named: 'options'),
+          cancelToken: any(named: 'cancelToken'),
+        )).thenAnswer((_) async => Response(
+          requestOptions: RequestOptions(path: ApiConfig.billingUrl('cta_001')),
+          statusCode: 200,
+          data: responseData,
+        ));
+
+        await datasource.registrarPago('cta_001', 15000.0, 10000.0);
+
+        verify(() => mockDio.put(
+          ApiConfig.billingUrl('cta_001'),
+          data: predicate<Map<String, dynamic>>((data) {
+            expect(data['is_paid'], equals(false));
+            expect(data.containsKey('paid_at'), isFalse);
+            return true;
+          }),
+          queryParameters: any(named: 'queryParameters'),
+          options: any(named: 'options'),
+          cancelToken: any(named: 'cancelToken'),
+        )).called(1);
+      });
+
       test('throws ArgumentError for negative montoTotal', () async {
         expect(
-          () => datasource.registrarPago('cta_001', 'acc_123', -100.0, 0.0),
+          () => datasource.registrarPago('cta_001', -100.0, 0.0),
           throwsA(isA<ArgumentError>()),
         );
       });
 
       test('throws ArgumentError for negative montoPagado', () async {
         expect(
-          () => datasource.registrarPago('cta_001', 'acc_123', 100.0, -50.0),
+          () => datasource.registrarPago('cta_001', 100.0, -50.0),
           throwsA(isA<ArgumentError>()),
         );
       });
 
       test('throws ArgumentError for empty cuentaId', () async {
         expect(
-          () => datasource.registrarPago('', 'acc_123', 100.0, 100.0),
+          () => datasource.registrarPago('', 100.0, 100.0),
           throwsA(isA<ArgumentError>()),
         );
       });
 
       test('throws ArgumentError for invalid cuentaId characters', () async {
         expect(
-          () => datasource.registrarPago('cta@invalid!', 'acc_123', 100.0, 100.0),
+          () => datasource.registrarPago('cta@invalid!', 100.0, 100.0),
           throwsA(isA<ArgumentError>()),
         );
       });
@@ -292,21 +348,20 @@ void main() {
           options: any(named: 'options'),
           cancelToken: any(named: 'cancelToken'),
         )).thenAnswer((_) async => Response(
-          requestOptions: RequestOptions(path: '${ApiConfig.baseUrl}/accounts/acc_123/billings/cta_001'),
+          requestOptions: RequestOptions(path: ApiConfig.billingUrl('cta_001')),
           statusCode: 200,
           data: responseData,
         ));
 
         final result = await datasource.reopenAccount(
           'cta_001',
-          'acc_123',
           15000.0,
         );
 
         expect(result, isTrue);
       });
 
-      test('sends correct payload with amount_billed, amount_paid=0, is_paid=false', () async {
+      test('sends correct payload with amount_billed, amount_paid=0, is_paid=false, paid_at=null', () async {
         final responseData = {
           'billing': {'is_paid': false, 'amount_paid': 0},
         };
@@ -318,19 +373,20 @@ void main() {
           options: any(named: 'options'),
           cancelToken: any(named: 'cancelToken'),
         )).thenAnswer((_) async => Response(
-          requestOptions: RequestOptions(path: '${ApiConfig.baseUrl}/accounts/acc_123/billings/cta_001'),
+          requestOptions: RequestOptions(path: ApiConfig.billingUrl('cta_001')),
           statusCode: 200,
           data: responseData,
         ));
 
-        await datasource.reopenAccount('cta_001', 'acc_123', 15000.0);
+        await datasource.reopenAccount('cta_001', 15000.0);
 
         verify(() => mockDio.put(
-          any(),
+          ApiConfig.billingUrl('cta_001'),
           data: predicate<Map<String, dynamic>>((data) {
             expect(data['amount_billed'], equals(15000.0));
             expect(data['amount_paid'], equals(0));
             expect(data['is_paid'], equals(false));
+            expect(data['paid_at'], isNull);
             return true;
           }),
           queryParameters: any(named: 'queryParameters'),
@@ -351,14 +407,13 @@ void main() {
           options: any(named: 'options'),
           cancelToken: any(named: 'cancelToken'),
         )).thenAnswer((_) async => Response(
-          requestOptions: RequestOptions(path: '${ApiConfig.baseUrl}/accounts/acc_123/billings/cta_001'),
+          requestOptions: RequestOptions(path: ApiConfig.billingUrl('cta_001')),
           statusCode: 200,
           data: responseData,
         ));
 
         final result = await datasource.reopenAccount(
           'cta_001',
-          'acc_123',
           15000.0,
         );
 
@@ -367,21 +422,21 @@ void main() {
 
       test('throws ArgumentError for negative montoOriginal', () async {
         expect(
-          () => datasource.reopenAccount('cta_001', 'acc_123', -100.0),
+          () => datasource.reopenAccount('cta_001', -100.0),
           throwsA(isA<ArgumentError>()),
         );
       });
 
       test('throws ArgumentError for empty cuentaId', () async {
         expect(
-          () => datasource.reopenAccount('', 'acc_123', 15000.0),
+          () => datasource.reopenAccount('', 15000.0),
           throwsA(isA<ArgumentError>()),
         );
       });
 
       test('throws ArgumentError for invalid cuentaId characters', () async {
         expect(
-          () => datasource.reopenAccount('cta@invalid!', 'acc_123', 15000.0),
+          () => datasource.reopenAccount('cta@invalid!', 15000.0),
           throwsA(isA<ArgumentError>()),
         );
       });

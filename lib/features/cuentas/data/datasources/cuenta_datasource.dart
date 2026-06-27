@@ -81,57 +81,60 @@ class CuentaDatasource {
         .toList();
   }
 
-  /// GET /accounts/{accountId}/billings/{billingId} — direct endpoint
-  Future<Cuenta> getDetalle(String accountId, String cuentaId) async {
-    _sanitizarId(accountId);
+  /// GET /billings/{billingId} — direct endpoint
+  Future<Cuenta> getDetalle(String cuentaId) async {
     _sanitizarId(cuentaId);
 
     final response = await _dio.get(
-      ApiConfig.accountBillingUrl(accountId, cuentaId),
+      ApiConfig.billingUrl(cuentaId),
     );
     final data = response.data;
     final billing = data['billing'] ?? data['data'] ?? data;
     return _fromJson(billing);
   }
 
-  /// PUT /accounts/{accountID}/billings/{id} — registra un pago
+  /// PUT /billings/{id} — registra un pago
   Future<bool> registrarPago(
     String cuentaId,
-    String accountId,
     double montoTotal,
     double montoPagado,
   ) async {
     _sanitizarId(cuentaId);
-    _sanitizarId(accountId);
 
     if (montoTotal < 0 || montoPagado < 0) {
       throw ArgumentError('Los montos no pueden ser negativos');
     }
 
+    final isPaid = montoPagado >= montoTotal;
     final response = await _dio.put(
-      '${ApiConfig.baseUrl}/accounts/$accountId/billings/$cuentaId',
-      data: {'amount_billed': montoTotal, 'amount_paid': montoPagado},
+      ApiConfig.billingUrl(cuentaId),
+      data: {
+        'amount_billed': montoTotal,
+        'amount_paid': montoPagado,
+        'is_paid': isPaid,
+        if (isPaid) 'paid_at': DateTime.now().toUtc().toIso8601String(),
+      },
     );
     final billing = response.data['billing'] ?? response.data;
     return billing['is_paid'] == true;
   }
 
-  /// PUT /accounts/{accountID}/billings/{id} — reabre una cuenta pagada
+  /// PUT /billings/{id} — reabre una cuenta pagada
   /// Resetea amount_paid a 0 y is_paid a false para marcar como no pagada
-  Future<bool> reopenAccount(String cuentaId, String accountId, double montoOriginal) async {
+  Future<bool> reopenAccount(String cuentaId, double montoOriginal) async {
     _sanitizarId(cuentaId);
-    _sanitizarId(accountId);
 
     if (montoOriginal < 0) {
       throw ArgumentError('El monto no puede ser negativo');
     }
 
     final response = await _dio.put(
-      '${ApiConfig.baseUrl}/accounts/$accountId/billings/$cuentaId',
+      ApiConfig.billingUrl(cuentaId),
       data: {
         'amount_billed': montoOriginal,
         'amount_paid': 0,
         'is_paid': false,
+        'paid_at': null,
       },
     );
     final billing = response.data['billing'] ?? response.data;
