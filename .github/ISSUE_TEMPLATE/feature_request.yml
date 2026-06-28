@@ -1,0 +1,82 @@
+name: Solicitud de funcionalidad
+description: Proponé una nueva funcionalidad o mejora para Home Pay
+labels: ["✨ enhancement", "🔍 status:needs-review"]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 📋 Cómo funciona
+
+        1. **Enviá** esta solicitud de feature → recibirá automáticamente la etiqueta `🔍 status:needs-review`
+        2. Una persona mantenedora la revisará y agregará `status:approved` (o la cerrará como fuera de alcance/duplicada)
+        3. **Recién entonces** deberías abrir un PR para implementarla
+
+        Los PRs que implementen features sin `status:approved` en el issue vinculado serán rechazados automáticamente.
+
+  - type: checkboxes
+    id: preflight
+    attributes:
+      label: Checklist previa
+      options:
+        - label: Busqué en los issues existentes y esto no es un duplicado
+          required: true
+        - label: Entiendo que los PRs serán rechazados si el issue vinculado no tiene `status:approved`
+          required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: 🔍 Área afectada
+      description: ¿Qué parte de la app afectaría esta funcionalidad?
+      options:
+        - Autenticación / sesión
+        - Pago Mensual (cuentas / billings)
+        - Empresas
+        - Administración
+        - Navegación / UI general
+        - Configuración / proyecto
+        - Otro
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: 💡 Problema
+      description: ¿Tu solicitud está relacionada con un problema? Describilo con claridad.
+      placeholder: |
+        Me frustra cuando...
+        Actualmente no es posible...
+        Cada vez que necesito hacer X, tengo que hacerlo manualmente...
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: 📦 Solución propuesta
+      description: Describí la solución que te gustaría. Sé lo más específico posible.
+      placeholder: |
+        Como usuario quiero...
+        En la pantalla X debería poder...
+        Comportamiento esperado:
+          ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: 🔄 Alternativas consideradas
+      description: Describí otras soluciones o features que hayas considerado.
+    validations:
+      required: false
+
+  - type: textarea
+    id: context
+    attributes:
+      label: 📎 Contexto adicional
+      description: Agregá cualquier otro contexto, capturas o ejemplos sobre esta solicitud.
+    validations:
+      required: false
