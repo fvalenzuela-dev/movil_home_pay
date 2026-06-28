@@ -551,7 +551,7 @@ child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        cuenta.nombre,
+                        cuenta.nombreDisplay,
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,

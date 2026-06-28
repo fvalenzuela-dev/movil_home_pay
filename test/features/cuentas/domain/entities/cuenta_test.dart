@@ -95,7 +95,7 @@ void main() {
       );
 
       expect(cuenta.nombreDisplay, isNot(contains(cuenta.accountId)));
-      expect(cuenta.nombreDisplay, equals('Cuenta sin nombre'));
+      expect(cuenta.nombreDisplay, equals('Pago mensual'));
     });
 
     test('different cuentas are not equal', () {

@@ -81,7 +81,7 @@ void main() {
       await pumpDetalle(tester, cuenta);
 
       expect(find.text(cuenta.accountId), findsNothing);
-      expect(find.text('Cuenta sin nombre'), findsOneWidget);
+      expect(find.text('Pago mensual'), findsOneWidget);
     });
 
     testWidgets('account icon uses the brand color (Netflix red), matching the list',

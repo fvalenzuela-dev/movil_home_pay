@@ -27,7 +27,9 @@ class Cuenta extends Equatable {
 
   /// Human-readable name for display. Falls back to a friendly placeholder
   /// instead of exposing the internal identifier when no name is available.
-  String get nombreDisplay => nombre.isNotEmpty ? nombre : 'Cuenta sin nombre';
+  /// Each cuenta is a monthly billing, so "Pago mensual" reads better than a
+  /// generic "no name" label.
+  String get nombreDisplay => nombre.isNotEmpty ? nombre : 'Pago mensual';
 
   @override
   List<Object?> get props =>
