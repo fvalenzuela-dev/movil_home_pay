@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/auth/token_provider.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../bloc/cuentas_bloc.dart';
+import '../cuenta_visuals.dart';
 
 /// Lista de cuentas page - Stitch Design
 class ListaCuentasPage extends StatefulWidget {
@@ -629,37 +630,9 @@ child: Column(
     );
   }
 
-  IconData _getCategoryIcon(String nombre) {
-    final lower = nombre.toLowerCase();
-    if (lower.contains('electricidad') || lower.contains('luz')) {
-      return Icons.bolt;
-    } else if (lower.contains('agua')) {
-      return Icons.water_drop;
-    } else if (lower.contains('internet') || lower.contains('wifi')) {
-      return Icons.router;
-    } else if (lower.contains('telefono') || lower.contains('movil')) {
-      return Icons.smartphone;
-    } else if (lower.contains('streaming') || lower.contains('netflix')) {
-      return Icons.subscriptions;
-    }
-    return Icons.receipt_long;
-  }
+  IconData _getCategoryIcon(String nombre) => cuentaIconFor(nombre);
 
-  Color _getCategoryColor(String nombre) {
-    final lower = nombre.toLowerCase();
-    if (lower.contains('electricidad') || lower.contains('luz')) {
-      return const Color(0xFFF59E0B); // orange
-    } else if (lower.contains('agua')) {
-      return AppTheme.primarySeed; // blue
-    } else if (lower.contains('internet') || lower.contains('wifi')) {
-      return const Color(0xFF6366F1); // indigo
-    } else if (lower.contains('telefono') || lower.contains('movil')) {
-      return const Color(0xFF8B5CF6); // purple
-    } else if (lower.contains('streaming') || lower.contains('netflix')) {
-      return const Color(0xFFEF4444); // red
-    }
-    return AppTheme.primarySeed;
-  }
+  Color _getCategoryColor(String nombre) => cuentaColorFor(nombre);
 
   void _onStateChanged(BuildContext context, CuentasState state) {
     if (state is AbrirPeriodoSuccess) {

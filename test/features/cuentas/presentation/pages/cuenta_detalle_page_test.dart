@@ -84,25 +84,26 @@ void main() {
       expect(find.text('Cuenta sin nombre'), findsOneWidget);
     });
 
-    testWidgets('account icon keeps its color inside a styled container', (tester) async {
+    testWidgets('account icon uses the brand color (Netflix red), matching the list',
+        (tester) async {
       final cuenta = CuentaFixture.createValidCuenta(nombre: 'Netflix');
 
       await pumpDetalle(tester, cuenta);
 
-      final scheme = AppTheme.lightTheme.colorScheme;
-      final iconFinder = find.byIcon(Icons.receipt_long);
+      const brandRed = Color(0xFFEF4444);
+      final iconFinder = find.byIcon(Icons.subscriptions);
       expect(iconFinder, findsOneWidget);
 
-      // Icon is tinted with the on-container color (not left colorless).
+      // Glyph is tinted with the brand color (not the washed-out theme color).
       final icon = tester.widget<Icon>(iconFinder);
-      expect(icon.color, equals(scheme.onPrimaryContainer));
+      expect(icon.color, equals(brandRed));
 
-      // Icon sits inside a colored container, matching the account card style.
+      // Icon sits inside a container tinted with the same brand color.
       final containerFinder =
           find.ancestor(of: iconFinder, matching: find.byType(Container)).first;
       final decoration =
           tester.widget<Container>(containerFinder).decoration as BoxDecoration;
-      expect(decoration.color, equals(scheme.primaryContainer));
+      expect(decoration.color, equals(brandRed.withValues(alpha: 0.1)));
     });
 
     testWidgets('renders the paid date using the yyyy-MM-dd format', (tester) async {

@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/date_formatter.dart';
+import '../cuenta_visuals.dart';
 import '../../domain/entities/cuenta.dart';
 import '../bloc/cuentas_bloc.dart';
 import '../widgets/estado_badge.dart';
@@ -141,13 +142,14 @@ class _CuentaDetallePageState extends State<CuentaDetallePage> {
                         width: 56,
                         height: 56,
                         decoration: BoxDecoration(
-                          color: theme.colorScheme.primaryContainer,
+                          color: cuentaColorFor(cuenta.nombre)
+                              .withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Icon(
-                          _getIcon(cuenta.nombre),
+                          cuentaIconFor(cuenta.nombre),
                           size: 28,
-                          color: theme.colorScheme.onPrimaryContainer,
+                          color: cuentaColorFor(cuenta.nombre),
                         ),
                       ),
                       const SizedBox(width: 16),
@@ -323,26 +325,6 @@ class _CuentaDetallePageState extends State<CuentaDetallePage> {
         montoPagado,
       ),
     );
-  }
-
-  IconData _getIcon(String nombre) {
-    final lower = nombre.toLowerCase();
-    if (lower.contains('luz') || lower.contains('electricidad')) {
-      return Icons.bolt;
-    }
-    if (lower.contains('agua')) {
-      return Icons.water_drop;
-    }
-    if (lower.contains('internet') || lower.contains('wifi')) {
-      return Icons.wifi;
-    }
-    if (lower.contains('gas')) {
-      return Icons.local_fire_department;
-    }
-    if (lower.contains('telefono') || lower.contains('celular')) {
-      return Icons.phone_android;
-    }
-    return Icons.receipt_long;
   }
 
   Future<void> _showReopenConfirmation(BuildContext context, Cuenta cuenta) async {
