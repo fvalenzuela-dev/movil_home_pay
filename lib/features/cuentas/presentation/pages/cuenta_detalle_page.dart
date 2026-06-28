@@ -137,10 +137,18 @@ class _CuentaDetallePageState extends State<CuentaDetallePage> {
                 children: [
                   Row(
                     children: [
-                      Icon(
-                        _getIcon(cuenta.nombre),
-                        size: 40,
-                        color: theme.colorScheme.primary,
+                      Container(
+                        width: 56,
+                        height: 56,
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.primaryContainer,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Icon(
+                          _getIcon(cuenta.nombre),
+                          size: 28,
+                          color: theme.colorScheme.onPrimaryContainer,
+                        ),
                       ),
                       const SizedBox(width: 16),
                       Expanded(

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:movil_home_pay/core/theme/app_theme.dart';
 import 'package:movil_home_pay/features/cuentas/domain/entities/cuenta.dart';
 import 'package:movil_home_pay/features/cuentas/domain/repositories/cuenta_repository.dart';
 import 'package:movil_home_pay/features/cuentas/presentation/bloc/cuentas_bloc.dart';
@@ -60,7 +61,10 @@ void main() {
     await tester.pumpWidget(
       BlocProvider<CuentasBloc>.value(
         value: bloc,
-        child: MaterialApp.router(routerConfig: router),
+        child: MaterialApp.router(
+          routerConfig: router,
+          theme: AppTheme.lightTheme,
+        ),
       ),
     );
     await tester.pumpAndSettle();
@@ -78,6 +82,27 @@ void main() {
 
       expect(find.text(cuenta.accountId), findsNothing);
       expect(find.text('Cuenta sin nombre'), findsOneWidget);
+    });
+
+    testWidgets('account icon keeps its color inside a styled container', (tester) async {
+      final cuenta = CuentaFixture.createValidCuenta(nombre: 'Netflix');
+
+      await pumpDetalle(tester, cuenta);
+
+      final scheme = AppTheme.lightTheme.colorScheme;
+      final iconFinder = find.byIcon(Icons.receipt_long);
+      expect(iconFinder, findsOneWidget);
+
+      // Icon is tinted with the on-container color (not left colorless).
+      final icon = tester.widget<Icon>(iconFinder);
+      expect(icon.color, equals(scheme.onPrimaryContainer));
+
+      // Icon sits inside a colored container, matching the account card style.
+      final containerFinder =
+          find.ancestor(of: iconFinder, matching: find.byType(Container)).first;
+      final decoration =
+          tester.widget<Container>(containerFinder).decoration as BoxDecoration;
+      expect(decoration.color, equals(scheme.primaryContainer));
     });
 
     testWidgets('renders the paid date using the yyyy-MM-dd format', (tester) async {
