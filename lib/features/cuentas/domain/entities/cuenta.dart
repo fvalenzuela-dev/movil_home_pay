@@ -25,6 +25,12 @@ class Cuenta extends Equatable {
   bool get isPaid => estado == 'pagada';
   double get saldo => monto - montoPagado;
 
+  /// Human-readable name for display. Falls back to a friendly placeholder
+  /// instead of exposing the internal identifier when no name is available.
+  /// Each cuenta is a monthly billing, so "Pago mensual" reads better than a
+  /// generic "no name" label.
+  String get nombreDisplay => nombre.isNotEmpty ? nombre : 'Pago mensual';
+
   @override
   List<Object?> get props =>
       [id, accountId, nombre, monto, montoPagado, estado, fechaPago, periodo];

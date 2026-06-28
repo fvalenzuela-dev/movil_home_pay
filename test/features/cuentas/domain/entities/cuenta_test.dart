@@ -69,6 +69,35 @@ void main() {
       expect(cuenta1, equals(cuenta2));
     });
 
+    test('nombreDisplay returns nombre when it is not empty', () {
+      final cuenta = Cuenta(
+        id: '1',
+        accountId: 'acc-1',
+        nombre: 'Netflix',
+        monto: 15000,
+        montoPagado: 0,
+        estado: 'pendiente',
+        periodo: '202604',
+      );
+
+      expect(cuenta.nombreDisplay, equals('Netflix'));
+    });
+
+    test('nombreDisplay returns a placeholder instead of the UUID when nombre is empty', () {
+      final cuenta = Cuenta(
+        id: '1',
+        accountId: '550e8400-e29b-41d4-a716-446655440000',
+        nombre: '',
+        monto: 15000,
+        montoPagado: 0,
+        estado: 'pendiente',
+        periodo: '202604',
+      );
+
+      expect(cuenta.nombreDisplay, isNot(contains(cuenta.accountId)));
+      expect(cuenta.nombreDisplay, equals('Pago mensual'));
+    });
+
     test('different cuentas are not equal', () {
       final cuenta1 = Cuenta(
         id: '1',

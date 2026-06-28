@@ -172,6 +172,35 @@ void main() {
         )).called(1);
       });
 
+      test('leaves nombre empty (does not expose UUID) when account_name is missing', () async {
+        final cuentaJson = {
+          'id': 'cta_noname',
+          'account_id': '550e8400-e29b-41d4-a716-446655440000',
+          'amount_billed': 15000.0,
+          'amount_paid': 0.0,
+          'is_paid': false,
+          'status': 'pending',
+          'period': '202404',
+        };
+        final responseData = {'billing': cuentaJson};
+
+        when(() => mockDio.get(
+          any(),
+          queryParameters: any(named: 'queryParameters'),
+          options: any(named: 'options'),
+          cancelToken: any(named: 'cancelToken'),
+        )).thenAnswer((_) async => Response(
+          requestOptions: RequestOptions(path: ApiConfig.billingUrl('cta_noname')),
+          statusCode: 200,
+          data: responseData,
+        ));
+
+        final result = await datasource.getDetalle('cta_noname');
+
+        expect(result.nombre, isEmpty);
+        expect(result.nombre, isNot(equals(result.accountId)));
+      });
+
       test('throws ArgumentError for invalid cuentaId characters', () async {
         expect(
           () => datasource.getDetalle('cta@invalid!'),

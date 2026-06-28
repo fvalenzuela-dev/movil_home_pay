@@ -195,7 +195,7 @@ class CuentaDatasource {
     return Cuenta(
       id: json['id'] ?? '',
       accountId: json['account_id'] ?? '',
-      nombre: json['account_name'] ?? json['name'] ?? json['account_id'] ?? '',
+      nombre: json['account_name'] ?? json['name'] ?? '',
       monto: (json['amount_billed'] ?? 0).toDouble(),
       montoPagado: (json['amount_paid'] ?? 0).toDouble(),
       estado: estado,
