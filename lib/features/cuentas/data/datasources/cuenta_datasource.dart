@@ -56,57 +56,85 @@ class CuentaDatasource {
     return items.map((json) => _fromJson(json)).toList();
   }
 
-  /// GET /accounts/{accountId}/billings/{billingId} — direct endpoint
-  Future<Cuenta> getDetalle(String accountId, String cuentaId) async {
-    _sanitizarId(accountId);
+  /// Extrae la lista de billings de una respuesta que puede venir envuelta
+  /// en distintos niveles: [...], {billings: [...]}, {data: {billings: [...]}}.
+  static List<dynamic> _extraerBillings(dynamic body) {
+    dynamic node = body;
+    // Desenvuelve hasta 3 niveles de Map buscando la lista bajo claves conocidas.
+    for (var i = 0; i < 3 && node is Map; i++) {
+      node = node['billings'] ?? node['data'] ?? node['items'] ?? node['results'];
+    }
+    if (node is List) return node;
+    if (node is Map<String, dynamic>) return [node]; // respuesta de un solo objeto
+    return const [];
+  }
+
+  /// POST /periods/{period}/open — abre todas las cuentas del periodo
+  Future<List<Cuenta>> abrirPeriodo(String periodo) async {
+    _validarPeriodo(periodo);
+
+    final response = await _dio.post(ApiConfig.periodOpenUrl(periodo));
+
+    final items = _extraerBillings(response.data);
+    return items
+        .map((json) => _fromJson(json as Map<String, dynamic>))
+        .toList();
+  }
+
+  /// GET /billings/{billingId} — direct endpoint
+  Future<Cuenta> getDetalle(String cuentaId) async {
     _sanitizarId(cuentaId);
 
     final response = await _dio.get(
-      ApiConfig.accountBillingUrl(accountId, cuentaId),
+      ApiConfig.billingUrl(cuentaId),
     );
     final data = response.data;
     final billing = data['billing'] ?? data['data'] ?? data;
     return _fromJson(billing);
   }
 
-  /// PUT /accounts/{accountID}/billings/{id} — registra un pago
+  /// PUT /billings/{id} — registra un pago
   Future<bool> registrarPago(
     String cuentaId,
-    String accountId,
     double montoTotal,
     double montoPagado,
   ) async {
     _sanitizarId(cuentaId);
-    _sanitizarId(accountId);
 
     if (montoTotal < 0 || montoPagado < 0) {
       throw ArgumentError('Los montos no pueden ser negativos');
     }
 
+    final isPaid = montoPagado >= montoTotal;
     final response = await _dio.put(
-      '${ApiConfig.baseUrl}/accounts/$accountId/billings/$cuentaId',
-      data: {'amount_billed': montoTotal, 'amount_paid': montoPagado},
+      ApiConfig.billingUrl(cuentaId),
+      data: {
+        'amount_billed': montoTotal,
+        'amount_paid': montoPagado,
+        'is_paid': isPaid,
+        if (isPaid) 'paid_at': DateTime.now().toUtc().toIso8601String(),
+      },
     );
     final billing = response.data['billing'] ?? response.data;
     return billing['is_paid'] == true;
   }
 
-  /// PUT /accounts/{accountID}/billings/{id} — reabre una cuenta pagada
+  /// PUT /billings/{id} — reabre una cuenta pagada
   /// Resetea amount_paid a 0 y is_paid a false para marcar como no pagada
-  Future<bool> reopenAccount(String cuentaId, String accountId, double montoOriginal) async {
+  Future<bool> reopenAccount(String cuentaId, double montoOriginal) async {
     _sanitizarId(cuentaId);
-    _sanitizarId(accountId);
 
     if (montoOriginal < 0) {
       throw ArgumentError('El monto no puede ser negativo');
     }
 
     final response = await _dio.put(
-      '${ApiConfig.baseUrl}/accounts/$accountId/billings/$cuentaId',
+      ApiConfig.billingUrl(cuentaId),
       data: {
         'amount_billed': montoOriginal,
         'amount_paid': 0,
         'is_paid': false,
+        'paid_at': null,
       },
     );
     final billing = response.data['billing'] ?? response.data;

@@ -65,7 +65,7 @@ void main() {
     blocTest<CuentasBloc, CuentasState>(
       'emits [CuentasLoading, CuentaDetalleLoaded] when CuentaDetalleRequested succeeds',
       setUp: () {
-        when(() => mockRepository.getDetalleCuenta(any(), any()))
+        when(() => mockRepository.getDetalleCuenta(any()))
             .thenAnswer((_) async => testCuenta);
       },
       build: () => CuentasBloc(mockRepository),
@@ -76,14 +76,14 @@ void main() {
         isA<CuentaDetalleLoaded>(),
       ],
       verify: (_) {
-        verify(() => mockRepository.getDetalleCuenta('acc-1', '1')).called(1);
+        verify(() => mockRepository.getDetalleCuenta('1')).called(1);
       },
     );
 
     blocTest<CuentasBloc, CuentasState>(
       'emits [CuentasLoading, CuentasError] when CuentaDetalleRequested fails',
       setUp: () {
-        when(() => mockRepository.getDetalleCuenta(any(), any()))
+        when(() => mockRepository.getDetalleCuenta(any()))
             .thenThrow(Exception('Not found'));
       },
       build: () => CuentasBloc(mockRepository),
@@ -98,7 +98,7 @@ void main() {
     blocTest<CuentasBloc, CuentasState>(
       'emits [CuentasLoading, PagoSuccess] when PagoRegistrado succeeds',
       setUp: () {
-        when(() => mockRepository.registrarPago(any(), any(), any(), any()))
+        when(() => mockRepository.registrarPago(any(), any(), any()))
             .thenAnswer((_) async => true);
       },
       build: () => CuentasBloc(mockRepository),
@@ -115,7 +115,6 @@ void main() {
       verify: (_) {
         verify(() => mockRepository.registrarPago(
               '1',
-              'acc-1',
               15000,
               15000,
             )).called(1);
@@ -125,7 +124,7 @@ void main() {
     blocTest<CuentasBloc, CuentasState>(
       'emits [CuentasLoading, PagoFailure] when PagoRegistrado fails',
       setUp: () {
-        when(() => mockRepository.registrarPago(any(), any(), any(), any()))
+        when(() => mockRepository.registrarPago(any(), any(), any()))
             .thenThrow(Exception('Payment failed'));
       },
       build: () => CuentasBloc(mockRepository),
@@ -144,7 +143,7 @@ void main() {
     blocTest<CuentasBloc, CuentasState>(
       'emits [CuentasLoading, ReopenSuccess] when CuentaReopenRequested succeeds',
       setUp: () {
-        when(() => mockRepository.reopenAccount(any(), any(), any()))
+        when(() => mockRepository.reopenAccount(any(), any()))
             .thenAnswer((_) async => true);
       },
       build: () => CuentasBloc(mockRepository),
@@ -160,7 +159,6 @@ void main() {
       verify: (_) {
         verify(() => mockRepository.reopenAccount(
               '1',
-              'acc-1',
               15000,
             )).called(1);
       },
@@ -169,7 +167,7 @@ void main() {
     blocTest<CuentasBloc, CuentasState>(
       'emits [CuentasLoading, ReopenFailure] when CuentaReopenRequested fails',
       setUp: () {
-        when(() => mockRepository.reopenAccount(any(), any(), any()))
+        when(() => mockRepository.reopenAccount(any(), any()))
             .thenThrow(Exception('Reopen failed'));
       },
       build: () => CuentasBloc(mockRepository),
@@ -239,6 +237,42 @@ void main() {
         expect: () => [
           isA<CuentasLoading>(),
           isA<CuentaAgregadaFailure>(),
+        ],
+      );
+    });
+
+    group('AbrirPeriodoRequested', () {
+      blocTest<CuentasBloc, CuentasState>(
+        'emits [CuentasLoading, AbrirPeriodoSuccess, CuentasLoaded] when open period succeeds',
+        setUp: () {
+          when(() => mockRepository.abrirPeriodo(any()))
+              .thenAnswer((_) async => [testCuenta, testCuenta]);
+        },
+        build: () => CuentasBloc(mockRepository),
+        act: (bloc) => bloc.add(const AbrirPeriodoRequested('202604')),
+        expect: () => [
+          isA<CuentasLoading>(),
+          isA<AbrirPeriodoSuccess>()
+              .having((s) => s.cantidad, 'cantidad', 2),
+          isA<CuentasLoaded>()
+              .having((s) => s.periodo, 'periodo', '202604'),
+        ],
+        verify: (_) {
+          verify(() => mockRepository.abrirPeriodo('202604')).called(1);
+        },
+      );
+
+      blocTest<CuentasBloc, CuentasState>(
+        'emits [CuentasLoading, AbrirPeriodoFailure] when open period fails',
+        setUp: () {
+          when(() => mockRepository.abrirPeriodo(any()))
+              .thenThrow(Exception('Server error'));
+        },
+        build: () => CuentasBloc(mockRepository),
+        act: (bloc) => bloc.add(const AbrirPeriodoRequested('202604')),
+        expect: () => [
+          isA<CuentasLoading>(),
+          isA<AbrirPeriodoFailure>(),
         ],
       );
     });

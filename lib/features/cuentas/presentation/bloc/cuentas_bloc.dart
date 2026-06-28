@@ -74,6 +74,13 @@ class AgregarCuentaIndividualRequested extends CuentasEvent {
   List<Object?> get props => [accountId, monto, montoPagado, periodo, nombre];
 }
 
+class AbrirPeriodoRequested extends CuentasEvent {
+  final String periodo;
+  const AbrirPeriodoRequested(this.periodo);
+  @override
+  List<Object?> get props => [periodo];
+}
+
 // States
 abstract class CuentasState extends Equatable {
   const CuentasState();
@@ -135,6 +142,20 @@ class CuentaAgregadaFailure extends CuentasState {
   List<Object?> get props => [message];
 }
 
+class AbrirPeriodoSuccess extends CuentasState {
+  final int cantidad;
+  const AbrirPeriodoSuccess(this.cantidad);
+  @override
+  List<Object?> get props => [cantidad];
+}
+
+class AbrirPeriodoFailure extends CuentasState {
+  final String message;
+  const AbrirPeriodoFailure(this.message);
+  @override
+  List<Object?> get props => [message];
+}
+
 class CuentasError extends CuentasState {
   final String message;
   const CuentasError(this.message);
@@ -152,6 +173,7 @@ class CuentasBloc extends Bloc<CuentasEvent, CuentasState> {
     on<PagoRegistrado>(_onPagoRegistrado);
     on<CuentaReopenRequested>(_onReopenRequested);
     on<AgregarCuentaIndividualRequested>(_onAgregarCuentaIndividualRequested);
+    on<AbrirPeriodoRequested>(_onAbrirPeriodoRequested);
   }
 
   Future<void> _onLoadRequested(
@@ -173,30 +195,11 @@ class CuentasBloc extends Bloc<CuentasEvent, CuentasState> {
   ) async {
     emit(CuentasLoading());
     try {
-      final accountId = _deriveAccountId(event.cuentaId) ?? event.accountId;
-      final cuenta = await _repository.getDetalleCuenta(
-        accountId,
-        event.cuentaId,
-      );
+      final cuenta = await _repository.getDetalleCuenta(event.cuentaId);
       emit(CuentaDetalleLoaded(cuenta));
     } catch (e) {
       emit(CuentasError(e.toString()));
     }
-  }
-
-  String? _deriveAccountId(String cuentaId) {
-    final currentState = state;
-    if (currentState is CuentasLoaded) {
-      try {
-        final cuenta = currentState.cuentas.firstWhere(
-          (c) => c.id == cuentaId,
-        );
-        return cuenta.accountId;
-      } catch (_) {
-        return null;
-      }
-    }
-    return null;
   }
 
   Future<void> _onPagoRegistrado(
@@ -207,7 +210,6 @@ class CuentasBloc extends Bloc<CuentasEvent, CuentasState> {
     try {
       await _repository.registrarPago(
         event.cuentaId,
-        event.accountId,
         event.montoTotal,
         event.montoPagado,
       );
@@ -225,7 +227,6 @@ class CuentasBloc extends Bloc<CuentasEvent, CuentasState> {
     try {
       await _repository.reopenAccount(
         event.cuentaId,
-        event.accountId,
         event.montoOriginal,
       );
       emit(ReopenSuccess(event.cuentaId));
@@ -258,6 +259,20 @@ class CuentasBloc extends Bloc<CuentasEvent, CuentasState> {
       }
     } catch (e) {
       emit(CuentaAgregadaFailure(e.toString()));
+    }
+  }
+
+  Future<void> _onAbrirPeriodoRequested(
+    AbrirPeriodoRequested event,
+    Emitter<CuentasState> emit,
+  ) async {
+    emit(CuentasLoading());
+    try {
+      final cuentas = await _repository.abrirPeriodo(event.periodo);
+      emit(AbrirPeriodoSuccess(cuentas.length));
+      emit(CuentasLoaded(cuentas, event.periodo));
+    } catch (e) {
+      emit(AbrirPeriodoFailure(e.toString()));
     }
   }
 

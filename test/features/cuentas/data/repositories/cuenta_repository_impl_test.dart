@@ -55,24 +55,24 @@ void main() {
     });
 
     group('getDetalleCuenta', () {
-      test('delegates to datasource with correct accountId and cuentaId', () async {
+      test('delegates to datasource with correct cuentaId', () async {
         final cuenta = CuentaFixture.createValidCuenta(id: 'cta_detail');
 
-        when(() => mockDatasource.getDetalle('acc_123', 'cta_detail'))
+        when(() => mockDatasource.getDetalle('cta_detail'))
             .thenAnswer((_) async => cuenta);
 
-        final result = await repository.getDetalleCuenta('acc_123', 'cta_detail');
+        final result = await repository.getDetalleCuenta('cta_detail');
 
         expect(result.id, equals('cta_detail'));
-        verify(() => mockDatasource.getDetalle('acc_123', 'cta_detail')).called(1);
+        verify(() => mockDatasource.getDetalle('cta_detail')).called(1);
       });
 
       test('forwards exceptions from datasource', () async {
-        when(() => mockDatasource.getDetalle(any(), any()))
+        when(() => mockDatasource.getDetalle(any()))
             .thenThrow(Exception('Not found'));
 
         expect(
-          () => repository.getDetalleCuenta('acc_123', 'cta_invalid'),
+          () => repository.getDetalleCuenta('cta_invalid'),
           throwsA(isA<Exception>()),
         );
       });
@@ -82,14 +82,12 @@ void main() {
       test('delegates to datasource with correct parameters', () async {
         when(() => mockDatasource.registrarPago(
           'cta_001',
-          'acc_123',
           15000.0,
           15000.0,
         )).thenAnswer((_) async => true);
 
         final result = await repository.registrarPago(
           'cta_001',
-          'acc_123',
           15000.0,
           15000.0,
         );
@@ -97,7 +95,6 @@ void main() {
         expect(result, isTrue);
         verify(() => mockDatasource.registrarPago(
           'cta_001',
-          'acc_123',
           15000.0,
           15000.0,
         )).called(1);
@@ -106,14 +103,12 @@ void main() {
       test('returns false when payment not successful', () async {
         when(() => mockDatasource.registrarPago(
           'cta_001',
-          'acc_123',
           15000.0,
           5000.0,
         )).thenAnswer((_) async => false);
 
         final result = await repository.registrarPago(
           'cta_001',
-          'acc_123',
           15000.0,
           5000.0,
         );
@@ -122,11 +117,11 @@ void main() {
       });
 
       test('forwards exceptions from datasource', () async {
-        when(() => mockDatasource.registrarPago(any(), any(), any(), any()))
+        when(() => mockDatasource.registrarPago(any(), any(), any()))
             .thenThrow(Exception('Payment failed'));
 
         expect(
-          () => repository.registrarPago('cta_001', 'acc_123', 15000.0, 15000.0),
+          () => repository.registrarPago('cta_001', 15000.0, 15000.0),
           throwsA(isA<Exception>()),
         );
       });
@@ -227,6 +222,33 @@ void main() {
             accountId: 'acc_duplicate',
             monto: 10000.0,
           ),
+          throwsA(isA<Exception>()),
+        );
+      });
+    });
+
+    group('abrirPeriodo', () {
+      test('delegates to datasource and returns opened cuentas', () async {
+        final cuentas = [
+          CuentaFixture.createValidCuenta(id: 'cta_1'),
+          CuentaFixture.createValidCuenta(id: 'cta_2'),
+        ];
+
+        when(() => mockDatasource.abrirPeriodo('202404'))
+            .thenAnswer((_) async => cuentas);
+
+        final result = await repository.abrirPeriodo('202404');
+
+        expect(result, hasLength(2));
+        verify(() => mockDatasource.abrirPeriodo('202404')).called(1);
+      });
+
+      test('forwards exceptions from datasource', () async {
+        when(() => mockDatasource.abrirPeriodo(any()))
+            .thenThrow(Exception('Server error'));
+
+        expect(
+          () => repository.abrirPeriodo('202404'),
           throwsA(isA<Exception>()),
         );
       });

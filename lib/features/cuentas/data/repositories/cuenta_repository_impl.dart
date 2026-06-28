@@ -14,20 +14,18 @@ class CuentaRepositoryImpl implements CuentaRepository {
   }
 
   @override
-  Future<Cuenta> getDetalleCuenta(String accountId, String cuentaId) {
-    return _datasource.getDetalle(accountId, cuentaId);
+  Future<Cuenta> getDetalleCuenta(String cuentaId) {
+    return _datasource.getDetalle(cuentaId);
   }
 
   @override
   Future<bool> registrarPago(
     String cuentaId,
-    String accountId,
     double montoTotal,
     double montoPagado,
   ) {
     return _datasource.registrarPago(
       cuentaId,
-      accountId,
       montoTotal,
       montoPagado,
     );
@@ -36,10 +34,14 @@ class CuentaRepositoryImpl implements CuentaRepository {
   @override
   Future<bool> reopenAccount(
     String cuentaId,
-    String accountId,
     double montoOriginal,
   ) {
-    return _datasource.reopenAccount(cuentaId, accountId, montoOriginal);
+    return _datasource.reopenAccount(cuentaId, montoOriginal);
+  }
+
+  @override
+  Future<List<Cuenta>> abrirPeriodo(String periodo) {
+    return _datasource.abrirPeriodo(periodo);
   }
 
   @override

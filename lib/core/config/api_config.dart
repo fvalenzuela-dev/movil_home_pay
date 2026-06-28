@@ -20,11 +20,15 @@ class ApiConfig {
   static String periodBillingsUrl(String period) =>
       '$baseUrl$periodsPath/$period$billingsPath';
 
+  /// Build URL para abrir todas las cuentas de un periodo (POST /periods/{period}/open)
+  static String periodOpenUrl(String period) =>
+      '$baseUrl$periodsPath/$period/open';
+
   /// Build URL para companies con pagination
   static String companiesUrl({int page = 1, int pageSize = 20}) =>
       '$baseUrl$companiesPath?page=$page&page_size=$pageSize';
 
-  /// Direct billing endpoint: GET /accounts/{accountId}/billings/{billingId}
-  static String accountBillingUrl(String accountId, String billingId) =>
-      '$baseUrl/accounts/$accountId/billings/$billingId';
+  /// Direct billing endpoint: GET /billings/{billingId}
+  static String billingUrl(String billingId) =>
+      '$baseUrl$billingsPath/$billingId';
 }

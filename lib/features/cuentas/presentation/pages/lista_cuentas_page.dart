@@ -72,24 +72,27 @@ class _ListaCuentasPageState extends State<ListaCuentasPage> {
         backgroundColor: AppTheme.primarySeed,
         child: const Icon(Icons.add, color: Colors.white),
       ),
-      body: SafeArea(
-        child: CustomScrollView(
-          slivers: [
-            // Header
-            SliverToBoxAdapter(
-              child: _buildHeader(),
-            ),
-            // Monthly Summary Card
-            SliverToBoxAdapter(
-              child: _buildSummaryCard(),
-            ),
-            // Filters
-            SliverToBoxAdapter(
-              child: _buildFilters(),
-            ),
-            // Bills List
-            _buildBillsList(),
-          ],
+      body: BlocListener<CuentasBloc, CuentasState>(
+        listener: _onStateChanged,
+        child: SafeArea(
+          child: CustomScrollView(
+            slivers: [
+              // Header
+              SliverToBoxAdapter(
+                child: _buildHeader(),
+              ),
+              // Monthly Summary Card
+              SliverToBoxAdapter(
+                child: _buildSummaryCard(),
+              ),
+              // Filters
+              SliverToBoxAdapter(
+                child: _buildFilters(),
+              ),
+              // Bills List
+              _buildBillsList(),
+            ],
+          ),
         ),
       ),
     );
@@ -138,6 +141,12 @@ class _ListaCuentasPageState extends State<ListaCuentasPage> {
                 ),
           Row(
             children: [
+              IconButton(
+                onPressed: () => _showAbrirPeriodoDialog(),
+                icon: const Icon(Icons.playlist_add_check),
+                color: AppTheme.primarySeed,
+                tooltip: 'Abrir período',
+              ),
               IconButton(
                 onPressed: () => _showLogoutDialog(),
                 icon: const Icon(Icons.logout),
@@ -650,6 +659,53 @@ child: Column(
       return const Color(0xFFEF4444); // red
     }
     return AppTheme.primarySeed;
+  }
+
+  void _onStateChanged(BuildContext context, CuentasState state) {
+    if (state is AbrirPeriodoSuccess) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Período abierto: ${state.cantidad} cuentas'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } else if (state is AbrirPeriodoFailure) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(state.message),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  void _showAbrirPeriodoDialog() {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Abrir período'),
+        content: Text(
+          'Esto abrirá TODAS las cuentas del período '
+          '${_formatPeriodo(_currentPeriodo)}. Esta acción es masiva. '
+          '¿Deseas continuar?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: const Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(dialogContext);
+              context
+                  .read<CuentasBloc>()
+                  .add(AbrirPeriodoRequested(_currentPeriodo));
+            },
+            child: const Text('Abrir'),
+          ),
+        ],
+      ),
+    );
   }
 
   void _showLogoutDialog() {
