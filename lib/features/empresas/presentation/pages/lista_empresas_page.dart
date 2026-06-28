@@ -299,7 +299,7 @@ class _ListaEmpresasPageState extends State<ListaEmpresasPage> {
           ),
           ListTile(
             leading: const Icon(Icons.home),
-            title: const Text('Dashboard'),
+            title: const Text('Pago Mensual'),
             onTap: () {
               Navigator.pop(context);
               context.go('/cuentas');

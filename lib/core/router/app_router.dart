@@ -159,7 +159,7 @@ class _MainShellState extends State<MainShell> {
           NavigationDestination(
             icon: Icon(Icons.receipt_long_outlined),
             selectedIcon: Icon(Icons.receipt_long),
-            label: 'Cuentas',
+            label: 'Pago Mensual',
           ),
           NavigationDestination(
             icon: Icon(Icons.business_outlined),
