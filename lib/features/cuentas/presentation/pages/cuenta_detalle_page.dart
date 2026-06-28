@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/utils/date_formatter.dart';
 import '../../domain/entities/cuenta.dart';
 import '../bloc/cuentas_bloc.dart';
 import '../widgets/estado_badge.dart';
@@ -144,9 +145,7 @@ class _CuentaDetallePageState extends State<CuentaDetallePage> {
                       const SizedBox(width: 16),
                       Expanded(
                         child: Text(
-                          cuenta.nombre.isNotEmpty
-                              ? cuenta.nombre
-                              : cuenta.accountId,
+                          cuenta.nombreDisplay,
                           style: theme.textTheme.headlineSmall,
                         ),
                       ),
@@ -172,10 +171,7 @@ class _CuentaDetallePageState extends State<CuentaDetallePage> {
                   _infoRow('Período', cuenta.periodo),
                   if (cuenta.fechaPago != null) ...[
                     const SizedBox(height: 8),
-                    _infoRow(
-                      'Pagado el',
-                      '${cuenta.fechaPago!.day}/${cuenta.fechaPago!.month}/${cuenta.fechaPago!.year}',
-                    ),
+                    _infoRow('Pagado el', formatYmd(cuenta.fechaPago!)),
                   ],
                 ],
               ),
@@ -245,16 +241,21 @@ class _CuentaDetallePageState extends State<CuentaDetallePage> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 16),
-                    SizedBox(
-                      width: double.infinity,
+                    const SizedBox(height: 12),
+                    Align(
+                      alignment: Alignment.centerRight,
                       child: OutlinedButton.icon(
                         onPressed: () => _showReopenConfirmation(context, cuenta),
-                        icon: const Icon(Icons.refresh),
+                        icon: const Icon(Icons.refresh, size: 18),
                         label: const Text('Reabrir cuenta'),
                         style: OutlinedButton.styleFrom(
                           foregroundColor: Colors.orange.shade700,
                           side: BorderSide(color: Colors.orange.shade700),
+                          visualDensity: VisualDensity.compact,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
+                          ),
                         ),
                       ),
                     ),

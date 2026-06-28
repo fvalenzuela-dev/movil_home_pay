@@ -25,6 +25,10 @@ class Cuenta extends Equatable {
   bool get isPaid => estado == 'pagada';
   double get saldo => monto - montoPagado;
 
+  /// Human-readable name for display. Falls back to a friendly placeholder
+  /// instead of exposing the internal identifier when no name is available.
+  String get nombreDisplay => nombre.isNotEmpty ? nombre : 'Cuenta sin nombre';
+
   @override
   List<Object?> get props =>
       [id, accountId, nombre, monto, montoPagado, estado, fechaPago, periodo];

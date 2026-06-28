@@ -43,7 +43,7 @@ class CuentaCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(cuenta.nombre, style: theme.textTheme.titleMedium),
+                    Text(cuenta.nombreDisplay, style: theme.textTheme.titleMedium),
                     const SizedBox(height: 4),
                     Text(
                       '\$${cuenta.monto.toStringAsFixed(0)}',

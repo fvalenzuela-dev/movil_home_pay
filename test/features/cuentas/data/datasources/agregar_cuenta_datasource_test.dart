@@ -105,8 +105,9 @@ void main() {
           monto: 5000.0,
         );
 
-        // Assert: nombre falls back to account_id when no account_name is returned
-        expect(result.nombre, equals('acc_456'));
+        // Assert: nombre stays empty (does not expose the account_id/UUID)
+        // when no account_name is returned.
+        expect(result.nombre, isEmpty);
         verify(() => mockDio.post(
               '${ApiConfig.baseUrl}/accounts/acc_456/billings',
               data: predicate<Map<String, dynamic>>((data) {
