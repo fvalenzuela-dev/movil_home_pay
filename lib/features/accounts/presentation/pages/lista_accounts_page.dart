@@ -14,12 +14,29 @@ class ListaAccountsPage extends StatefulWidget {
 }
 
 class _ListaAccountsPageState extends State<ListaAccountsPage> {
+  bool _isReloading = false;
+  bool _initialLoadDone = false;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadAccounts();
+      _initialLoadDone = true;
     });
+  }
+
+  /// Re-requests the list when the shared AccountBloc holds a stale non-list
+  /// state (e.g. AccountDetailLoaded after returning from the edit form).
+  /// Guarded to avoid a rebuild loop.
+  void _safeReload() {
+    if (!_isReloading && _initialLoadDone) {
+      _isReloading = true;
+      _loadAccounts();
+      Future.delayed(const Duration(seconds: 1), () {
+        _isReloading = false;
+      });
+    }
   }
 
   void _loadAccounts() {
@@ -79,6 +96,11 @@ class _ListaAccountsPageState extends State<ListaAccountsPage> {
               );
             }
 
+            // Initial or stale state (e.g. after returning from the edit
+            // form) — re-request the list instead of hanging on a spinner.
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              _safeReload();
+            });
             return const Center(child: CircularProgressIndicator());
           },
         ),

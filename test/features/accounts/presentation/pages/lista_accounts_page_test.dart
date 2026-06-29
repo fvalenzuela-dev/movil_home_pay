@@ -73,6 +73,9 @@ void main() {
       await tester.pump();
 
       expect(find.byType(FloatingActionButton), findsOneWidget);
+
+      // AccountInitial triggers a guarded reload; flush its timer.
+      await tester.pump(const Duration(seconds: 1));
     });
 
     testWidgets('shows loading indicator on AccountLoading state', (tester) async {
@@ -92,6 +95,24 @@ void main() {
       await tester.pump();
 
       expect(find.text('Error de red'), findsOneWidget);
+    });
+
+    testWidgets('re-requests the list when bloc holds a stale non-list state',
+        (tester) async {
+      // Simulates returning from the edit form, which leaves the shared
+      // AccountBloc in AccountDetailLoaded — the list must recover, not hang.
+      when(() => mockAccountBloc.state)
+          .thenReturn(AccountDetailLoaded(account1));
+
+      await tester.pumpWidget(buildSubject());
+      await tester.pump(); // initState postFrame: initial load + flag
+      await tester.pump(); // builder default postFrame: _safeReload
+
+      verify(() => mockAccountBloc.add(const AccountListRequested()))
+          .called(greaterThanOrEqualTo(1));
+
+      // Flush the _safeReload guard timer so no pending timer leaks.
+      await tester.pump(const Duration(seconds: 1));
     });
   });
 }
