@@ -104,13 +104,19 @@ class _ListaAccountsPageState extends State<ListaAccountsPage> {
         itemCount: state.accounts.length,
         itemBuilder: (context, index) {
           final account = state.accounts[index];
-          return AccountCard(
-            account: account,
-            onEdit: () => context.pushNamed(
-              'account-editar',
+          return GestureDetector(
+            onTap: () => context.pushNamed(
+              'account-detalle',
               pathParameters: {'id': account.id},
             ),
-            onDelete: () => _showDeleteConfirmation(context, account),
+            child: AccountCard(
+              account: account,
+              onEdit: () => context.pushNamed(
+                'account-editar',
+                pathParameters: {'id': account.id},
+              ),
+              onDelete: () => _showDeleteConfirmation(context, account),
+            ),
           );
         },
       ),
