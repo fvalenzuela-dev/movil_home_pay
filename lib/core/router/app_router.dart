@@ -3,8 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../features/accounts/presentation/bloc/account_bloc.dart';
-import '../../features/accounts/presentation/pages/account_detalle_page.dart';
 import '../../features/accounts/presentation/pages/account_form_page.dart';
 import '../../features/accounts/presentation/pages/lista_accounts_page.dart';
 import '../../features/admin/presentation/pages/categories_page.dart';
@@ -110,19 +108,6 @@ class AppRouter {
             path: '/accounts',
             name: 'accounts',
             builder: (context, state) => const ListaAccountsPage(),
-          ),
-
-          // Accounts - detalle (read-only, route-scoped AccountBloc)
-          GoRoute(
-            path: '/accounts/detalle/:id',
-            name: 'account-detalle',
-            builder: (context, state) {
-              final id = state.pathParameters['id']!;
-              return BlocProvider<AccountBloc>(
-                create: (_) => getIt<AccountBloc>(),
-                child: AccountDetallePage(accountId: id),
-              );
-            },
           ),
 
           // Accounts - nueva (form-scoped EmpresaBloc per ADR-2)
