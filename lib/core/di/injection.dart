@@ -10,6 +10,10 @@ import '../../features/cuentas/data/datasources/cuenta_datasource.dart';
 import '../../features/cuentas/data/repositories/cuenta_repository_impl.dart';
 import '../../features/cuentas/domain/repositories/cuenta_repository.dart';
 import '../../features/cuentas/presentation/bloc/cuentas_bloc.dart';
+import '../../features/accounts/data/datasources/account_datasource.dart';
+import '../../features/accounts/data/repositories/account_repository_impl.dart';
+import '../../features/accounts/domain/repositories/account_repository.dart';
+import '../../features/accounts/presentation/bloc/account_bloc.dart';
 import '../../features/empresas/data/datasources/empresa_datasource.dart';
 import '../../features/empresas/data/repositories/empresa_repository_impl.dart';
 import '../../features/empresas/domain/repositories/empresa_repository.dart';
@@ -146,6 +150,11 @@ void _registerDataSources() {
   getIt.registerLazySingleton<EmpresaDatasource>(
     () => EmpresaDatasource(getIt<Dio>()),
   );
+
+  // Account data source
+  getIt.registerLazySingleton<AccountDatasource>(
+    () => AccountDatasource(getIt<Dio>()),
+  );
 }
 
 void _registerRepositories() {
@@ -168,6 +177,11 @@ void _registerRepositories() {
   getIt.registerLazySingleton<EmpresaRepository>(
     () => EmpresaRepositoryImpl(getIt<EmpresaDatasource>()),
   );
+
+  // Account repository
+  getIt.registerLazySingleton<AccountRepository>(
+    () => AccountRepositoryImpl(getIt<AccountDatasource>()),
+  );
 }
 
 void _registerBlocs() {
@@ -189,5 +203,10 @@ void _registerBlocs() {
   // Empresa BLoC
   getIt.registerFactory<EmpresaBloc>(
     () => EmpresaBloc(getIt<EmpresaRepository>()),
+  );
+
+  // Account BLoC
+  getIt.registerFactory<AccountBloc>(
+    () => AccountBloc(getIt<AccountRepository>()),
   );
 }

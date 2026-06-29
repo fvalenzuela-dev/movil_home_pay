@@ -11,6 +11,7 @@ import 'core/config/clerk_config.dart';
 import 'core/di/injection.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
+import 'features/accounts/presentation/bloc/account_bloc.dart';
 import 'features/admin/presentation/bloc/category_bloc.dart';
 import 'features/admin/presentation/bloc/category_event.dart';
 import 'features/auth/presentation/bloc/auth_bloc.dart';
@@ -60,6 +61,9 @@ class MovilHomePayApp extends StatelessWidget {
           ),
           BlocProvider<EmpresaBloc>(
             create: (_) => getIt<EmpresaBloc>(),
+          ),
+          BlocProvider<AccountBloc>(
+            create: (_) => getIt<AccountBloc>(),
           ),
           BlocProvider<CategoryBloc>(
             create: (_) => getIt<CategoryBloc>()..add(CategoriesLoadRequested()),

@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/accounts/presentation/pages/account_form_page.dart';
+import '../../features/accounts/presentation/pages/lista_accounts_page.dart';
 import '../../features/admin/presentation/pages/categories_page.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/cuentas/presentation/pages/agregar_cuenta_page.dart';
 import '../../features/cuentas/presentation/pages/cuenta_detalle_page.dart';
 import '../../features/cuentas/presentation/pages/lista_cuentas_page.dart';
+import '../../features/empresas/presentation/bloc/empresa_bloc.dart';
 import '../../features/empresas/presentation/pages/empresa_form_page.dart';
 import '../../features/empresas/presentation/pages/lista_empresas_page.dart';
+import '../di/injection.dart';
 
 /// App Router configuration using go_router
 class AppRouter {
@@ -98,6 +103,38 @@ class AppRouter {
             },
           ),
 
+          // Accounts (master billing accounts) - lista
+          GoRoute(
+            path: '/accounts',
+            name: 'accounts',
+            builder: (context, state) => const ListaAccountsPage(),
+          ),
+
+          // Accounts - nueva (form-scoped EmpresaBloc per ADR-2)
+          GoRoute(
+            path: '/accounts/nueva',
+            name: 'account-nueva',
+            builder: (context, state) => BlocProvider<EmpresaBloc>(
+              create: (_) =>
+                  getIt<EmpresaBloc>()..add(const EmpresaListRequested()),
+              child: const AccountFormPage(),
+            ),
+          ),
+
+          // Accounts - editar (form-scoped EmpresaBloc per ADR-2)
+          GoRoute(
+            path: '/accounts/editar/:id',
+            name: 'account-editar',
+            builder: (context, state) {
+              final id = state.pathParameters['id']!;
+              return BlocProvider<EmpresaBloc>(
+                create: (_) =>
+                    getIt<EmpresaBloc>()..add(const EmpresaListRequested()),
+                child: AccountFormPage(accountId: id),
+              );
+            },
+          ),
+
           // Categorías (Admin)
           GoRoute(
             path: '/categorias',
@@ -130,7 +167,8 @@ class _MainShellState extends State<MainShell> {
     final location = GoRouterState.of(context).uri.toString();
     if (location.startsWith('/cuentas')) return 0;
     if (location.startsWith('/empresas')) return 1;
-    if (location.startsWith('/categorias')) return 2;
+    if (location.startsWith('/accounts')) return 2;
+    if (location.startsWith('/categorias')) return 3;
     return 0;
   }
 
@@ -151,6 +189,9 @@ class _MainShellState extends State<MainShell> {
               context.goNamed('empresas');
               break;
             case 2:
+              context.goNamed('accounts');
+              break;
+            case 3:
               context.goNamed('categorias');
               break;
           }
@@ -165,6 +206,11 @@ class _MainShellState extends State<MainShell> {
             icon: Icon(Icons.business_outlined),
             selectedIcon: Icon(Icons.business),
             label: 'Empresas',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.account_balance_wallet_outlined),
+            selectedIcon: Icon(Icons.account_balance_wallet),
+            label: 'Cuentas',
           ),
           NavigationDestination(
             icon: Icon(Icons.category_outlined),
