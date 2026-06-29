@@ -116,7 +116,32 @@ class _ListaAccountsPageState extends State<ListaAccountsPage> {
 
   Widget _buildContent(BuildContext context, AccountListLoaded state) {
     if (state.accounts.isEmpty) {
-      return const Center(child: Text('No hay cuentas registradas'));
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.account_balance_wallet_outlined,
+              size: 64,
+              color: AppTheme.outline,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'No hay cuentas registradas',
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: AppTheme.outline,
+                  ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Toca el botón + para agregar una cuenta',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: AppTheme.outline,
+                  ),
+            ),
+          ],
+        ),
+      );
     }
 
     return RefreshIndicator(
