@@ -106,7 +106,7 @@ class _ListaAccountsPageState extends State<ListaAccountsPage> {
           final account = state.accounts[index];
           return GestureDetector(
             onTap: () => context.pushNamed(
-              'account-detalle',
+              'account-editar',
               pathParameters: {'id': account.id},
             ),
             child: AccountCard(
