@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/theme/app_theme.dart';
 import '../bloc/account_bloc.dart';
 import '../widgets/account_card.dart';
 
@@ -107,7 +108,8 @@ class _ListaAccountsPageState extends State<ListaAccountsPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => context.pushNamed('account-nueva'),
-        child: const Icon(Icons.add),
+        backgroundColor: AppTheme.primarySeed,
+        child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }
