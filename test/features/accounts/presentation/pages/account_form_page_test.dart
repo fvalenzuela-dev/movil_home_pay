@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:movil_home_pay/features/accounts/domain/entities/account.dart';
 import 'package:movil_home_pay/features/accounts/presentation/bloc/account_bloc.dart';
 import 'package:movil_home_pay/features/accounts/presentation/pages/account_form_page.dart';
 import 'package:movil_home_pay/features/empresas/domain/entities/empresa.dart';
@@ -144,6 +145,42 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Editar Cuenta'), findsOneWidget);
+    });
+
+    testWidgets('edit mode populates billing day field from loaded account',
+        (tester) async {
+      const loadedAccount = Account(
+        id: 'acc-1',
+        companyId: 'comp-1',
+        companyName: 'Netflix Corp',
+        name: 'Netflix',
+        accountNumber: 'ACC-001',
+        billingDay: 5,
+        autoAccumulate: false,
+      );
+
+      // Emit AccountDetailLoaded so the form's BlocListener populates fields.
+      whenListen(
+        mockAccountBloc,
+        Stream<AccountState>.fromIterable(
+          const [AccountDetailLoaded(loadedAccount)],
+        ),
+        initialState: const AccountLoading(),
+      );
+      when(() => mockEmpresaBloc.state).thenReturn(EmpresaListLoaded(
+        empresas: [empresa1],
+        page: 1,
+        totalPages: 1,
+        totalCount: 1,
+      ));
+
+      await tester.pumpWidget(buildSubject(accountId: 'acc-1'));
+      await tester.pumpAndSettle();
+
+      // Regression: the billing day field must reflect the loaded value (5),
+      // not the default "1". Bug was using initialValue instead of a controller.
+      expect(find.text('5'), findsOneWidget);
+      expect(find.text('1'), findsNothing);
     });
   });
 }

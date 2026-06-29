@@ -22,13 +22,13 @@ class _AccountFormPageState extends State<AccountFormPage> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _accountNumberController = TextEditingController();
+  final _billingDayController = TextEditingController(text: '1');
 
   bool _isEditMode = false;
   Account? _existingAccount;
 
   /// Required FK — submit is disabled until set
   String? _companyId;
-  int _billingDay = 1;
   bool _autoAccumulate = false;
 
   @override
@@ -48,6 +48,7 @@ class _AccountFormPageState extends State<AccountFormPage> {
   void dispose() {
     _nameController.dispose();
     _accountNumberController.dispose();
+    _billingDayController.dispose();
     super.dispose();
   }
 
@@ -55,9 +56,9 @@ class _AccountFormPageState extends State<AccountFormPage> {
     _existingAccount = account;
     _nameController.text = account.name;
     _accountNumberController.text = account.accountNumber ?? '';
+    _billingDayController.text = account.billingDay.toString();
     setState(() {
       _companyId = account.companyId;
-      _billingDay = account.billingDay;
       _autoAccumulate = account.autoAccumulate;
     });
   }
@@ -68,12 +69,13 @@ class _AccountFormPageState extends State<AccountFormPage> {
 
     final name = _nameController.text.trim();
     final accountNumber = _accountNumberController.text.trim();
+    final billingDay = int.tryParse(_billingDayController.text.trim()) ?? 1;
 
     if (_isEditMode && _existingAccount != null) {
       final updated = _existingAccount!.copyWith(
         name: name,
         accountNumber: accountNumber.isEmpty ? null : accountNumber,
-        billingDay: _billingDay,
+        billingDay: billingDay,
         autoAccumulate: _autoAccumulate,
         companyId: _companyId,
       );
@@ -84,7 +86,7 @@ class _AccountFormPageState extends State<AccountFormPage> {
         companyId: _companyId!,
         name: name,
         accountNumber: accountNumber.isEmpty ? null : accountNumber,
-        billingDay: _billingDay,
+        billingDay: billingDay,
         autoAccumulate: _autoAccumulate,
       );
       context.read<AccountBloc>().add(AccountCreateRequested(newAccount));
@@ -198,19 +200,13 @@ class _AccountFormPageState extends State<AccountFormPage> {
 
           // Billing day
           TextFormField(
-            initialValue: _billingDay.toString(),
+            controller: _billingDayController,
             decoration: const InputDecoration(
               labelText: 'Día de cobro *',
               prefixIcon: Icon(Icons.calendar_today),
               border: OutlineInputBorder(),
             ),
             keyboardType: TextInputType.number,
-            onChanged: (value) {
-              final day = int.tryParse(value);
-              if (day != null && day >= 1 && day <= 31) {
-                setState(() => _billingDay = day);
-              }
-            },
             validator: (value) {
               final day = int.tryParse(value ?? '');
               if (day == null || day < 1 || day > 31) {
