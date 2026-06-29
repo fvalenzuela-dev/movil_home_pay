@@ -31,4 +31,27 @@ class ApiConfig {
   /// Direct billing endpoint: GET /billings/{billingId}
   static String billingUrl(String billingId) =>
       '$baseUrl$billingsPath/$billingId';
+
+  /// Accounts endpoint path
+  static const String accountsPath = '/accounts';
+
+  /// Build URL for accounts list with pagination and filters
+  /// NOTE: pagination param is `limit`, NOT page_size (differs from companiesUrl)
+  static String accountsUrl({
+    String? companyId,
+    String? sort,
+    String? order,
+    int page = 1,
+    int limit = 20,
+  }) {
+    final params = <String, String>{'page': '$page', 'limit': '$limit'};
+    if (companyId != null && companyId.isNotEmpty) params['company_id'] = companyId;
+    if (sort != null && sort.isNotEmpty) params['sort'] = sort;
+    if (order != null && order.isNotEmpty) params['order'] = order;
+    final qs = params.entries.map((e) => '${e.key}=${e.value}').join('&');
+    return '$baseUrl$accountsPath?$qs';
+  }
+
+  /// Build URL for a single account by ID
+  static String accountUrl(String id) => '$baseUrl$accountsPath/$id';
 }
