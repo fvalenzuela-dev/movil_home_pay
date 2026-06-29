@@ -22,6 +22,17 @@ class _CategoriesPageState extends State<CategoriesPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
+  void initState() {
+    super.initState();
+    // Always fetch fresh on open. The global CategoryBloc only loads once at
+    // startup, so without this the page would show stale in-memory categories
+    // after they change server-side (mirrors ListaEmpresasPage / ListaAccountsPage).
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<CategoryBloc>().add(const CategoriesLoadRequested());
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
