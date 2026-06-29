@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:movil_home_pay/features/accounts/domain/entities/account.dart';
 import 'package:movil_home_pay/features/accounts/presentation/bloc/account_bloc.dart';
 import 'package:movil_home_pay/features/accounts/presentation/pages/lista_accounts_page.dart';
 import 'package:movil_home_pay/features/accounts/presentation/widgets/account_card.dart';

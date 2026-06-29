@@ -35,13 +35,6 @@ class AccountDatasource {
     }
   }
 
-  /// Validates billing day is in [1..31] range
-  static void _validarBillingDay(int day) {
-    if (day < 1 || day > 31) {
-      throw ArgumentError('billing_day debe estar entre 1 y 31');
-    }
-  }
-
   /// GET /accounts — paginated list of accounts
   Future<PaginatedResult<Account>> getAccounts({
     String? companyId,

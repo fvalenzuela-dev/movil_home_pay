@@ -7,8 +7,8 @@ import '../bloc/account_bloc.dart';
 import '../../../empresas/domain/entities/empresa.dart';
 import '../../../empresas/presentation/bloc/empresa_bloc.dart';
 
-/// Form page for creating or editing an account
-/// NOTE: BlocProvider<EmpresaBloc> is wired at ROUTE level in app_router.dart (ADR-2)
+/// Form page for creating or editing an account.
+/// NOTE: BlocProvider for EmpresaBloc is wired at ROUTE level in app_router.dart (ADR-2)
 class AccountFormPage extends StatefulWidget {
   final String? accountId; // null = create mode, non-null = edit mode
 
@@ -142,8 +142,10 @@ class _AccountFormPageState extends State<AccountFormPage> {
                 empresas = [];
               }
 
+              // Use key to force rebuild when _companyId changes (edit mode population)
               return DropdownButtonFormField<String>(
-                value: _companyId,
+                key: ValueKey(_companyId),
+                initialValue: _companyId,
                 decoration: const InputDecoration(
                   labelText: 'Empresa *',
                   prefixIcon: Icon(Icons.business),
