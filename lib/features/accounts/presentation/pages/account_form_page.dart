@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/theme/app_theme.dart';
 import '../../domain/entities/account.dart';
 import '../bloc/account_bloc.dart';
 import '../../../empresas/domain/entities/empresa.dart';
@@ -25,9 +26,10 @@ class _AccountFormPageState extends State<AccountFormPage> {
   final _billingDayController = TextEditingController(text: '1');
 
   bool _isEditMode = false;
+  bool _isLoading = false;
   Account? _existingAccount;
 
-  /// Required FK — submit is disabled until set
+  /// Required FK — enforced via dropdown validator on submit
   String? _companyId;
   bool _autoAccumulate = false;
 
@@ -66,6 +68,8 @@ class _AccountFormPageState extends State<AccountFormPage> {
   void _submit() {
     if (!_formKey.currentState!.validate()) return;
     if (_companyId == null) return;
+
+    setState(() => _isLoading = true);
 
     final name = _nameController.text.trim();
     final accountNumber = _accountNumberController.text.trim();
@@ -115,6 +119,7 @@ class _AccountFormPageState extends State<AccountFormPage> {
             context.pop();
           }
           if (state is AccountError) {
+            setState(() => _isLoading = false);
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(state.message),
@@ -163,6 +168,12 @@ class _AccountFormPageState extends State<AccountFormPage> {
                     .toList(),
                 onChanged: (value) {
                   setState(() => _companyId = value);
+                },
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'La empresa es requerida';
+                  }
+                  return null;
                 },
               );
             },
@@ -225,12 +236,25 @@ class _AccountFormPageState extends State<AccountFormPage> {
           ),
           const SizedBox(height: 24),
 
-          // Submit button — disabled until companyId is set
+          // Submit button — disabled while saving; required fields validated on press
           SizedBox(
             height: 48,
             child: ElevatedButton(
-              onPressed: _companyId == null ? null : _submit,
-              child: Text(_isEditMode ? 'Guardar Cambios' : 'Crear Cuenta'),
+              onPressed: _isLoading ? null : _submit,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.primarySeed,
+                foregroundColor: Colors.white,
+              ),
+              child: _isLoading
+                  ? const SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
+                    )
+                  : Text(_isEditMode ? 'Guardar Cambios' : 'Crear Cuenta'),
             ),
           ),
         ],

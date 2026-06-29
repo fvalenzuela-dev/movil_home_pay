@@ -74,7 +74,7 @@ void main() {
       expect(find.text('Netflix Corp'), findsWidgets);
     });
 
-    testWidgets('submit button is disabled when no empresa is selected',
+    testWidgets('submit without empresa shows validation error and does not submit',
         (tester) async {
       when(() => mockAccountBloc.state).thenReturn(const AccountInitial());
       when(() => mockEmpresaBloc.state).thenReturn(EmpresaListLoaded(
@@ -87,11 +87,52 @@ void main() {
       await tester.pumpWidget(buildSubject());
       await tester.pumpAndSettle();
 
-      // Find ElevatedButton (submit)
+      // Button is enabled (like the other menus); validation runs on press
       final submitButton = tester.widget<ElevatedButton>(
         find.byType(ElevatedButton),
       );
-      expect(submitButton.onPressed, isNull);
+      expect(submitButton.onPressed, isNotNull);
+
+      // Pressing without an empresa surfaces the required-field error
+      await tester.tap(find.byType(ElevatedButton));
+      await tester.pumpAndSettle();
+
+      expect(find.text('La empresa es requerida'), findsOneWidget);
+    });
+
+    testWidgets('shows a spinner in the submit button while saving',
+        (tester) async {
+      when(() => mockAccountBloc.state).thenReturn(const AccountInitial());
+      when(() => mockEmpresaBloc.state).thenReturn(EmpresaListLoaded(
+        empresas: [empresa1],
+        page: 1,
+        totalPages: 1,
+        totalCount: 1,
+      ));
+
+      await tester.pumpWidget(buildSubject());
+      await tester.pumpAndSettle();
+
+      // Select empresa
+      await tester.tap(find.byType(DropdownButtonFormField<String>));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Netflix Corp').last);
+      await tester.pumpAndSettle();
+
+      // Fill the required name field (first TextFormField)
+      await tester.enterText(find.byType(TextFormField).first, 'My Account');
+
+      // Press save — _isLoading flips true and the button shows a spinner
+      await tester.tap(find.widgetWithText(ElevatedButton, 'Crear Cuenta'));
+      await tester.pump();
+
+      expect(
+        find.descendant(
+          of: find.byType(ElevatedButton),
+          matching: find.byType(CircularProgressIndicator),
+        ),
+        findsOneWidget,
+      );
     });
 
     testWidgets('submit button is enabled after selecting an empresa',
