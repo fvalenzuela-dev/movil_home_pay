@@ -81,9 +81,13 @@ abstract class AccountState extends Equatable {
   List<Object?> get props => [];
 }
 
-class AccountInitial extends AccountState {}
+class AccountInitial extends AccountState {
+  const AccountInitial();
+}
 
-class AccountLoading extends AccountState {}
+class AccountLoading extends AccountState {
+  const AccountLoading();
+}
 
 class AccountListLoaded extends AccountState {
   final List<Account> accounts;
@@ -135,7 +139,7 @@ class AccountError extends AccountState {
 class AccountBloc extends Bloc<AccountEvent, AccountState> {
   final AccountRepository _repository;
 
-  AccountBloc(this._repository) : super(AccountInitial()) {
+  AccountBloc(this._repository) : super(const AccountInitial()) {
     on<AccountListRequested>(_onListRequested);
     on<AccountDetailRequested>(_onDetailRequested);
     on<AccountCreateRequested>(_onCreateRequested);
@@ -148,14 +152,14 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
     AccountListReset event,
     Emitter<AccountState> emit,
   ) {
-    emit(AccountInitial());
+    emit(const AccountInitial());
   }
 
   Future<void> _onListRequested(
     AccountListRequested event,
     Emitter<AccountState> emit,
   ) async {
-    emit(AccountLoading());
+    emit(const AccountLoading());
     try {
       final result = await _repository.getAccounts(
         companyId: event.companyId,
@@ -179,7 +183,7 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
     AccountDetailRequested event,
     Emitter<AccountState> emit,
   ) async {
-    emit(AccountLoading());
+    emit(const AccountLoading());
     try {
       final account = await _repository.getAccountById(event.id);
       emit(AccountDetailLoaded(account));
@@ -192,7 +196,7 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
     AccountCreateRequested event,
     Emitter<AccountState> emit,
   ) async {
-    emit(AccountLoading());
+    emit(const AccountLoading());
     try {
       final account = await _repository.createAccount(event.account);
       emit(AccountOperationSuccess('Cuenta creada exitosamente', account: account));
@@ -205,7 +209,7 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
     AccountUpdateRequested event,
     Emitter<AccountState> emit,
   ) async {
-    emit(AccountLoading());
+    emit(const AccountLoading());
     try {
       final account = await _repository.updateAccount(event.account);
       emit(AccountOperationSuccess('Cuenta actualizada exitosamente', account: account));
@@ -218,7 +222,7 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
     AccountDeleteRequested event,
     Emitter<AccountState> emit,
   ) async {
-    emit(AccountLoading());
+    emit(const AccountLoading());
     try {
       await _repository.deleteAccount(event.id);
       emit(const AccountOperationSuccess('Cuenta eliminada exitosamente'));
